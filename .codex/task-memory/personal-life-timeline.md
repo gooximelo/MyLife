@@ -85,3 +85,43 @@ None recorded.
 
 ### Notes
 - None recorded.
+
+## Checkpoint 2026-09-18T17:00:15+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+精修个人生平时间线，修复丢失符号，增强时间线/弹窗/表单交互，并新增底部本地到访计数。
+
+### Latest User Request
+仔细检查细节，增加每次进入加一的访客人数，并补充更多细节和交互。
+
+### Active Requirements
+- 访客计数放在页面最底部；每次页面 pageshow 加一；继续保持纯静态单页。
+
+### Decisions And Rationale
+- 访客计数使用 localStorage，仅代表当前设备/浏览器累计到访次数，页面中明确标注；真实全站访客总数需未来接后端原子计数。
+- 保留访客可用的本地记忆录入；增加阶段切换动画、方向键 tabs、移动端横向滚动、表单空白校验、存储异常提示和删除二次确认。
+
+### Stable Facts
+- None recorded.
+
+### Files And Artifacts
+- index.html: 修复年龄区间和缺失图标；新增底部 visitor card、pageshow 计数、可访问性和响应式细节。
+
+### Commands
+- None recorded.
+
+### Verification
+- JavaScript 语法、HTML/CSS 括号与引号、git diff --check 均通过；模拟测试验证两次进入递增、阶段点击/键盘切换、tab DOM 稳定、新增记忆、空白拦截和二次确认删除。内置浏览器当前不可用，未做截图级视觉回归。
+
+### Open Issues And Risks
+- None recorded.
+
+### Next Steps
+- 如需所有访客共享总计数或站长新增内容公开给其他人，接入后端/CMS；之后可用真实年份、节点和照片替换占位内容。
+
+### Notes
+- None recorded.
