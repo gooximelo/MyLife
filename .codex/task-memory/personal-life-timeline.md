@@ -435,3 +435,159 @@ gooxi21.cn 未登录先显示登录页；所有账号登录后回首页；仅 12
 
 ### Notes
 - None recorded.
+
+## Checkpoint 2026-09-20T16:18:08+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+已确认线上与本地 reset-password 页面一致；截图中的 otp_expired 是 Supabase 验证端在页面加载前返回，前端未触发发送邮件。最可能原因是邮箱安全扫描预取并消耗 ConfirmationURL，另有旧邮件被新请求替换的可能。
+
+### Latest User Request
+仔细排查首次点击重置邮件即显示链接无效的问题，不要触发重置邮件额度。
+
+### Active Requirements
+- 排查和验证期间不得调用 resetPasswordForEmail 或发送任何重置邮件。
+
+### Decisions And Rationale
+- 采用防预取两步恢复：Recovery 模板链接携带 TokenHash 先进入本站确认页，只有用户主动点击后才调用 verifyOtp(type=recovery)，然后显示新密码表单。
+
+### Stable Facts
+- 线上 reset-password/index.html 与本地 SHA-256 完全一致；错误 URL 含 #error=access_denied&error_code=otp_expired，证明失败发生在 Supabase /verify 阶段、早于本站表单逻辑。
+
+### Files And Artifacts
+- reset-password/index.html: 当前支持 token_hash，但会自动 verifyOtp；计划改为显式确认后验证，并拒绝把普通登录会话误当恢复会话。
+
+### Commands
+- None recorded.
+
+### Verification
+- 只读获取线上页面返回 200，线上与本地文件哈希相同；官方 Supabase 文档确认 ConfirmationURL 可能被邮件预取扫描提前消耗。未发送邮件。
+
+### Open Issues And Risks
+- 工作区 Windows 沙箱初始化 helper_unknown_error，apply_patch 无法读取文件，修复补丁尚未落盘。Supabase Recovery 邮件模板内容和 Auth Logs 需要用户后台权限确认。
+
+### Next Steps
+- 沙箱恢复后修改 reset-password 两步确认；用户在 Supabase Recovery 模板将 ConfirmationURL 改为 RedirectTo + token_hash + type=recovery；再仅用一封最新邮件做端到端验证。
+
+### Notes
+- None recorded.
+
+## Checkpoint 2026-09-20T16:22:04+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+确认 2026-06-03 后新建的 Supabase Free 项目使用默认邮件服务时不能修改 Auth 邮件模板，用户后台表现正常。
+
+### Latest User Request
+无法修改 Supabase Recovery 邮件模板，询问不配置 SMTP 是否有其他解决办法。
+
+### Active Requirements
+- 不得为排查触发重置邮件；优先给出适合个人网站且安全的恢复方案。
+
+### Decisions And Rationale
+- 纯前端无法安全绕过不可编辑的 ConfirmationURL；首选免费自定义 SMTP。若坚持无 SMTP，可使用 Free/Pro 可用的 Send Email Auth Hook 配合邮件 API；完全不用外部邮件服务时只能提供登录态修改密码和人工恢复，无法实现安全的忘记密码自助流程。
+
+### Stable Facts
+- Supabase 2026-06-03 起限制新 Free 项目通过默认 SMTP 自定义认证邮件模板；Auth Send Email Hook 在 Free/Pro 可用并会替代 SMTP 发送。
+
+### Files And Artifacts
+- None recorded.
+
+### Commands
+- None recorded.
+
+### Verification
+- None recorded.
+
+### Open Issues And Risks
+- 需要用户在免费 SMTP、Send Email Hook、或仅登录态改密/人工恢复之间选择；当前默认 ConfirmationURL 对 QQ 邮箱预取仍可能立即失效。
+
+### Next Steps
+- 建议配置 Resend 免费 SMTP并使用安全 token_hash 模板；若用户拒绝 SMTP，再实现 account 登录态修改密码并决定是否部署 Send Email Hook。
+
+### Notes
+- None recorded.
+
+## Checkpoint 2026-09-20T16:28:44+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+确定采用 Resend 自定义 SMTP，并在 Recovery 模板使用 RedirectTo + TokenHash + recovery 类型，绕开默认 ConfirmationURL 的邮件预取问题。
+
+### Latest User Request
+询问 Resend 免费 SMTP 与安全 token_hash 模板的具体实现步骤。
+
+### Active Requirements
+- 不得触发测试邮件；Resend API Key 只能保存在 Supabase SMTP 密码字段或密钥管理中，不得写入前端或仓库。
+
+### Decisions And Rationale
+- 推荐验证 auth.gooxi21.cn 子域；Resend SMTP 使用 smtp.resend.com、465、用户名 resend、密码为 Resend API Key；关闭邮件点击跟踪。
+
+### Stable Facts
+- login/index.html 已将 resetPasswordForEmail redirectTo 指向 /reset-password/；reset-password/index.html 已支持 query token_hash 并以 recovery 类型调用 verifyOtp。
+
+### Files And Artifacts
+- None recorded.
+
+### Commands
+- None recorded.
+
+### Verification
+- 官方 Resend 文档确认 SMTP 主机 smtp.resend.com、用户名 resend、465/587 等端口及 API Key 作为密码；Supabase 官方 Resend 集成可自动填充 SMTP。
+
+### Open Issues And Risks
+- apply_patch 仍受 Windows sandbox helper_unknown_error 阻挡，两步人工确认加固尚未写入；当前 token_hash 流程仍可用。
+
+### Next Steps
+- 用户先在 Resend 验证 auth.gooxi21.cn、配置 Supabase SMTP、URL Configuration 与 Recovery 模板；最后只发送一封邮件验证链接形态和改密流程。
+
+### Notes
+- None recorded.
+
+## Checkpoint 2026-09-20T16:33:24+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+用户已启用 Supabase Custom SMTP，改用个人 QQ 邮箱发送 Auth 邮件；截图显示 sender 1223157269@qq.com、smtp.qq.com、465、每用户 60 秒。
+
+### Latest User Request
+检查 QQ SMTP 配置是否正确并说明下一步。
+
+### Active Requirements
+- 不得主动发送测试或重置邮件；不得索取或记录 QQ SMTP 授权码。
+
+### Decisions And Rationale
+- QQ SMTP 可替代 Resend用于小型个人站；必须使用完整 QQ 邮箱作为 SMTP 用户名、QQ 生成的 SMTP 授权码作为密码，不能使用 QQ 登录密码。Recovery 模板必须从 ConfirmationURL 改为 RedirectTo + TokenHash + type=recovery。
+
+### Stable Facts
+- 当前截图中的 Reset Password 模板仍使用 {{ .ConfirmationURL }}，尚未解决邮件扫描提前消耗链接的问题。
+
+### Files And Artifacts
+- None recorded.
+
+### Commands
+- None recorded.
+
+### Verification
+- None recorded.
+
+### Open Issues And Risks
+- 截图未显示 SMTP Username、Password/authorization code 和页面底部保存状态，无法确认连接凭据完整；需核对 URL Configuration。
+
+### Next Steps
+- 保存 QQ SMTP；修改并保存 Recovery 模板；确认 Site URL 和两个 Redirect URLs；最后只发一封最新重置邮件并检查链接以 gooxi21.cn/reset-password/?token_hash= 开头。
+
+### Notes
+- None recorded.
