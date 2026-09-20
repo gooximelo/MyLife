@@ -591,3 +591,42 @@ gooxi21.cn 未登录先显示登录页；所有账号登录后回首页；仅 12
 
 ### Notes
 - None recorded.
+
+## Checkpoint 2026-09-20T16:54:29+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+按截图删除重置密码页左侧三节点时间线和设置新密码标题下方说明文字，并清理对应 CSS。
+
+### Latest User Request
+删除截图红框标出的左侧时间线和标题下说明。
+
+### Active Requirements
+- 只调整展示，不修改 Supabase token 验证、密码更新或跳转逻辑。
+
+### Decisions And Rationale
+- None recorded.
+
+### Stable Facts
+- None recorded.
+
+### Files And Artifacts
+- reset-password/index.html: 删除 timeline-art/time-point HTML 与样式，删除重置表单副标题。
+
+### Commands
+- None recorded.
+
+### Verification
+- 确认 timeline-art、time-point 和目标说明文字均不存在；设置新密码标题保留；verifyOtp 与 updateUser 逻辑保留；git diff --check 仅有 LF/CRLF 提示。
+
+### Open Issues And Risks
+- None recorded.
+
+### Next Steps
+- 部署后刷新 /reset-password/ 做视觉确认。
+
+### Notes
+- None recorded.
