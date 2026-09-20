@@ -2,73 +2,411 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>登录</title>
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>用户登录</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 420px;
+      padding: 30px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    h1,
+    h2 {
+      margin-top: 0;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 12px;
+      border: 1px solid #cccccc;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 10px 18px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 15px;
+      color: white;
+      background: #246bfd;
+    }
+
+    button:hover {
+      opacity: 0.85;
+    }
+
+    #signout {
+      background: #e5484d;
+    }
+
+    #saveProfile {
+      width: 100%;
+      background: #159455;
+    }
+
+    .message {
+      min-height: 24px;
+      margin-top: 16px;
+      word-break: break-word;
+      color: #333333;
+    }
+
+    .profile {
+      margin-top: 25px;
+      padding-top: 20px;
+      border-top: 1px solid #dddddd;
+    }
+
+    .user-email {
+      margin-bottom: 16px;
+      color: #666666;
+    }
+  </style>
 </head>
 
 <body>
-  <h1>用户登录</h1>
+  <main class="card">
+    <h1>用户登录</h1>
 
-  <input id="email" type="email" placeholder="邮箱">
-  <input id="password" type="password" placeholder="密码">
+    <div id="authForm">
+      <input
+        id="email"
+        type="email"
+        placeholder="请输入邮箱"
+        autocomplete="email"
+      >
 
-  <button id="signup">注册</button>
-  <button id="signin">登录</button>
-  <button id="signout">退出</button>
+      <input
+        id="password"
+        type="password"
+        placeholder="请输入密码（至少6位）"
+        autocomplete="current-password"
+      >
 
-  <p id="message"></p>
+      <div class="buttons">
+        <button id="signup" type="button">注册</button>
+        <button id="signin" type="button">登录</button>
+        <button id="signout" type="button">退出登录</button>
+      </div>
+    </div>
+
+    <p id="authMessage" class="message"></p>
+
+    <section id="profileSection" class="profile" hidden>
+      <h2>个人资料</h2>
+
+      <p id="currentUserEmail" class="user-email"></p>
+
+      <input
+        id="nickname"
+        type="text"
+        placeholder="请输入昵称"
+      >
+
+      <button id="saveProfile" type="button">
+        保存昵称
+      </button>
+
+      <p id="profileMessage" class="message"></p>
+    </section>
+  </main>
 
   <script type="module">
     import { createClient } from
       "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
+    /*
+      这里只能填写：
+      1. Project URL
+      2. Publishable key
+
+      不要填写 Secret key。
+    */
     const supabaseUrl = "https://zckpkhktthgwzcnumadb.supabase.co";
     const supabaseKey = "sb_publishable_fEMwadF6BygFMuGxdt2eBA_euB38tR4";
 
-    const client = createClient(supabaseUrl, supabaseKey);
+    const supabase = createClient(
+      supabaseUrl,
+      supabaseKey
+    );
 
-    const email = document.getElementById("email");
-    const password = document.getElementById("password");
-    const message = document.getElementById("message");
+    const emailInput =
+      document.getElementById("email");
 
-    document.getElementById("signup").onclick = async () => {
-      const { error } = await client.auth.signUp({
-        email: email.value,
-        password: password.value
+    const passwordInput =
+      document.getElementById("password");
+
+    const authMessage =
+      document.getElementById("authMessage");
+
+    const profileSection =
+      document.getElementById("profileSection");
+
+    const currentUserEmail =
+      document.getElementById("currentUserEmail");
+
+    const nicknameInput =
+      document.getElementById("nickname");
+
+    const profileMessage =
+      document.getElementById("profileMessage");
+
+    let currentUser = null;
+
+    function showAuthMessage(text, isError = false) {
+      authMessage.textContent = text;
+      authMessage.style.color =
+        isError ? "#d93025" : "#159455";
+    }
+
+    function showProfileMessage(text, isError = false) {
+      profileMessage.textContent = text;
+      profileMessage.style.color =
+        isError ? "#d93025" : "#159455";
+    }
+
+    async function loadProfile() {
+      if (!currentUser) {
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("nickname")
+        .eq("id", currentUser.id)
+        .maybeSingle();
+
+      if (error) {
+        showProfileMessage(error.message, true);
+        return;
+      }
+
+      nicknameInput.value =
+        data?.nickname ?? "";
+    }
+
+    async function refreshLoginStatus() {
+      const {
+        data: { session },
+        error
+      } = await supabase.auth.getSession();
+
+      if (error) {
+        showAuthMessage(error.message, true);
+        return;
+      }
+
+      if (!session) {
+        currentUser = null;
+        profileSection.hidden = true;
+        showAuthMessage("当前未登录");
+        return;
+      }
+
+      currentUser = session.user;
+
+      currentUserEmail.textContent =
+        `当前用户：${currentUser.email}`;
+
+      profileSection.hidden = false;
+
+      showAuthMessage(
+        `登录成功：${currentUser.email}`
+      );
+
+      await loadProfile();
+    }
+
+    /*
+      注册
+    */
+    document
+      .getElementById("signup")
+      .addEventListener("click", async () => {
+        const email = emailInput.value.trim();
+        const password = passwordInput.value;
+
+        if (!email || !password) {
+          showAuthMessage(
+            "请输入邮箱和密码",
+            true
+          );
+          return;
+        }
+
+        if (password.length < 6) {
+          showAuthMessage(
+            "密码至少需要6位",
+            true
+          );
+          return;
+        }
+
+        showAuthMessage("正在注册……");
+
+        const { error } =
+          await supabase.auth.signUp({
+            email,
+            password,
+
+            options: {
+              emailRedirectTo:
+                `${window.location.origin}/login/`
+            }
+          });
+
+        if (error) {
+          showAuthMessage(error.message, true);
+          return;
+        }
+
+        showAuthMessage(
+          "注册邮件已发送，请打开邮箱完成确认"
+        );
       });
 
-      message.textContent = error
-        ? error.message
-        : "注册成功，请前往邮箱确认账号";
-    };
+    /*
+      登录
+    */
+    document
+      .getElementById("signin")
+      .addEventListener("click", async () => {
+        const email = emailInput.value.trim();
+        const password = passwordInput.value;
 
-    document.getElementById("signin").onclick = async () => {
-      const { data, error } =
-        await client.auth.signInWithPassword({
-          email: email.value,
-          password: password.value
-        });
+        if (!email || !password) {
+          showAuthMessage(
+            "请输入邮箱和密码",
+            true
+          );
+          return;
+        }
 
-      message.textContent = error
-        ? error.message
-        : `登录成功：${data.user.email}`;
-    };
+        showAuthMessage("正在登录……");
 
-    document.getElementById("signout").onclick = async () => {
-      const { error } = await client.auth.signOut();
+        const { error } =
+          await supabase.auth.signInWithPassword({
+            email,
+            password
+          });
 
-      message.textContent = error
-        ? error.message
-        : "已退出登录";
-    };
+        if (error) {
+          showAuthMessage(error.message, true);
+          return;
+        }
 
-    const {
-      data: { session }
-    } = await client.auth.getSession();
+        passwordInput.value = "";
 
-    if (session) {
-      message.textContent = `当前登录用户：${session.user.email}`;
-    }
+        await refreshLoginStatus();
+      });
+
+    /*
+      退出登录
+    */
+    document
+      .getElementById("signout")
+      .addEventListener("click", async () => {
+        const { error } =
+          await supabase.auth.signOut();
+
+        if (error) {
+          showAuthMessage(error.message, true);
+          return;
+        }
+
+        currentUser = null;
+        nicknameInput.value = "";
+        profileSection.hidden = true;
+
+        showAuthMessage("已退出登录");
+      });
+
+    /*
+      保存昵称
+    */
+    document
+      .getElementById("saveProfile")
+      .addEventListener("click", async () => {
+        if (!currentUser) {
+          showProfileMessage(
+            "请先登录",
+            true
+          );
+          return;
+        }
+
+        const nickname =
+          nicknameInput.value.trim();
+
+        if (!nickname) {
+          showProfileMessage(
+            "请输入昵称",
+            true
+          );
+          return;
+        }
+
+        showProfileMessage("正在保存……");
+
+        const { error } = await supabase
+          .from("profiles")
+          .upsert(
+            {
+              id: currentUser.id,
+              nickname
+            },
+            {
+              onConflict: "id"
+            }
+          );
+
+        if (error) {
+          showProfileMessage(
+            error.message,
+            true
+          );
+          return;
+        }
+
+        showProfileMessage("昵称保存成功");
+      });
+
+    /*
+      页面打开时检查是否已经登录
+    */
+    await refreshLoginStatus();
   </script>
 </body>
 </html>
