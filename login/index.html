@@ -115,6 +115,10 @@
       return new URL("./", window.location.href).href;
     }
 
+    function resetPasswordPageUrl() {
+      return new URL("../reset-password/", window.location.href).href;
+    }
+
     function redirectAfterLogin() {
       if (redirecting) return;
       redirecting = true;
@@ -296,7 +300,7 @@
       const button = document.getElementById("sendResetButton");
       showMessage(forgotMessage, "");
       setBusy(button, true, "正在发送……");
-      const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: loginPageUrl() });
+      const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: resetPasswordPageUrl() });
       setBusy(button, false);
       if (error) {
         showMessage(forgotMessage, friendlyError(error), true);
@@ -335,6 +339,12 @@
       await supabase.auth.signOut({ scope: "local" });
       recoveryMode = false;
       window.history.replaceState({}, "", loginPageUrl());
+      const resetCompleted = new URLSearchParams(window.location.search).get("reset") === "success";
+      if (resetCompleted) {
+        window.history.replaceState({}, "", loginPageUrl());
+        showLogin("密码已经更新，请使用新密码登录");
+        return;
+      }
       showLogin();
     });
 

@@ -392,3 +392,46 @@ gooxi21.cn 未登录先显示登录页；所有账号登录后回首页；仅 12
 
 ### Notes
 - None recorded.
+
+## Checkpoint 2026-09-20T14:28:05+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+修复密码找回回调：新增独立 /reset-password/ 页面，登录页发出的新重置邮件改为指向专用页面，保存密码后退出临时会话并回登录页。
+
+### Latest User Request
+重置邮件能收到但点击后没有修改密码页面，需要检查并修复完整重置流程。
+
+### Active Requirements
+- 密码重置邮件必须进入专用页面，明确显示新密码和确认密码。
+- 专用页面验证 Supabase 恢复会话，使用 updateUser 保存密码，成功后退出临时会话并回登录。
+- 无效或过期链接显示中文原因和返回登录入口；密码眼睛保持按住显示、松开隐藏。
+
+### Decisions And Rationale
+- 将恢复流程从登录页主逻辑中分离到 /reset-password/，同时保留登录页旧恢复逻辑兼容已发送链接。
+- resetPasswordForEmail 的 redirectTo 改为 https://gooxi21.cn/reset-password/；登录页通过 reset=success 显示成功提示。
+
+### Stable Facts
+- Supabase URL Configuration 必须允许 https://gooxi21.cn/reset-password/，Recovery 邮件模板按钮应使用 {{ .ConfirmationURL }}。
+
+### Files And Artifacts
+- login/index.html: 重置邮件回调改到专用页面，并处理密码更新成功提示。
+- reset-password/index.html: 新增链接验证、新密码表单、updateUser、临时会话退出、无效链接状态和按住眼睛查看密码。
+
+### Commands
+- None recorded.
+
+### Verification
+- 两个模块语法、ID 完整唯一、专用回调解析、会话验证、PASSWORD_RECOVERY、updateUser、本地退出、成功回登录、无效链接及眼睛交互均通过；git diff --check 通过。
+
+### Open Issues And Risks
+- 必须在 Supabase 后台新增专用 Redirect URL 并检查 Recovery 邮件模板，否则服务端会回退到 Site URL；内置浏览器不可用，未完成真实邮件端到端测试。
+
+### Next Steps
+- 部署两页并完成 Supabase Redirect URL/Recovery 模板设置后，重新发送一封新邮件测试；旧邮件不要复用。
+
+### Notes
+- None recorded.
