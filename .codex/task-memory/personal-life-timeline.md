@@ -350,3 +350,45 @@ gooxi21.cn 未登录先显示登录页；所有账号登录后回首页；仅 12
 
 ### Notes
 - None recorded.
+
+## Checkpoint 2026-09-20T14:16:56+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+进一步精简邮箱登录页：移除顶部栏、品牌网址、圆形图标、登录说明和浏览器保存提示；所有密码框改为按住眼睛临时显示。
+
+### Latest User Request
+移除顶部白框、品牌网址、阅圆圈、登录说明和保存浏览器提示；密码查看改成眼睛并且只在按住时显示。
+
+### Active Requirements
+- 登录页从顶部到底使用统一背景，不显示顶部品牌栏。
+- 主登录卡只显示邮箱登录标题、邮箱、密码、登录、找回密码和注册账号。
+- 所有密码字段使用眼睛图标，按住显示，松开、移出、失焦或切换页面立即隐藏，不允许常开。
+- 登录与注册错误继续使用明确中文提示，忘记密码流程保留。
+
+### Decisions And Rationale
+- 眼睛交互使用 pointerdown/keyup 临时显示，并在 pointerup、pointerleave、pointercancel、blur、visibilitychange 和窗口失焦时统一隐藏。
+
+### Stable Facts
+- None recorded.
+
+### Files And Artifacts
+- login/index.html: 删除顶部与多余提示，增加 5 个 SVG 眼睛按钮及按住查看密码交互。
+
+### Commands
+- None recorded.
+
+### Verification
+- 模块语法、ID 完整唯一、顶部/品牌/圆圈/说明/保存提示移除、5 个密码框眼睛覆盖、按住显示与多路径自动隐藏均通过；git diff --check 通过。
+
+### Open Issues And Risks
+- 内置浏览器当前不可用，未完成真实按压与截图级视觉验收。
+
+### Next Steps
+- 部署后在电脑和手机上分别按住眼睛图标，确认按住显示、松开立即隐藏。
+
+### Notes
+- None recorded.
