@@ -47,6 +47,59 @@ None recorded.
 ### Notes
 - None recorded.
 
+## Checkpoint 2026-09-20T12:00:00+08:00
+- Status: `active`
+
+### Objective
+将个人生平站点改为登录后访问，并实现站长独享编辑权限、其他账号只读。
+
+### Current State
+首页、登录页和账户页已统一接入持久 Supabase 会话；首页未登录跳转登录，登录后统一回到站点根目录。固定站长邮箱可编辑共享生平，其他账号只读且各自保留个人资料卡。
+
+### Latest User Request
+gooxi21.cn 未登录先显示登录页；所有账号登录后回首页；仅 1223157269@qq.com 能浏览并修改生平，其他账号只能阅读；登录状态要长期保持。
+
+### Active Requirements
+- 未登录不得看到首页内容；登录后统一进入 gooxi21.cn 根目录。
+- 站长邮箱拥有新增和删除生平记忆权限；其他已登录用户只有阅读权限。
+- 每个账号在 account 页面拥有自己的资料卡。
+- Supabase 会话持久化并自动刷新。
+
+### Decisions And Rationale
+- 权限同时在前端界面与 Supabase RLS 落实；前端隐藏按钮只改善体验，RLS 才是安全边界。
+- 共享生平增量内容迁移到 life_memories 表，不再使用每台设备独立的 localStorage 记忆。
+- 登录页忽略 next 参数并始终返回站点根目录，满足所有账号进入同一生平页面的产品定位。
+
+### Stable Facts
+- 站长邮箱为 1223157269@qq.com。
+- Supabase 项目 URL 为 https://zckpkhktthgwzcnumadb.supabase.co。
+
+### Files And Artifacts
+- index.html: 首页鉴权遮罩、角色判断、只读/管理模式、life_memories 云端读写。
+- login/index.html: 持久会话，登录、注册确认或已有会话均返回根目录。
+- account/index.html: 持久会话守卫与当前用户自己的资料卡。
+- supabase-setup.sql: profiles 与 life_memories 表、授权、RLS 和 updated_at 触发器。
+
+### Commands
+- None recorded.
+
+### Verification
+- 三个模块脚本解析无 SyntaxError；静态验收覆盖未登录首页跳转、登录页已有会话回首页、账户页未登录跳转、站长按钮显示、访客增删保存拦截、三页 persistSession/autoRefreshToken 配置。
+- 首页模拟鉴权覆盖未登录、站长和访客三种角色；共享记忆加载通过。
+- 内置浏览器当前不可用，未完成真实点击与 Supabase 线上 RLS 端到端测试。
+
+### Open Issues And Risks
+- 必须在 Supabase SQL Editor 执行 supabase-setup.sql，并检查没有旧的宽松策略与新策略并存。
+- Supabase Auth URL、邮箱确认和 Session timeout 设置需要在控制台完成。
+- 首页仍有静态示例经历；若内容必须对未登录者连页面源代码也不可见，应将全部正文迁移到受 RLS 保护的数据表。
+- 底部访客人数目前仍是当前浏览器 localStorage 计数，不是全站总访问量。
+
+### Next Steps
+- 执行 SQL 并完成 Supabase 控制台设置后，在 gooxi21.cn 用站长与普通账号各做一次真机登录、刷新、编辑权限验证。
+
+### Notes
+- None recorded.
+
 ## Checkpoint 2026-09-18T16:20:52+08:00
 - Status: `active`
 

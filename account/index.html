@@ -29,7 +29,11 @@
   <script type="module">
     import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
-    const supabase = createClient("https://zckpkhktthgwzcnumadb.supabase.co", "sb_publishable_fEMwadF6BygFMuGxdt2eBA_euB38tR4");
+    const supabase = createClient(
+      "https://zckpkhktthgwzcnumadb.supabase.co",
+      "sb_publishable_fEMwadF6BygFMuGxdt2eBA_euB38tR4",
+      { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } }
+    );
     const loadingState = document.getElementById("loadingState");
     const loadingMessage = document.getElementById("loadingMessage");
     const retryButton = document.getElementById("retryButton");
@@ -40,9 +44,7 @@
     let currentUser = null;
 
     function loginUrl() {
-      const target = new URL("../login/", window.location.href);
-      target.searchParams.set("next", `${window.location.pathname}${window.location.search}${window.location.hash}`);
-      return target.href;
+      return new URL("../login/", window.location.href).href;
     }
 
     function redirectToLogin() {

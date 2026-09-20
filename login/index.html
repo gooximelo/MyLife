@@ -159,32 +159,18 @@
 
     const supabase = createClient(
       supabaseUrl,
-      supabaseKey
+      supabaseKey,
+      {
+        auth: {
+          persistSession: true,
+          autoRefreshToken: true,
+          detectSessionInUrl: true
+        }
+      }
     );
 
     function safeNextUrl() {
-      const fallback = new URL("../account/", window.location.href);
-      const requested = new URLSearchParams(window.location.search).get("next");
-
-      if (!requested) {
-        return fallback;
-      }
-
-      try {
-        const candidate = new URL(requested, window.location.href);
-
-        if (candidate.origin !== window.location.origin) {
-          return fallback;
-        }
-
-        if (candidate.pathname === window.location.pathname) {
-          return fallback;
-        }
-
-        return candidate;
-      } catch (_error) {
-        return fallback;
-      }
+      return new URL("../", window.location.href);
     }
 
     function redirectAfterLogin() {
@@ -192,10 +178,7 @@
     }
 
     function emailConfirmationUrl() {
-      const target = new URL("./", window.location.href);
-      const next = safeNextUrl();
-      target.searchParams.set("next", `${next.pathname}${next.search}${next.hash}`);
-      return target.href;
+      return new URL("./", window.location.href).href;
     }
 
     const emailInput =
