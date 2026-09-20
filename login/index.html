@@ -2,435 +2,338 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
-  <title>登录 · 我的生平</title>
-
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#eee7db">
+  <meta name="description" content="使用邮箱登录，阅读 Gooxi 的个人生平。">
+  <title>邮箱登录 · 我的生平</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: Arial, sans-serif;
-      background: #f4f6f8;
-    }
-
-    .card {
-      width: 100%;
-      max-width: 420px;
-      padding: 30px;
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
-    }
-
-    h1,
-    h2 {
-      margin-top: 0;
-    }
-
-    input {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 12px;
-      border: 1px solid #cccccc;
-      border-radius: 6px;
-      font-size: 16px;
-    }
-
-    .buttons {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    button {
-      padding: 10px 18px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-      font-size: 15px;
-      color: white;
-      background: #246bfd;
-    }
-
-    button:hover {
-      opacity: 0.85;
-    }
-
-    #signout {
-      display: none;
-    }
-
-    #saveProfile {
-      width: 100%;
-      background: #159455;
-    }
-
-    .message {
-      min-height: 24px;
-      margin-top: 16px;
-      word-break: break-word;
-      color: #333333;
-    }
-
-    .profile {
-      margin-top: 25px;
-      padding-top: 20px;
-      border-top: 1px solid #dddddd;
-    }
-
-    .user-email {
-      margin-bottom: 16px;
-      color: #666666;
-    }
+    :root{--paper:#eee7db;--white:#fffdf9;--ink:#18211f;--muted:#70766f;--green:#2e594d;--green-dark:#18342c;--green-soft:#e1ebe4;--orange:#b8472a;--orange-soft:#f3d9cf;--line:rgba(24,33,31,.14);--danger:#aa3529;--shadow:0 32px 100px rgba(48,42,31,.16);--serif:"Noto Serif SC","Songti SC",SimSun,serif;--sans:Inter,"PingFang SC","Microsoft YaHei",sans-serif}
+    *{box-sizing:border-box}html{min-width:320px}body{min-height:100vh;margin:0;overflow-x:hidden;color:var(--ink);background:var(--paper);font-family:var(--sans)}body:before{content:"";position:fixed;z-index:-1;inset:0;pointer-events:none;opacity:.32;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.08'/%3E%3C/svg%3E")}button,input{font:inherit}button{color:inherit}button,input,a{-webkit-tap-highlight-color:transparent}button:focus-visible,input:focus-visible{outline:3px solid rgba(184,71,42,.24);outline-offset:3px}[hidden]{display:none!important}
+    .backdrop{position:fixed;z-index:-2;inset:0;overflow:hidden;background:radial-gradient(circle at 16% 14%,rgba(255,255,255,.92),transparent 26rem),radial-gradient(circle at 83% 22%,rgba(184,71,42,.13),transparent 25rem),radial-gradient(circle at 74% 86%,rgba(46,89,77,.15),transparent 31rem),linear-gradient(140deg,#f8f4ec 0%,#eee7da 56%,#e7ddce 100%)}.orb{position:absolute;border-radius:50%;filter:blur(1px)}.orb.one{width:330px;height:330px;right:-80px;top:-110px;border:70px solid rgba(184,71,42,.08)}.orb.two{width:460px;height:460px;left:-220px;bottom:-270px;background:rgba(46,89,77,.08)}.sweep{position:absolute;left:12%;right:7%;bottom:-43%;height:72%;border-radius:50% 50% 0 0;background:linear-gradient(105deg,rgba(46,89,77,.1),rgba(255,255,255,.04));transform:rotate(-5deg)}
+    .timeline-art{position:absolute;left:clamp(35px,8vw,140px);top:23%;bottom:16%;width:190px;color:rgba(24,33,31,.4)}.timeline-art:before{content:"";position:absolute;top:0;bottom:0;left:18px;width:1px;background:linear-gradient(transparent,var(--green),var(--orange),transparent)}.time-point{position:absolute;left:12px;width:13px;height:13px;border:3px solid var(--paper);border-radius:50%;background:var(--green);box-shadow:0 0 0 1px var(--green)}.time-point span{position:absolute;left:28px;top:-5px;width:125px;font:500 13px var(--serif);letter-spacing:.12em}.time-point.first{top:8%}.time-point.second{top:46%;background:var(--orange);box-shadow:0 0 0 1px var(--orange)}.time-point.third{bottom:8%}.background-quote{position:absolute;right:clamp(34px,7vw,120px);bottom:9%;max-width:260px;color:rgba(24,33,31,.34);font:500 17px/1.8 var(--serif);text-align:right}.background-quote:before{content:"“";display:block;color:rgba(184,71,42,.28);font-size:70px;line-height:.55}
+    .site-head{height:80px;display:flex;align-items:center;padding:0 clamp(24px,5vw,72px);border-bottom:1px solid rgba(24,33,31,.08);background:rgba(255,253,249,.42);backdrop-filter:blur(10px)}.brand{display:flex;align-items:center;gap:12px;font-family:var(--serif);font-weight:700;letter-spacing:.13em}.brand-mark{width:36px;height:36px;display:grid;place-items:center;border:1px solid var(--ink);border-radius:50%;font:12px var(--sans);letter-spacing:0}.brand small{display:block;margin-top:3px;color:var(--muted);font:8px var(--sans);letter-spacing:.18em}
+    .auth-main{min-height:calc(100vh - 80px);display:grid;place-items:center;padding:54px 20px 80px}.login-card{width:min(460px,100%);padding:46px 50px 34px;border:1px solid rgba(24,33,31,.07);border-radius:8px;background:rgba(255,253,249,.92);box-shadow:var(--shadow);backdrop-filter:blur(18px)}.view-title{text-align:center}.view-title .seal{width:54px;height:54px;display:grid;place-items:center;margin:0 auto 20px;border-radius:50%;color:#fff;background:var(--green);font:500 19px var(--serif);box-shadow:0 10px 26px rgba(46,89,77,.2)}.view-title h1{margin:0;font:500 32px/1.25 var(--serif);letter-spacing:.03em}.view-title p{margin:12px 0 0;color:var(--muted);font-size:12px;line-height:1.7}
+    .auth-form{display:grid;gap:14px;margin-top:30px}.field{display:grid;gap:7px}.field>span:first-child{color:var(--muted);font-size:11px}.field input{width:100%;height:54px;padding:0 17px;border:1px solid var(--line);border-radius:5px;color:var(--ink);background:rgba(255,255,255,.82);outline:0;transition:.2s}.field input::placeholder{color:#a5aaa6}.field input:focus{border-color:var(--green);background:#fff;box-shadow:0 0 0 3px rgba(46,89,77,.08)}.password-wrap{position:relative}.password-wrap input{padding-right:67px}.password-toggle{position:absolute;right:8px;top:9px;height:36px;padding:0 9px;border:0;border-radius:3px;color:var(--muted);background:transparent;cursor:pointer;font-size:11px}.password-toggle:hover{color:var(--green);background:var(--green-soft)}
+    .primary-button{width:100%;height:52px;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:7px;padding:0 18px;border:0;border-radius:5px;color:#fff;background:var(--green);box-shadow:0 12px 28px rgba(46,89,77,.19);cursor:pointer;font-size:15px;font-weight:700;letter-spacing:.08em;transition:.2s}.primary-button:hover{transform:translateY(-2px);background:var(--green-dark);box-shadow:0 16px 34px rgba(46,89,77,.26)}.primary-button:disabled{opacity:.58;cursor:wait;transform:none}.secondary-button{width:100%;height:48px;border:1px solid var(--green);border-radius:5px;color:var(--green);background:transparent;cursor:pointer;font-weight:700}.secondary-button:hover{color:#fff;background:var(--green)}.secondary-button:disabled{opacity:.58;cursor:wait}
+    .message{min-height:19px;margin:11px 0 0;color:var(--green);font-size:11px;line-height:1.65;text-align:center;overflow-wrap:anywhere}.message.error{color:var(--danger)}.message:empty{min-height:0;margin:0}.account-links{display:grid;grid-template-columns:1fr 1fr;margin-top:29px;padding-top:22px;border-top:1px solid var(--line)}.link-button{position:relative;padding:4px 12px;border:0;color:var(--ink);background:transparent;cursor:pointer;font-size:12px}.link-button+ .link-button:before{content:"";position:absolute;left:0;top:2px;bottom:2px;width:1px;background:var(--line)}.link-button:hover{color:var(--orange)}.session-note{display:flex;align-items:center;justify-content:center;gap:7px;margin:21px 0 0;color:#8b908b;font-size:9px}.session-note:before{content:"";width:6px;height:6px;border-radius:50%;background:var(--green)}
+    .session-check{min-height:370px;display:grid;place-items:center;text-align:center}.spinner{width:40px;height:40px;margin:0 auto 20px;border:3px solid rgba(24,33,31,.1);border-top-color:var(--orange);border-radius:50%;animation:spin .8s linear infinite}.session-check strong{font:500 22px var(--serif)}.session-check p{margin:9px 0 0;color:var(--muted);font-size:11px}@keyframes spin{to{transform:rotate(360deg)}}
+    .recovery-actions{display:grid;gap:9px}.text-button{padding:10px;border:0;color:var(--muted);background:transparent;cursor:pointer;font-size:11px}.text-button:hover{color:var(--orange)}
+    dialog{width:min(450px,calc(100% - 28px));padding:0;border:0;border-radius:8px;color:var(--ink);background:var(--white);box-shadow:0 38px 120px rgba(18,30,26,.35)}dialog::backdrop{background:rgba(20,31,28,.62);backdrop-filter:blur(6px)}.dialog-body{padding:32px}.dialog-head{display:flex;align-items:start;justify-content:space-between;gap:20px;padding-bottom:21px;border-bottom:1px solid var(--line)}.dialog-head h2{margin:0;font:500 27px var(--serif)}.dialog-head p{margin:8px 0 0;color:var(--muted);font-size:11px;line-height:1.7}.close-button{width:34px;height:34px;display:grid;place-items:center;flex:0 0 auto;border:1px solid var(--line);border-radius:50%;background:transparent;cursor:pointer}.dialog-body .auth-form{margin-top:23px}.dialog-tip{margin:16px 0 0;color:#8c918c;font-size:9px;line-height:1.65;text-align:center}
+    @media(max-width:900px){.timeline-art{left:34px;opacity:.5}.background-quote{display:none}.login-card{box-shadow:0 25px 75px rgba(48,42,31,.14)}}
+    @media(max-width:600px){.timeline-art{display:none}.site-head{height:68px;padding:0 20px}.brand small{display:none}.auth-main{min-height:calc(100vh - 68px);padding:26px 14px 48px}.login-card{padding:35px 23px 27px}.view-title h1{font-size:29px}.view-title .seal{width:48px;height:48px;margin-bottom:17px}.auth-form{margin-top:25px}.field input{height:52px}.background-quote{display:none}.dialog-body{padding:27px 21px}}
+    @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
   </style>
 </head>
-
 <body>
-  <main class="card">
-    <h1>用户登录</h1>
+  <div class="backdrop" aria-hidden="true">
+    <span class="orb one"></span><span class="orb two"></span><span class="sweep"></span>
+    <div class="timeline-art"><div class="time-point first"><span>过去 · 来处</span></div><div class="time-point second"><span>此刻 · 生长</span></div><div class="time-point third"><span>未来 · 待续</span></div></div>
+    <div class="background-quote">故事并不只存在于过去，它也在今天继续发生。</div>
+  </div>
 
-    <div id="authForm">
-      <input
-        id="email"
-        type="email"
-        placeholder="请输入邮箱"
-        autocomplete="email"
-      >
+  <header class="site-head"><div class="brand"><span class="brand-mark">传</span><span>我的生平<small>GOOXI21.CN</small></span></div></header>
 
-      <input
-        id="password"
-        type="password"
-        placeholder="请输入密码（至少6位）"
-        autocomplete="current-password"
-      >
+  <main class="auth-main">
+    <section class="login-card">
+      <div class="session-check" id="sessionCheck" aria-live="polite"><div><div class="spinner" aria-hidden="true"></div><strong>正在检查登录状态</strong><p>请稍候，马上为你打开故事。</p></div></div>
 
-      <div class="buttons">
-        <button id="signup" type="button">注册</button>
-        <button id="signin" type="button">登录</button>
-        <button id="signout" type="button">退出登录</button>
+      <div id="loginView" hidden>
+        <header class="view-title"><span class="seal" aria-hidden="true">阅</span><h1>邮箱登录</h1><p>登录以后，继续阅读我的生平故事</p></header>
+        <form class="auth-form" id="loginForm">
+          <label class="field"><span>邮箱账号</span><input id="loginEmail" type="email" placeholder="请输入邮箱" autocomplete="email" required></label>
+          <label class="field"><span>登录密码</span><span class="password-wrap"><input id="loginPassword" type="password" placeholder="请输入密码" autocomplete="current-password" minlength="6" required><button class="password-toggle" type="button" data-password-target="loginPassword">显示</button></span></label>
+          <button class="primary-button" id="signinButton" type="submit">登录</button>
+        </form>
+        <p class="message" id="loginMessage" role="status" aria-live="polite"></p>
+        <div class="account-links"><button class="link-button" id="openForgot" type="button">找回密码</button><button class="link-button" id="openSignup" type="button">注册账号</button></div>
+        <p class="session-note">登录状态会安全保存在当前浏览器</p>
       </div>
-    </div>
 
-    <p id="authMessage" class="message"></p>
-
-    <section id="profileSection" class="profile" hidden>
-      <h2>个人资料</h2>
-
-      <p id="currentUserEmail" class="user-email"></p>
-
-      <input
-        id="nickname"
-        type="text"
-        placeholder="请输入昵称"
-      >
-
-      <button id="saveProfile" type="button">
-        保存昵称
-      </button>
-
-      <p id="profileMessage" class="message"></p>
+      <div id="recoveryView" hidden>
+        <header class="view-title"><span class="seal" aria-hidden="true">钥</span><h1>设置新密码</h1><p>重置链接已验证，请输入新的登录密码</p></header>
+        <form class="auth-form" id="recoveryForm">
+          <label class="field"><span>新密码</span><span class="password-wrap"><input id="newPassword" type="password" placeholder="请输入至少 6 位新密码" autocomplete="new-password" minlength="6" required><button class="password-toggle" type="button" data-password-target="newPassword">显示</button></span></label>
+          <label class="field"><span>确认新密码</span><input id="confirmNewPassword" type="password" placeholder="请再次输入新密码" autocomplete="new-password" minlength="6" required></label>
+          <div class="recovery-actions"><button class="primary-button" id="updatePasswordButton" type="submit">保存新密码</button><button class="text-button" id="cancelRecovery" type="button">返回登录</button></div>
+        </form>
+        <p class="message" id="recoveryMessage" role="status" aria-live="polite"></p>
+      </div>
     </section>
   </main>
 
+  <dialog id="signupDialog" aria-labelledby="signupTitle">
+    <div class="dialog-body">
+      <header class="dialog-head"><div><h2 id="signupTitle">注册账号</h2><p>本站仅支持邮箱注册，完成邮箱验证后即可登录阅读。</p></div><button class="close-button" id="closeSignup" type="button" aria-label="关闭注册">×</button></header>
+      <form class="auth-form" id="signupForm">
+        <label class="field"><span>邮箱账号</span><input id="signupEmail" type="email" placeholder="请输入邮箱" autocomplete="email" required></label>
+        <label class="field"><span>设置密码</span><span class="password-wrap"><input id="signupPassword" type="password" placeholder="请输入至少 6 位密码" autocomplete="new-password" minlength="6" required><button class="password-toggle" type="button" data-password-target="signupPassword">显示</button></span></label>
+        <label class="field"><span>确认密码</span><input id="signupConfirm" type="password" placeholder="请再次输入密码" autocomplete="new-password" minlength="6" required></label>
+        <button class="secondary-button" id="signupButton" type="submit">注册</button>
+      </form>
+      <p class="message" id="signupMessage" role="status" aria-live="polite"></p>
+      <p class="dialog-tip">如果这个邮箱已经注册，请关闭窗口后直接登录或找回密码。</p>
+    </div>
+  </dialog>
+
+  <dialog id="forgotDialog" aria-labelledby="forgotTitle">
+    <div class="dialog-body">
+      <header class="dialog-head"><div><h2 id="forgotTitle">找回密码</h2><p>输入注册邮箱，我们会向该邮箱发送密码重置链接。</p></div><button class="close-button" id="closeForgot" type="button" aria-label="关闭找回密码">×</button></header>
+      <form class="auth-form" id="forgotForm">
+        <label class="field"><span>注册邮箱</span><input id="resetEmail" type="email" placeholder="请输入注册邮箱" autocomplete="email" required></label>
+        <button class="primary-button" id="sendResetButton" type="submit">发送重置邮件</button>
+      </form>
+      <p class="message" id="forgotMessage" role="status" aria-live="polite"></p>
+    </div>
+  </dialog>
+
   <script type="module">
-    import { createClient } from
-      "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
-
-    /*
-      这里只能填写：
-      1. Project URL
-      2. Publishable key
-
-      不要填写 Secret key。
-    */
-    const supabaseUrl = "https://zckpkhktthgwzcnumadb.supabase.co";
-    const supabaseKey = "sb_publishable_fEMwadF6BygFMuGxdt2eBA_euB38tR4";
+    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 
     const supabase = createClient(
-      supabaseUrl,
-      supabaseKey,
-      {
-        auth: {
-          persistSession: true,
-          autoRefreshToken: true,
-          detectSessionInUrl: true
-        }
-      }
+      "https://zckpkhktthgwzcnumadb.supabase.co",
+      "sb_publishable_fEMwadF6BygFMuGxdt2eBA_euB38tR4",
+      { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } }
     );
 
-    function safeNextUrl() {
-      return new URL("../", window.location.href);
+    const sessionCheck = document.getElementById("sessionCheck");
+    const loginView = document.getElementById("loginView");
+    const recoveryView = document.getElementById("recoveryView");
+    const loginEmail = document.getElementById("loginEmail");
+    const loginPassword = document.getElementById("loginPassword");
+    const loginMessage = document.getElementById("loginMessage");
+    const signupDialog = document.getElementById("signupDialog");
+    const signupMessage = document.getElementById("signupMessage");
+    const forgotDialog = document.getElementById("forgotDialog");
+    const forgotMessage = document.getElementById("forgotMessage");
+    const recoveryMessage = document.getElementById("recoveryMessage");
+    const hashParams = new URLSearchParams(window.location.hash.slice(1));
+    let recoveryMode = hashParams.get("type") === "recovery";
+    let initializing = true;
+    let redirecting = false;
+
+    function siteHomeUrl() {
+      return new URL("../", window.location.href).href;
     }
 
-    function redirectAfterLogin() {
-      window.location.replace(safeNextUrl().href);
-    }
-
-    function emailConfirmationUrl() {
+    function loginPageUrl() {
       return new URL("./", window.location.href).href;
     }
 
-    const emailInput =
-      document.getElementById("email");
-
-    const passwordInput =
-      document.getElementById("password");
-
-    const authMessage =
-      document.getElementById("authMessage");
-
-    const profileSection =
-      document.getElementById("profileSection");
-
-    const currentUserEmail =
-      document.getElementById("currentUserEmail");
-
-    const nicknameInput =
-      document.getElementById("nickname");
-
-    const profileMessage =
-      document.getElementById("profileMessage");
-
-    let currentUser = null;
-
-    function showAuthMessage(text, isError = false) {
-      authMessage.textContent = text;
-      authMessage.style.color =
-        isError ? "#d93025" : "#159455";
+    function redirectAfterLogin() {
+      if (redirecting) return;
+      redirecting = true;
+      window.location.replace(siteHomeUrl());
     }
 
-    function showProfileMessage(text, isError = false) {
-      profileMessage.textContent = text;
-      profileMessage.style.color =
-        isError ? "#d93025" : "#159455";
+    function showMessage(element, text, isError = false) {
+      element.textContent = text;
+      element.classList.toggle("error", isError);
     }
 
-    async function loadProfile() {
-      if (!currentUser) {
-        return;
-      }
-
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("nickname")
-        .eq("id", currentUser.id)
-        .maybeSingle();
-
-      if (error) {
-        showProfileMessage(error.message, true);
-        return;
-      }
-
-      nicknameInput.value =
-        data?.nickname ?? "";
+    function friendlyError(error) {
+      const message = error?.message || "操作失败，请稍后重试";
+      const normalized = message.toLowerCase();
+      if (normalized.includes("invalid login credentials") || normalized.includes("invalid_credentials")) return "账号或者密码错误";
+      if (normalized.includes("email not confirmed")) return "邮箱尚未验证，请先前往邮箱完成验证";
+      if (normalized.includes("user already registered") || normalized.includes("already been registered")) return "该邮箱已经注册，请直接登录或找回密码";
+      if (normalized.includes("signup is disabled")) return "当前暂未开放新账号注册";
+      if (normalized.includes("password should be")) return "密码至少需要 6 位";
+      if (normalized.includes("rate limit") || normalized.includes("security purposes")) return "操作过于频繁，请稍后再试";
+      if (normalized.includes("expired") || normalized.includes("invalid token")) return "重置链接无效或已过期，请重新发送";
+      return "操作没有完成，请稍后重试";
     }
 
-    async function refreshLoginStatus() {
-      const {
-        data: { session },
-        error
-      } = await supabase.auth.getSession();
-
-      if (error) {
-        showAuthMessage(error.message, true);
-        return;
-      }
-
-      if (!session) {
-        currentUser = null;
-        profileSection.hidden = true;
-        showAuthMessage("请登录后继续");
-        return;
-      }
-
-      currentUser = session.user;
-      showAuthMessage("登录状态有效，正在返回……");
-      redirectAfterLogin();
+    function setBusy(button, busy, busyText) {
+      if (!button.dataset.label) button.dataset.label = button.textContent;
+      button.disabled = busy;
+      button.textContent = busy ? busyText : button.dataset.label;
     }
 
-    /*
-      注册
-    */
-    document
-      .getElementById("signup")
-      .addEventListener("click", async () => {
-        const email = emailInput.value.trim();
-        const password = passwordInput.value;
+    function showLogin(message = "", isError = false) {
+      sessionCheck.hidden = true;
+      recoveryView.hidden = true;
+      loginView.hidden = false;
+      if (message) showMessage(loginMessage, message, isError);
+      requestAnimationFrame(() => loginEmail.focus());
+    }
 
-        if (!email || !password) {
-          showAuthMessage(
-            "请输入邮箱和密码",
-            true
-          );
-          return;
-        }
+    function showRecovery() {
+      recoveryMode = true;
+      sessionCheck.hidden = true;
+      loginView.hidden = true;
+      recoveryView.hidden = false;
+      requestAnimationFrame(() => document.getElementById("newPassword").focus());
+    }
 
-        if (password.length < 6) {
-          showAuthMessage(
-            "密码至少需要6位",
-            true
-          );
-          return;
-        }
+    function openDialog(dialog, focusElement) {
+      dialog.showModal();
+      requestAnimationFrame(() => focusElement.focus());
+    }
 
-        showAuthMessage("正在注册……");
-
-        const { data, error } =
-          await supabase.auth.signUp({
-            email,
-            password,
-
-            options: {
-              emailRedirectTo: emailConfirmationUrl()
-            }
-          });
-
-        if (error) {
-          showAuthMessage(error.message, true);
-          return;
-        }
-
-        if (data.session) {
-          redirectAfterLogin();
-          return;
-        }
-
-        showAuthMessage("注册邮件已发送，请打开邮箱完成确认");
+    function closeOnBackdrop(dialog) {
+      dialog.addEventListener("click", event => {
+        if (event.target === dialog) dialog.close();
       });
+    }
 
-    /*
-      登录
-    */
-    document
-      .getElementById("signin")
-      .addEventListener("click", async () => {
-        const email = emailInput.value.trim();
-        const password = passwordInput.value;
+    document.querySelectorAll("[data-password-target]").forEach(button => {
+      button.addEventListener("click", () => {
+        const input = document.getElementById(button.dataset.passwordTarget);
+        const showing = input.type === "text";
+        input.type = showing ? "password" : "text";
+        button.textContent = showing ? "显示" : "隐藏";
+        button.setAttribute("aria-label", showing ? "显示密码" : "隐藏密码");
+      });
+    });
 
-        if (!email || !password) {
-          showAuthMessage(
-            "请输入邮箱和密码",
-            true
-          );
-          return;
-        }
+    document.getElementById("loginForm").addEventListener("submit", async event => {
+      event.preventDefault();
+      const email = loginEmail.value.trim();
+      const password = loginPassword.value;
+      const button = document.getElementById("signinButton");
+      showMessage(loginMessage, "");
+      setBusy(button, true, "正在登录……");
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      setBusy(button, false);
+      if (error) {
+        showMessage(loginMessage, friendlyError(error), true);
+        loginPassword.select();
+        return;
+      }
+      loginPassword.value = "";
+      if (data.session) redirectAfterLogin();
+    });
 
-        showAuthMessage("正在登录……");
+    document.getElementById("openSignup").addEventListener("click", () => {
+      document.getElementById("signupEmail").value = loginEmail.value.trim();
+      showMessage(signupMessage, "");
+      openDialog(signupDialog, document.getElementById("signupEmail"));
+    });
 
-        const { data, error } =
-          await supabase.auth.signInWithPassword({
-            email,
-            password
-          });
+    document.getElementById("closeSignup").addEventListener("click", () => signupDialog.close());
+    closeOnBackdrop(signupDialog);
 
-        if (error) {
-          showAuthMessage(error.message, true);
-          return;
-        }
-
-        passwordInput.value = "";
-        currentUser = data.user;
-        showAuthMessage("登录成功，正在返回……");
+    document.getElementById("signupForm").addEventListener("submit", async event => {
+      event.preventDefault();
+      const email = document.getElementById("signupEmail").value.trim();
+      const password = document.getElementById("signupPassword").value;
+      const confirmation = document.getElementById("signupConfirm").value;
+      const button = document.getElementById("signupButton");
+      if (password !== confirmation) {
+        showMessage(signupMessage, "两次输入的密码不一致", true);
+        document.getElementById("signupConfirm").focus();
+        return;
+      }
+      showMessage(signupMessage, "");
+      setBusy(button, true, "正在注册……");
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: { emailRedirectTo: loginPageUrl() }
+      });
+      setBusy(button, false);
+      if (error) {
+        showMessage(signupMessage, friendlyError(error), true);
+        return;
+      }
+      if (data.session) {
         redirectAfterLogin();
-      });
-
-    /*
-      退出登录
-    */
-    document
-      .getElementById("signout")
-      .addEventListener("click", async () => {
-        const { error } =
-          await supabase.auth.signOut();
-
-        if (error) {
-          showAuthMessage(error.message, true);
-          return;
-        }
-
-        currentUser = null;
-        nicknameInput.value = "";
-        profileSection.hidden = true;
-
-        showAuthMessage("已退出登录");
-      });
-
-    /*
-      保存昵称
-    */
-    document
-      .getElementById("saveProfile")
-      .addEventListener("click", async () => {
-        if (!currentUser) {
-          showProfileMessage(
-            "请先登录",
-            true
-          );
-          return;
-        }
-
-        const nickname =
-          nicknameInput.value.trim();
-
-        if (!nickname) {
-          showProfileMessage(
-            "请输入昵称",
-            true
-          );
-          return;
-        }
-
-        showProfileMessage("正在保存……");
-
-        const { error } = await supabase
-          .from("profiles")
-          .upsert(
-            {
-              id: currentUser.id,
-              nickname
-            },
-            {
-              onConflict: "id"
-            }
-          );
-
-        if (error) {
-          showProfileMessage(
-            error.message,
-            true
-          );
-          return;
-        }
-
-        showProfileMessage("昵称保存成功");
-      });
-
-    /*
-      页面打开时检查是否已经登录
-    */
-    passwordInput.addEventListener("keydown", event => {
-      if (event.key === "Enter") {
-        event.preventDefault();
-        document.getElementById("signin").click();
+        return;
       }
+      if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
+        showMessage(signupMessage, "该邮箱已经注册，请直接登录或找回密码", true);
+        return;
+      }
+      loginEmail.value = email;
+      showMessage(signupMessage, "注册邮件已发送，请前往邮箱完成验证");
     });
 
-    supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) redirectAfterLogin();
+    document.getElementById("openForgot").addEventListener("click", () => {
+      document.getElementById("resetEmail").value = loginEmail.value.trim();
+      showMessage(forgotMessage, "");
+      openDialog(forgotDialog, document.getElementById("resetEmail"));
     });
 
-    await refreshLoginStatus();
+    document.getElementById("closeForgot").addEventListener("click", () => forgotDialog.close());
+    closeOnBackdrop(forgotDialog);
+
+    document.getElementById("forgotForm").addEventListener("submit", async event => {
+      event.preventDefault();
+      const email = document.getElementById("resetEmail").value.trim();
+      const button = document.getElementById("sendResetButton");
+      showMessage(forgotMessage, "");
+      setBusy(button, true, "正在发送……");
+      const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: loginPageUrl() });
+      setBusy(button, false);
+      if (error) {
+        showMessage(forgotMessage, friendlyError(error), true);
+        return;
+      }
+      showMessage(forgotMessage, "如果该邮箱已经注册，重置邮件会很快送达");
+    });
+
+    document.getElementById("recoveryForm").addEventListener("submit", async event => {
+      event.preventDefault();
+      const password = document.getElementById("newPassword").value;
+      const confirmation = document.getElementById("confirmNewPassword").value;
+      const button = document.getElementById("updatePasswordButton");
+      if (password !== confirmation) {
+        showMessage(recoveryMessage, "两次输入的新密码不一致", true);
+        document.getElementById("confirmNewPassword").focus();
+        return;
+      }
+      showMessage(recoveryMessage, "");
+      setBusy(button, true, "正在保存……");
+      const { error } = await supabase.auth.updateUser({ password });
+      if (error) {
+        setBusy(button, false);
+        showMessage(recoveryMessage, friendlyError(error), true);
+        return;
+      }
+      await supabase.auth.signOut({ scope: "local" });
+      recoveryMode = false;
+      window.history.replaceState({}, "", loginPageUrl());
+      document.getElementById("recoveryForm").reset();
+      setBusy(button, false);
+      showLogin("密码已更新，请使用新密码登录");
+    });
+
+    document.getElementById("cancelRecovery").addEventListener("click", async () => {
+      await supabase.auth.signOut({ scope: "local" });
+      recoveryMode = false;
+      window.history.replaceState({}, "", loginPageUrl());
+      showLogin();
+    });
+
+    supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "PASSWORD_RECOVERY") {
+        recoveryMode = true;
+        showRecovery();
+        return;
+      }
+      if (!initializing && session && !recoveryMode) redirectAfterLogin();
+    });
+
+    async function initializeLogin() {
+      const { data: { session }, error } = await supabase.auth.getSession();
+      initializing = false;
+      if (error) {
+        showLogin("暂时无法检查登录状态，请刷新页面重试", true);
+        return;
+      }
+      if (recoveryMode) {
+        if (session) showRecovery();
+        else showLogin("重置链接无效或已过期，请重新发送", true);
+        return;
+      }
+      if (session) {
+        redirectAfterLogin();
+        return;
+      }
+      showLogin();
+    }
+
+    await initializeLogin();
   </script>
 </body>
 </html>

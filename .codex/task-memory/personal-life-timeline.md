@@ -261,3 +261,92 @@ gooxi21.cn 未登录先显示登录页；所有账号登录后回首页；仅 12
 
 ### Notes
 - None recorded.
+
+## Checkpoint 2026-09-20T13:52:52+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+重构登录页为登录主视图与折叠注册辅助卡，并完成 Supabase 忘记密码、恢复回调和更新密码流程。
+
+### Latest User Request
+重新设计登录页面，突出登录、缩小注册，并增加 Supabase 忘记密码功能。
+
+### Active Requirements
+- 未登录访问首页跳登录，登录后统一回根目录。
+- 登录是页面主操作，注册为较小的辅助操作，桌面和手机均清晰。
+- 忘记密码必须支持发送邮件、识别恢复链接、设置新密码并重新登录。
+- 站长邮箱可编辑共享生平，其他账号只读；每个账号保留自己的资料卡。
+
+### Decisions And Rationale
+- 注册使用默认折叠 details 卡片，减少对登录主流程的干扰。
+- 密码找回调用 resetPasswordForEmail，监听 PASSWORD_RECOVERY，并用 updateUser 保存新密码；成功后仅退出当前浏览器会话。
+- 密码恢复与邮箱确认共用已允许的 /login/ 回调路径，不新增数据库表。
+
+### Stable Facts
+- Supabase Redirect URLs 需要包含 https://gooxi21.cn/login/；生产邮件建议配置自定义 SMTP。
+
+### Files And Artifacts
+- login/index.html: 全面重做响应式视觉、登录表单、折叠注册、忘记密码弹窗和新密码恢复视图。
+
+### Commands
+- None recorded.
+
+### Verification
+- 模块脚本无 SyntaxError；所有脚本引用 ID 存在且无重复；表单闭合；静态验证覆盖 resetPasswordForEmail、PASSWORD_RECOVERY、updateUser、普通会话回首页、折叠注册和手机端登录优先；git diff --check 通过。
+
+### Open Issues And Risks
+- 内置浏览器当前不可用，未完成截图级视觉验收和真实邮件端到端测试。
+
+### Next Steps
+- 部署后用测试邮箱执行忘记密码，点击邮件链接设置新密码，再用新密码登录。
+
+### Notes
+- None recorded.
+
+## Checkpoint 2026-09-20T13:57:58+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+按参考图将登录页改为居中单一邮箱登录，注册和找回密码改为底部入口与弹窗，增加生平时间线氛围背景和完整中文提示。
+
+### Latest User Request
+参考 QQ 登录页，只保留邮箱登录，不要快捷登录和意见反馈；增强背景，统一中文提示，并明确提示登录错误与重复邮箱。
+
+### Active Requirements
+- 未登录访问首页跳登录，登录后统一回根目录。
+- 登录页只支持邮箱和密码，不显示快捷登录、第三方登录或意见反馈。
+- 主页面突出登录，底部只保留找回密码和注册账号，注册作为次要弹窗。
+- 账号密码错误、邮箱未验证、重复注册、频率限制和密码问题使用中文提示。
+- 忘记密码支持邮件、恢复回调、更新密码与重新登录。
+
+### Decisions And Rationale
+- 采用参考图的顶部品牌加居中登录卡布局，背景使用过去、此刻、未来时间线与柔和光晕。
+- 注册与找回密码均使用 dialog 弹窗，保持登录主页面简洁。
+- 重复邮箱同时处理 Supabase 明确错误和 identities 为空的可识别返回；邮箱确认开启时其余情况使用安全兜底提示。
+
+### Stable Facts
+- Supabase 为防止账号枚举，在开启邮箱确认时可能对已注册邮箱返回模糊用户对象，因此前端无法保证所有重复邮箱都被精确公开。
+
+### Files And Artifacts
+- login/index.html: 单邮箱登录视觉、时间线背景、注册/找回弹窗、中文错误映射、密码恢复流程。
+
+### Commands
+- None recorded.
+
+### Verification
+- 模块语法通过；脚本引用 ID 完整且唯一；确认仅邮箱登录、无快捷登录/意见反馈、中文账号密码错误、重复邮箱提示、注册与找回弹窗及密码恢复链路；git diff --check 通过。
+
+### Open Issues And Risks
+- 内置浏览器当前不可用，未完成截图级视觉验收；重复邮箱的精确反馈受 Supabase 防枚举策略限制。
+
+### Next Steps
+- 部署后用错误密码、已注册邮箱和新邮箱分别验证三种中文提示，并测试密码重置邮件。
+
+### Notes
+- None recorded.
