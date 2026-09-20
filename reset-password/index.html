@@ -179,6 +179,17 @@
         showInvalid(hash.get("error_description") || query.get("error_description") || "重置链接无效或已过期，请重新发送");
         return;
       }
+      const tokenHash = query.get("token_hash");
+      if (tokenHash) {
+        const { data, error } = await supabase.auth.verifyOtp({ type: "recovery", token_hash: tokenHash });
+        if (error || !data.session) {
+          showInvalid("重置链接无效或已过期，请重新发送密码重置邮件。");
+          return;
+        }
+        window.history.replaceState({}, "", new URL("./", window.location.href).href);
+        showResetForm();
+        return;
+      }
       const { data: { session }, error } = await supabase.auth.getSession();
       if (error) {
         showInvalid("暂时无法验证重置链接，请检查网络后重试");
