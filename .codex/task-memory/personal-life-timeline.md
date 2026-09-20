@@ -630,3 +630,42 @@ gooxi21.cn 未登录先显示登录页；所有账号登录后回首页；仅 12
 
 ### Notes
 - None recorded.
+
+## Checkpoint 2026-09-20T17:06:06+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+为登录、注册和找回密码统一增加完整邮箱域名校验，阻止 1111@qq 等缺少顶级后缀的地址调用 Supabase。
+
+### Latest User Request
+修复邮箱判断逻辑，要求 @ 后具有合法完整后缀，错误邮箱不得发送邮件。
+
+### Active Requirements
+- 登录、注册、找回密码三处必须一致校验，并在任何 Supabase Auth 请求和加载状态之前拦截。
+
+### Decisions And Rationale
+- 不硬编码 qq/163/gmail 供应商白名单；按邮箱结构校验完整域名、标签和 2-63 位字母顶级域，以兼容学校、公司和自定义域邮箱。
+
+### Stable Facts
+- None recorded.
+
+### Files And Artifacts
+- login/index.html: 新增 normalizeEmail、isCompleteEmail、readValidEmail；三个邮箱输入增加完整示例和 maxlength=254；三个提交处理器先校验再调用 Supabase。
+
+### Commands
+- None recorded.
+
+### Verification
+- 有效用例 qq.com、gmail.com、school.edu.cn、大小写域名及子域全部通过；1111@qq、缺少部分、连续点、非法短后缀、数字后缀、域名中划线首尾等 12 个无效用例全部拒绝；模块语法通过；三条路径均验证校验先于 API；git diff --check 仅 LF/CRLF 提示。
+
+### Open Issues And Risks
+- None recorded.
+
+### Next Steps
+- 部署后在注册与找回密码界面用 1111@qq 做一次不触发网络请求的视觉验证。
+
+### Notes
+- 前端语法校验不能证明域名或邮箱真实存在，真实性继续依赖邮箱验证；若未来要求域名可收信，需服务端 MX 校验。
