@@ -218,3 +218,46 @@ gooxi21.cn 未登录先显示登录页；所有账号登录后回首页；仅 12
 
 ### Notes
 - None recorded.
+
+## Checkpoint 2026-09-20T11:31:10+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+首页新增当前账号菜单和本地账号切换，账户页同步改为切换账号；切换后回登录页。
+
+### Latest User Request
+已登录后缺少账号切换入口，需要能够换其他账号查看。
+
+### Active Requirements
+- 未登录访问首页跳登录，登录后统一回根目录。
+- 站长邮箱可编辑共享生平，其他账号只读；每个账号保留自己的资料卡。
+- 首页和账户页都要能明确切换账号，且不退出其他设备。
+
+### Decisions And Rationale
+- 首页右上角使用可展开账号菜单显示当前邮箱、权限模式、个人资料与切换账号。
+- 切换账号调用 Supabase signOut scope local，仅清除当前浏览器会话，然后跳转登录页。
+
+### Stable Facts
+- 现有 profiles 表继续用于每个账号自己的资料卡；共享生平使用 life_memories。
+
+### Files And Artifacts
+- index.html: 新增账号菜单、当前邮箱、权限标识、移动端适配与切换账号逻辑。
+- account/index.html: 退出登录改为切换账号，并使用 local scope。
+
+### Commands
+- None recorded.
+
+### Verification
+- 两个模块脚本无 SyntaxError；验证邮箱显示、切换按钮、local signOut、登录页回跳、移动端菜单及无重复 ID；git diff --check 通过。
+
+### Open Issues And Risks
+- 内置浏览器当前不可用，未完成真实点击与线上 Supabase 会话切换测试。
+
+### Next Steps
+- 部署后分别登录站长和普通账号，使用首页账号菜单来回切换一次。
+
+### Notes
+- None recorded.

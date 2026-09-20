@@ -23,7 +23,7 @@
     <section class="state" id="loadingState" aria-live="polite"><div><div class="spinner" aria-hidden="true"></div><h2>正在验证登录状态</h2><p id="loadingMessage">请稍候，马上为你打开账户。</p><button class="button" id="retryButton" type="button" hidden>重新检查</button></div></section>
     <section class="account-grid" id="accountContent" hidden>
       <aside class="identity"><div class="avatar" id="avatar">我</div><small>SIGNED IN AS</small><h2 id="displayName">我的账户</h2><p id="userEmail"></p></aside>
-      <div class="panel"><div class="panel-head"><h3>个人资料</h3><p>更新后会保存到你的 Supabase 账户。</p></div><label class="field">昵称<input id="nickname" type="text" maxlength="40" placeholder="请输入昵称" autocomplete="nickname"></label><div class="actions"><button class="button secondary" id="signout" type="button">退出登录</button><button class="button" id="saveProfile" type="button">保存资料</button></div><p class="message" id="profileMessage" role="status" aria-live="polite"></p></div>
+      <div class="panel"><div class="panel-head"><h3>个人资料</h3><p>更新后会保存到你的 Supabase 账户。需要使用其他账号时，可退出当前浏览器中的登录状态。</p></div><label class="field">昵称<input id="nickname" type="text" maxlength="40" placeholder="请输入昵称" autocomplete="nickname"></label><div class="actions"><button class="button secondary" id="signout" type="button">切换账号</button><button class="button" id="saveProfile" type="button">保存资料</button></div><p class="message" id="profileMessage" role="status" aria-live="polite"></p></div>
     </section>
   </main>
   <script type="module">
@@ -41,6 +41,7 @@
     const nicknameInput = document.getElementById("nickname");
     const profileMessage = document.getElementById("profileMessage");
     const saveButton = document.getElementById("saveProfile");
+    const switchButton = document.getElementById("signout");
     let currentUser = null;
 
     function loginUrl() {
@@ -118,12 +119,17 @@
       showProfileMessage("资料已保存");
     });
 
-    document.getElementById("signout").addEventListener("click", async () => {
-      const { error } = await supabase.auth.signOut();
+    switchButton.addEventListener("click", async () => {
+      switchButton.disabled = true;
+      switchButton.textContent = "正在切换……";
+      const { error } = await supabase.auth.signOut({ scope: "local" });
       if (error) {
-        showProfileMessage(`退出失败：${error.message}`, true);
+        switchButton.disabled = false;
+        switchButton.textContent = "切换账号";
+        showProfileMessage(`切换失败：${error.message}`, true);
         return;
       }
+      currentUser = null;
       redirectToLogin();
     });
 
