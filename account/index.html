@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#f4f0e7">
+  <title>我的账户 · 个人生平</title>
+  <style>
+    :root{--paper:#f4f0e7;--ink:#18211f;--muted:#69706b;--orange:#b8472a;--green:#2e594d;--line:rgba(24,33,31,.15);--white:#fffdf8;--shadow:0 24px 70px rgba(52,43,30,.12);--serif:"Noto Serif SC","Songti SC",serif;--sans:Inter,"PingFang SC","Microsoft YaHei",sans-serif}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;color:var(--ink);background:radial-gradient(circle at 10% 12%,rgba(184,71,42,.08),transparent 26rem),radial-gradient(circle at 90% 82%,rgba(46,89,77,.08),transparent 28rem),var(--paper);font-family:var(--sans)}button,input{font:inherit}button,a{-webkit-tap-highlight-color:transparent}button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--orange);outline-offset:3px}a{color:inherit;text-decoration:none}
+    .shell{width:min(1040px,calc(100% - 36px));margin:auto}.nav{height:82px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line)}.brand{display:flex;align-items:center;gap:11px;font-family:var(--serif);font-weight:700;letter-spacing:.1em}.mark{width:34px;height:34px;display:grid;place-items:center;border:1px solid;border-radius:50%;font:12px var(--sans);letter-spacing:0}.back{color:var(--muted);font-size:13px}.back:hover{color:var(--orange)}
+    .page{padding:68px 0 92px}.eyebrow{color:var(--orange);font-size:11px;font-weight:700;letter-spacing:.2em}.heading{display:flex;align-items:end;justify-content:space-between;gap:36px;margin:14px 0 38px}.heading h1{margin:0;font:500 clamp(40px,7vw,70px)/1.1 var(--serif);letter-spacing:-.04em}.heading p{max-width:380px;margin:0;color:var(--muted);font-size:14px;line-height:1.8}
+    .state,.account-grid{background:var(--white);border:1px solid rgba(24,33,31,.05);box-shadow:var(--shadow)}.state{min-height:280px;display:grid;place-items:center;padding:48px;text-align:center}.spinner{width:38px;height:38px;margin:0 auto 18px;border:3px solid rgba(24,33,31,.12);border-top-color:var(--orange);border-radius:50%;animation:spin .8s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}.state h2{margin:0 0 8px;font:500 28px var(--serif)}.state p{margin:0;color:var(--muted);line-height:1.7}.state button{margin-top:20px}
+    .account-grid{display:grid;grid-template-columns:300px 1fr}.identity{padding:42px 34px;color:var(--white);background:var(--green)}.avatar{width:72px;height:72px;display:grid;place-items:center;margin-bottom:28px;border:1px solid rgba(255,255,255,.34);border-radius:50%;background:rgba(255,255,255,.1);font:500 28px var(--serif)}.identity small{color:rgba(255,255,255,.6);font-size:10px;letter-spacing:.18em}.identity h2{margin:8px 0;font:500 27px var(--serif);overflow-wrap:anywhere}.identity p{margin:0;color:rgba(255,255,255,.64);font-size:12px;overflow-wrap:anywhere}.panel{padding:42px 46px}.panel-head{padding-bottom:24px;border-bottom:1px solid var(--line)}.panel h3{margin:0 0 8px;font:500 28px var(--serif)}.panel-head p{margin:0;color:var(--muted);font-size:13px}.field{display:grid;gap:9px;margin:26px 0 12px;color:var(--muted);font-size:12px}.field input{width:100%;padding:14px 15px;color:var(--ink);background:#fbfaf6;border:1px solid var(--line);border-radius:3px;outline:0}.field input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(46,89,77,.1)}.actions{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-top:22px}.button{border:0;border-radius:3px;padding:13px 20px;color:white;background:var(--orange);cursor:pointer}.button:disabled{opacity:.55;cursor:wait}.button.secondary{color:var(--muted);background:transparent;border:1px solid var(--line)}.button.secondary:hover{color:var(--orange);border-color:var(--orange)}.message{min-height:22px;margin:16px 0 0;color:var(--green);font-size:12px}.message.error{color:#a63327}
+    [hidden]{display:none!important}@media(max-width:720px){.page{padding-top:48px}.heading{display:block}.heading p{margin-top:18px}.account-grid{grid-template-columns:1fr}.identity{padding:30px}.avatar{width:58px;height:58px;margin-bottom:18px}.panel{padding:32px 24px}.actions{align-items:stretch;flex-direction:column}.actions .button{width:100%}}@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+  </style>
+</head>
+<body>
+  <header class="shell"><nav class="nav" aria-label="账户导航"><a class="brand" href="../"><span class="mark">传</span><span>我的生平</span></a><a class="back" href="../">← 返回主页</a></nav></header>
+  <main class="page shell">
+    <span class="eyebrow">PRIVATE ACCOUNT</span>
+    <div class="heading"><h1>我的账户</h1><p>管理你的个人资料。只有通过登录验证后，账户内容才会显示。</p></div>
+    <section class="state" id="loadingState" aria-live="polite"><div><div class="spinner" aria-hidden="true"></div><h2>正在验证登录状态</h2><p id="loadingMessage">请稍候，马上为你打开账户。</p><button class="button" id="retryButton" type="button" hidden>重新检查</button></div></section>
+    <section class="account-grid" id="accountContent" hidden>
+      <aside class="identity"><div class="avatar" id="avatar">我</div><small>SIGNED IN AS</small><h2 id="displayName">我的账户</h2><p id="userEmail"></p></aside>
+      <div class="panel"><div class="panel-head"><h3>个人资料</h3><p>更新后会保存到你的 Supabase 账户。</p></div><label class="field">昵称<input id="nickname" type="text" maxlength="40" placeholder="请输入昵称" autocomplete="nickname"></label><div class="actions"><button class="button secondary" id="signout" type="button">退出登录</button><button class="button" id="saveProfile" type="button">保存资料</button></div><p class="message" id="profileMessage" role="status" aria-live="polite"></p></div>
+    </section>
+  </main>
+  <script type="module">
+    import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
+    const supabase = createClient("https://zckpkhktthgwzcnumadb.supabase.co", "sb_publishable_fEMwadF6BygFMuGxdt2eBA_euB38tR4");
+    const loadingState = document.getElementById("loadingState");
+    const loadingMessage = document.getElementById("loadingMessage");
+    const retryButton = document.getElementById("retryButton");
+    const accountContent = document.getElementById("accountContent");
+    const nicknameInput = document.getElementById("nickname");
+    const profileMessage = document.getElementById("profileMessage");
+    const saveButton = document.getElementById("saveProfile");
+    let currentUser = null;
+
+    function loginUrl() {
+      const target = new URL("../login/", window.location.href);
+      target.searchParams.set("next", `${window.location.pathname}${window.location.search}${window.location.hash}`);
+      return target.href;
+    }
+
+    function redirectToLogin() {
+      window.location.replace(loginUrl());
+    }
+
+    function showProfileMessage(text, isError = false) {
+      profileMessage.textContent = text;
+      profileMessage.classList.toggle("error", isError);
+    }
+
+    function showCheckError(message) {
+      loadingMessage.textContent = `暂时无法检查登录状态：${message}`;
+      retryButton.hidden = false;
+    }
+
+    async function loadProfile() {
+      const { data, error } = await supabase.from("profiles").select("nickname").eq("id", currentUser.id).maybeSingle();
+      if (error) {
+        showProfileMessage(`资料读取失败：${error.message}`, true);
+        return;
+      }
+      const nickname = data?.nickname ?? "";
+      nicknameInput.value = nickname;
+      document.getElementById("displayName").textContent = nickname || "我的账户";
+      document.getElementById("avatar").textContent = (nickname || currentUser.email || "我").trim().slice(0, 1).toUpperCase();
+    }
+
+    async function guardAccount() {
+      retryButton.hidden = true;
+      loadingMessage.textContent = "请稍候，马上为你打开账户。";
+      const { data: { session }, error } = await supabase.auth.getSession();
+      if (error) {
+        showCheckError(error.message);
+        return;
+      }
+      if (!session) {
+        redirectToLogin();
+        return;
+      }
+      currentUser = session.user;
+      document.getElementById("userEmail").textContent = currentUser.email ?? "";
+      loadingState.hidden = true;
+      accountContent.hidden = false;
+      await loadProfile();
+    }
+
+    retryButton.addEventListener("click", guardAccount);
+
+    saveButton.addEventListener("click", async () => {
+      if (!currentUser) {
+        redirectToLogin();
+        return;
+      }
+      const nickname = nicknameInput.value.trim();
+      if (!nickname) {
+        showProfileMessage("请输入昵称", true);
+        nicknameInput.focus();
+        return;
+      }
+      saveButton.disabled = true;
+      showProfileMessage("正在保存……");
+      const { error } = await supabase.from("profiles").upsert({ id: currentUser.id, nickname }, { onConflict: "id" });
+      saveButton.disabled = false;
+      if (error) {
+        showProfileMessage(`保存失败：${error.message}`, true);
+        return;
+      }
+      document.getElementById("displayName").textContent = nickname;
+      document.getElementById("avatar").textContent = nickname.slice(0, 1).toUpperCase();
+      showProfileMessage("资料已保存");
+    });
+
+    document.getElementById("signout").addEventListener("click", async () => {
+      const { error } = await supabase.auth.signOut();
+      if (error) {
+        showProfileMessage(`退出失败：${error.message}`, true);
+        return;
+      }
+      redirectToLogin();
+    });
+
+    supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session && currentUser) redirectToLogin();
+    });
+
+    await guardAccount();
+  </script>
+</body>
+</html>

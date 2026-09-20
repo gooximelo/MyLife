@@ -7,7 +7,7 @@
     content="width=device-width, initial-scale=1.0"
   >
 
-  <title>用户登录</title>
+  <title>登录 · 我的生平</title>
 
   <style>
     * {
@@ -68,7 +68,7 @@
     }
 
     #signout {
-      background: #e5484d;
+      display: none;
     }
 
     #saveProfile {
@@ -162,6 +162,42 @@
       supabaseKey
     );
 
+    function safeNextUrl() {
+      const fallback = new URL("../account/", window.location.href);
+      const requested = new URLSearchParams(window.location.search).get("next");
+
+      if (!requested) {
+        return fallback;
+      }
+
+      try {
+        const candidate = new URL(requested, window.location.href);
+
+        if (candidate.origin !== window.location.origin) {
+          return fallback;
+        }
+
+        if (candidate.pathname === window.location.pathname) {
+          return fallback;
+        }
+
+        return candidate;
+      } catch (_error) {
+        return fallback;
+      }
+    }
+
+    function redirectAfterLogin() {
+      window.location.replace(safeNextUrl().href);
+    }
+
+    function emailConfirmationUrl() {
+      const target = new URL("./", window.location.href);
+      const next = safeNextUrl();
+      target.searchParams.set("next", `${next.pathname}${next.search}${next.hash}`);
+      return target.href;
+    }
+
     const emailInput =
       document.getElementById("email");
 
@@ -231,22 +267,13 @@
       if (!session) {
         currentUser = null;
         profileSection.hidden = true;
-        showAuthMessage("当前未登录");
+        showAuthMessage("请登录后继续");
         return;
       }
 
       currentUser = session.user;
-
-      currentUserEmail.textContent =
-        `当前用户：${currentUser.email}`;
-
-      profileSection.hidden = false;
-
-      showAuthMessage(
-        `登录成功：${currentUser.email}`
-      );
-
-      await loadProfile();
+      showAuthMessage("登录状态有效，正在返回……");
+      redirectAfterLogin();
     }
 
     /*
@@ -276,14 +303,13 @@
 
         showAuthMessage("正在注册……");
 
-        const { error } =
+        const { data, error } =
           await supabase.auth.signUp({
             email,
             password,
 
             options: {
-              emailRedirectTo:
-                `${window.location.origin}/login/`
+              emailRedirectTo: emailConfirmationUrl()
             }
           });
 
@@ -292,9 +318,12 @@
           return;
         }
 
-        showAuthMessage(
-          "注册邮件已发送，请打开邮箱完成确认"
-        );
+        if (data.session) {
+          redirectAfterLogin();
+          return;
+        }
+
+        showAuthMessage("注册邮件已发送，请打开邮箱完成确认");
       });
 
     /*
@@ -316,7 +345,7 @@
 
         showAuthMessage("正在登录……");
 
-        const { error } =
+        const { data, error } =
           await supabase.auth.signInWithPassword({
             email,
             password
@@ -328,8 +357,9 @@
         }
 
         passwordInput.value = "";
-
-        await refreshLoginStatus();
+        currentUser = data.user;
+        showAuthMessage("登录成功，正在返回……");
+        redirectAfterLogin();
       });
 
     /*
@@ -406,6 +436,17 @@
     /*
       页面打开时检查是否已经登录
     */
+    passwordInput.addEventListener("keydown", event => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        document.getElementById("signin").click();
+      }
+    });
+
+    supabase.auth.onAuthStateChange((_event, session) => {
+      if (session) redirectAfterLogin();
+    });
+
     await refreshLoginStatus();
   </script>
 </body>

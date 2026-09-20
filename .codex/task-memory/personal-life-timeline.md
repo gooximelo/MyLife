@@ -125,3 +125,43 @@ None recorded.
 
 ### Notes
 - None recorded.
+
+## Checkpoint 2026-09-20T10:45:43+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+新增 Supabase 登录守卫：account 未登录跳转 login，登录成功或已有会话按安全 next 参数返回账户页。
+
+### Latest User Request
+修改 account 和 login 文件，实现未登录访问账户页时跳到登录页面。
+
+### Active Requirements
+- 直接访问 account 时必须验证 Supabase session；未登录跳登录页；登录后返回原目标页面。
+
+### Decisions And Rationale
+- account 页面负责资料展示、昵称保存和退出；login 页面负责注册登录，并只接受同源 next 地址，避免开放重定向。
+
+### Stable Facts
+- None recorded.
+
+### Files And Artifacts
+- account/index.html: 新建受保护账户页、加载状态、会话守卫、资料读写与退出。
+- login/index.html: 增加安全 next 回跳、已登录自动返回、注册邮件回调和回车登录。
+
+### Commands
+- None recorded.
+
+### Verification
+- 模块语法和 CSS 检查通过；模拟验证未登录 account 跳 login、登录会话显示 account、已登录 login 返回 account、同源 next 保留查询与锚点、外部 next 被拒绝；git diff --check 通过。内置浏览器当前不可用。
+
+### Open Issues And Risks
+- Supabase 控制台需将部署域名的 /login/ 加入允许的 Redirect URLs；profiles 表仍需启用正确的 RLS 策略，前端跳转本身不是数据安全边界。
+
+### Next Steps
+- 在真实部署域名完成一次注册确认、登录、刷新 account、退出登录的端到端验证。
+
+### Notes
+- None recorded.
