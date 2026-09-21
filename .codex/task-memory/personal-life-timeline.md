@@ -669,3 +669,81 @@ gooxi21.cn 未登录先显示登录页；所有账号登录后回首页；仅 12
 
 ### Notes
 - 前端语法校验不能证明域名或邮箱真实存在，真实性继续依赖邮箱验证；若未来要求域名可收信，需服务端 MX 校验。
+
+## Checkpoint 2026-09-21T08:58:47+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+删除首页顶部三个锚点导航和站长“写下记忆”按钮，只保留右侧账号菜单。
+
+### Latest User Request
+删除截图红框中的“序言/人生轨迹/写在最后”和“+写下记忆”。
+
+### Active Requirements
+- 保留当前账号菜单、个人资料入口和切换账号功能，不影响认证逻辑。
+
+### Decisions And Rationale
+- 将 nav-links 改为仅承载账号菜单的 nav-account，并删除旧导航链接及按钮专属样式；保留记忆弹窗和数据逻辑，避免超出本次视觉删除范围。
+
+### Stable Facts
+- None recorded.
+
+### Files And Artifacts
+- index.html: 删除三个顶部导航链接和 small-action 写记忆按钮；清理 nav-links/small-action/链接下划线及响应式样式；导航 aria-label 改为账号导航。
+
+### Commands
+- None recorded.
+
+### Verification
+- 确认三个链接、写下记忆按钮、nav-links 与 small-action 均不存在；nav-account、accountMenu、switchAccount 保留；模块语法通过；git diff --check 仅 LF/CRLF 提示；内置页面预览不可用。
+
+### Open Issues And Risks
+- None recorded.
+
+### Next Steps
+- 部署或本地刷新首页，确认账号菜单单独右对齐。
+
+### Notes
+- None recorded.
+
+## Checkpoint 2026-09-21T09:21:58+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+将添加记忆入口移入当前阶段的故事面板，按钮随童年/少年/远行/生长/待续切换并分别写入对应阶段。
+
+### Latest User Request
+在每一个人生阶段里面单独增加添加记忆按钮。
+
+### Active Requirements
+- 按钮仅站长账号可见；普通账号继续只读；保存必须写入当前选择阶段。
+
+### Decisions And Rationale
+- 复用已有 memoryDialog 和 activeStage 数据逻辑，在 storyPanel 中新增单一动态按钮；切换阶段时更新按钮文字和无障碍标签，避免为五个阶段复制五套表单。
+
+### Stable Facts
+- None recorded.
+
+### Files And Artifacts
+- index.html: storyPanel 内新增 stageAddMemory；新增桌面胶囊按钮和移动端满宽样式；renderStory 按当前阶段更新按钮名称。
+
+### Commands
+- None recorded.
+
+### Verification
+- 按钮唯一且位于 storyPanel 内；owner-only 与 js-open-dialog 生效；弹窗显示 activeStage 名称；数据库 insert 使用 stage:activeStage；移动端满宽；顶栏旧按钮仍不存在；无重复 ID；模块语法通过；git diff --check 仅 LF/CRLF 提示；页面预览不可用。
+
+### Open Issues And Risks
+- None recorded.
+
+### Next Steps
+- 部署或刷新首页，用站长账号依次切换五个阶段并确认按钮标题，再任选一个阶段保存一条记忆做 Supabase 端到端验证。
+
+### Notes
+- None recorded.
