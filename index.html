@@ -83,6 +83,36 @@ body.auth-pending>header,body.auth-pending>main,body.auth-pending>footer,body.au
 .access-badge{display:inline-flex;align-items:center;width:max-content;padding:6px 9px;border:1px solid var(--line);border-radius:99px;color:var(--muted);font-size:10px;white-space:nowrap}.access-badge.owner{color:var(--orange);border-color:rgba(184,71,42,.35);background:rgba(184,71,42,.06)}
 .account-menu{position:relative;z-index:30}.account-menu summary{display:flex;align-items:center;gap:9px;min-width:190px;padding:7px 13px;border:1px solid var(--line);border-radius:99px;background:rgba(255,253,248,.72);cursor:pointer;list-style:none;transition:.2s}.account-menu summary::-webkit-details-marker{display:none}.account-menu summary:hover,.account-menu[open] summary{border-color:rgba(46,89,77,.42);background:var(--white)}.account-summary{display:grid;min-width:0;gap:1px}.account-summary small{color:var(--muted);font-size:9px;letter-spacing:.08em}.account-summary strong{max-width:145px;overflow:hidden;color:var(--ink);font-size:11px;font-weight:600;text-overflow:ellipsis;white-space:nowrap}.account-chevron{margin-left:auto;color:var(--muted);font-size:12px;transition:.2s}.account-menu[open] .account-chevron{transform:rotate(180deg)}.account-menu-panel{position:absolute;top:calc(100% + 12px);right:0;width:278px;padding:18px;background:var(--white);border:1px solid rgba(24,33,31,.08);border-radius:6px;box-shadow:0 24px 65px rgba(24,33,31,.2)}.account-menu-panel:before{content:"";position:absolute;right:24px;top:-6px;width:11px;height:11px;background:var(--white);border-top:1px solid rgba(24,33,31,.08);border-left:1px solid rgba(24,33,31,.08);transform:rotate(45deg)}.account-menu-label{display:block;margin-bottom:8px;color:var(--muted);font-size:9px;letter-spacing:.16em}.account-menu-email{display:block;margin-bottom:12px;overflow-wrap:anywhere;font-size:13px}.account-menu-actions{display:grid;gap:8px;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}.account-menu-actions a,.account-menu-actions button{width:100%;display:flex;align-items:center;justify-content:space-between;padding:11px 12px;border:0;border-radius:3px;color:var(--ink);background:#f7f3eb;font-size:12px;cursor:pointer;text-align:left}.account-menu-actions a:after{display:none}.account-menu-actions a:hover{color:var(--green);background:var(--green2)}.account-menu-actions button{color:var(--orange);background:rgba(184,71,42,.07)}.account-menu-actions button:hover{background:rgba(184,71,42,.13)}.account-menu-actions button:disabled{opacity:.55;cursor:wait}
 @media(max-width:620px){.account-menu summary{min-width:0;padding:7px 11px}.account-chevron{display:none}.account-summary strong{max-width:118px}.account-menu-panel{width:min(278px,calc(100vw - 28px))}.account-menu-panel a{display:flex}.access-badge{display:inline-flex}}
+/* 照片与视频：私有桶上传、预览和记忆卡片展示 */
+.memory{grid-template-columns:78px minmax(0,1fr) auto}
+.memory-content{min-width:0}
+.memory-media{overflow:hidden;margin:15px 0 2px;border:1px solid var(--line);border-radius:4px;background:#efede6}
+.memory-media img,.memory-media video{display:block;width:100%;max-height:520px;object-fit:contain;background:#151918}
+.memory-media figcaption{padding:8px 11px;color:var(--muted);background:rgba(255,253,248,.9);font-size:10px}
+dialog{max-height:calc(100vh - 32px);overflow:auto}
+.dialog-context{margin:8px 0 0;color:var(--muted);font-size:12px}
+.icon-button:disabled{cursor:wait;opacity:.45}
+.media-field{margin:2px 0 18px}
+.media-input{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.media-picker{display:flex;align-items:center;gap:13px;margin:0;padding:15px;border:1px dashed rgba(46,89,77,.38);border-radius:4px;color:var(--green);background:var(--green2);cursor:pointer;transition:.2s}
+.media-picker:hover{border-color:var(--green);background:#e5eee8}
+.media-input:focus-visible+.media-picker{outline:3px solid var(--orange);outline-offset:3px}
+.media-picker-icon{display:grid;place-items:center;flex:0 0 36px;height:36px;border-radius:50%;color:var(--white);background:var(--green);font-size:22px;font-weight:300}
+.media-picker-copy{display:grid;gap:3px}
+.media-picker-copy strong{color:var(--ink);font-size:13px}
+.media-picker-copy small{color:var(--muted);font-size:10px;line-height:1.5}
+.media-preview{overflow:hidden;margin-top:12px;border:1px solid var(--line);border-radius:4px;background:#171b1a}
+.media-preview img,.media-preview video{display:block;width:100%;max-height:260px;object-fit:contain}
+.media-file-meta{display:flex;justify-content:space-between;gap:14px;padding:8px 11px;color:#ffffffb8;font-size:10px}
+.remove-media{margin-top:9px;padding:0;border:0;color:#9b6c61;background:none;font-size:11px;cursor:pointer}
+.upload-state{margin-top:12px}
+.upload-state-copy{display:flex;justify-content:space-between;margin-bottom:7px;color:var(--muted);font-size:10px}
+.upload-state progress{display:block;width:100%;height:7px;border:0;border-radius:99px;overflow:hidden;background:#e6e1d8}
+.upload-state progress::-webkit-progress-bar{background:#e6e1d8}
+.upload-state progress::-webkit-progress-value{background:var(--green)}
+.upload-state progress::-moz-progress-bar{background:var(--green)}
+.dialog-actions button:disabled{cursor:wait;opacity:.6}
+@media(max-width:620px){.media-picker{align-items:flex-start}.memory-media img,.memory-media video{max-height:360px}}
 </style>
 </head>
 <body class="auth-pending">
@@ -97,6 +127,7 @@ body.auth-pending>header,body.auth-pending>main,body.auth-pending>footer,body.au
 <dialog id="memoryDialog" aria-labelledby="dialogTitle"><form class="dialog-inner" id="memoryForm"><div class="dialog-head"><div><span>NEW MEMORY</span><h3 id="dialogTitle">写下一段记忆</h3><p class="dialog-context" id="dialogStage">将写入：童年</p></div><button class="icon-button" type="button" id="closeDialog" aria-label="关闭">&#215;</button></div><div class="form-row"><label>时间<input name="date" placeholder="例如：2018" maxlength="20" required></label><label>标签<input name="tag" placeholder="例如：成长" maxlength="12"></label></div><label>这段故事的标题<input name="title" placeholder="给这个瞬间起一个名字" maxlength="40" required></label><label>发生了什么<textarea name="text" placeholder="写下当时的地点、人物、感受……" maxlength="260" required></textarea></label><div class="dialog-actions"><span class="save-note">保存后所有读者都能看到</span><button class="primary" type="submit">保存记忆 <span aria-hidden="true">&rarr;</span></button></div></form></dialog><div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true">记忆已保存</div>
 <script type="module">
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+import * as tus from "https://cdn.jsdelivr.net/npm/tus-js-client@4/+esm";
 
 const OWNER_EMAIL="1223157269@qq.com";
 const supabase=createClient(
@@ -111,12 +142,48 @@ const stages=[
 {age:"23 岁至今",name:"生长",years:"第四章 · 成为自己的过程",title:"生活没有答案，只有行动",lead:"进入真实世界以后，我一边解决问题，一边更新自己。那些走过的弯路、完成的作品和真心珍惜的人，共同组成此刻的我。",memories:[{date:"工作后",title:"完成第一个真正满意的作品",text:"在这里写下你的项目、职业转折，或者第一次被认可的那个时刻。",tag:"创造"},{date:"最近",title:"我正在成为怎样的人",text:"写一写现在最看重的事，以及今天的你与从前有什么不同。",tag:"此刻"}]},
 {age:"未来",name:"待续",years:"下一章 · 尚未抵达",title:"把空白留给明天",lead:"未来不是一个等着被揭晓的答案，而是今天的选择一点点写成的故事。愿我一直保留出发的勇气，也保留回望的温柔。",memories:[]}
 ];
-const visitStorageKey="my-life-timeline-visits-v1";let activeStage=0;let customMemories=[];let currentUser=null;let isOwner=false;
+const MEDIA_BUCKET="Beautiful Memories";
+const SUPABASE_PROJECT_REF="zckpkhktthgwzcnumadb";
+const RESUMABLE_UPLOAD_THRESHOLD=6*1024*1024;
+const IMAGE_SIZE_LIMIT=10*1024*1024;
+const VIDEO_SIZE_LIMIT=50*1024*1024;
+const ALLOWED_IMAGE_TYPES=new Set(["image/jpeg","image/png","image/webp","image/gif"]);
+const ALLOWED_VIDEO_TYPES=new Set(["video/mp4","video/webm","video/ogg"]);
+const FILE_EXTENSIONS={"image/jpeg":"jpg","image/png":"png","image/webp":"webp","image/gif":"gif","video/mp4":"mp4","video/webm":"webm","video/ogg":"ogv"};
+const visitStorageKey="my-life-timeline-visits-v1";
+let activeStage=0;
+let customMemories=[];
+let currentUser=null;
+let isOwner=false;
+let previewObjectUrl="";
+let isSavingMemory=false;
 
 async function loadRemoteMemories(){
-  const{data,error}=await supabase.from("life_memories").select("id,stage,event_date,title,description,tag,created_at").order("created_at",{ascending:true});
+  const{data,error}=await supabase.from("life_memories").select("id,stage,event_date,title,description,tag,media_path,media_type,media_mime,media_name,media_size,created_at").order("created_at",{ascending:true});
   if(error)throw error;
-  customMemories=(data||[]).filter(item=>Number.isInteger(item.stage)&&item.stage>=0&&item.stage<stages.length).map(item=>({id:item.id,stage:item.stage,date:item.event_date,title:item.title,text:item.description,tag:item.tag||"记忆",custom:true}));
+  const rows=(data||[]).filter(item=>Number.isInteger(item.stage)&&item.stage>=0&&item.stage<stages.length);
+  customMemories=await Promise.all(rows.map(async item=>{
+    let mediaUrl="";
+    if(item.media_path){
+      const{data:signed,error:signedError}=await supabase.storage.from(MEDIA_BUCKET).createSignedUrl(item.media_path,6*60*60);
+      if(!signedError)mediaUrl=signed?.signedUrl||"";
+    }
+    return{
+      id:item.id,
+      stage:item.stage,
+      date:item.event_date,
+      title:item.title,
+      text:item.description,
+      tag:item.tag||"记忆",
+      mediaPath:item.media_path||"",
+      mediaType:item.media_type||"",
+      mediaMime:item.media_mime||"",
+      mediaName:item.media_name||"",
+      mediaSize:item.media_size||0,
+      mediaUrl,
+      custom:true
+    };
+  }));
 }
 const stageList=document.getElementById("stageList"),storyPanel=document.getElementById("storyPanel"),memoryList=document.getElementById("memoryList"),dialog=document.getElementById("memoryDialog"),form=document.getElementById("memoryForm");
 const stageGraph=document.getElementById("stageGraph"),graphTrack=document.getElementById("graphTrack"),graphSvg=document.getElementById("graphSvg"),graphBase=document.getElementById("graphBase"),graphProgress=document.getElementById("graphProgress");
@@ -154,7 +221,335 @@ stageList.addEventListener("keydown",e=>{if(!["ArrowDown","ArrowRight","ArrowUp"
 memoryList.addEventListener("click",async e=>{const b=e.target.closest(".delete-memory");if(!b||!isOwner)return;if(b.dataset.confirming!=="true"){b.dataset.confirming="true";b.textContent="再点一次确认删除";setTimeout(()=>{if(b.isConnected){b.dataset.confirming="false";b.textContent="删除这条记忆"}},2400);return}b.disabled=true;const{error}=await supabase.from("life_memories").delete().eq("id",b.dataset.id);if(error){b.disabled=false;b.textContent="删除失败，请重试";showToast(`删除失败：${error.message}`);return}customMemories=customMemories.filter(item=>item.id!==b.dataset.id);renderStory(activeStage);showToast("这段记忆已删除")});
 document.querySelectorAll(".js-open-dialog").forEach(b=>b.addEventListener("click",()=>{if(!isOwner){showToast("当前账号只有阅读权限");return}document.getElementById("dialogStage").textContent=`将写入：${stages[activeStage].name}`;dialog.showModal();setTimeout(()=>form.elements.date.focus(),80)}));document.getElementById("closeDialog").addEventListener("click",()=>dialog.close());dialog.addEventListener("click",e=>{if(e.target===dialog)dialog.close()});
 form.addEventListener("submit",async e=>{e.preventDefault();if(!isOwner||!currentUser){showToast("当前账号没有编辑权限");return}const d=new FormData(form),date=d.get("date").trim(),title=d.get("title").trim(),text=d.get("text").trim(),tag=d.get("tag").trim()||"记忆";if(!date||!title||!text){showToast("请把时间、标题和故事填写完整");const empty=["date","title","text"].find(name=>!d.get(name).trim());form.elements[empty].focus();return}const submit=form.querySelector('button[type="submit"]');submit.disabled=true;submit.textContent="正在保存……";const{data,error}=await supabase.from("life_memories").insert({stage:activeStage,event_date:date,title,description:text,tag,author_id:currentUser.id}).select("id,stage,event_date,title,description,tag").single();submit.disabled=false;submit.innerHTML='保存记忆 <span aria-hidden="true">&rarr;</span>';if(error){showToast(`保存失败：${error.message}`);return}customMemories.push({id:data.id,stage:data.stage,date:data.event_date,title:data.title,text:data.description,tag:data.tag||"记忆",custom:true});form.reset();dialog.close();renderStory(activeStage);showToast(`已保存到“${stages[activeStage].name}”阶段`)});
-function showToast(message){const t=document.getElementById("toast");t.textContent=message;t.classList.add("show");clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.classList.remove("show"),2200)}
+const mediaField=document.createElement("div");
+mediaField.className="media-field";
+mediaField.innerHTML=
+  '<input class="media-input" id="memoryMedia" name="media" type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/ogg">'+
+  '<label class="media-picker" for="memoryMedia"><span class="media-picker-icon" aria-hidden="true">＋</span>'+
+  '<span class="media-picker-copy"><strong id="mediaPickerText">添加照片或视频（可选）</strong>'+
+  '<small>照片最大 10 MB；视频最大 50 MB，推荐 MP4 或 WebM</small></span></label>'+
+  '<div class="media-preview" id="mediaPreview" hidden></div>'+
+  '<button class="remove-media" id="removeMedia" type="button" hidden>移除这份附件</button>'+
+  '<div class="upload-state" id="uploadState" role="status" aria-live="polite" hidden>'+
+  '<div class="upload-state-copy"><span id="uploadStatusText">准备上传</span><span id="uploadPercent">0%</span></div>'+
+  '<progress id="uploadProgress" max="100" value="0"></progress></div>';
+const dialogActions=form.querySelector(".dialog-actions");
+dialogActions.insertAdjacentElement("beforebegin",mediaField);
+dialogActions.querySelector(".save-note").textContent="媒体保存在私有存储桶，登录后可查看";
+
+const mediaInput=document.getElementById("memoryMedia");
+const mediaPreview=document.getElementById("mediaPreview");
+const mediaPickerText=document.getElementById("mediaPickerText");
+const removeMediaButton=document.getElementById("removeMedia");
+const uploadState=document.getElementById("uploadState");
+const uploadStatusText=document.getElementById("uploadStatusText");
+const uploadPercent=document.getElementById("uploadPercent");
+const uploadProgress=document.getElementById("uploadProgress");
+const closeDialogButton=document.getElementById("closeDialog");
+
+function formatFileSize(bytes){
+  if(bytes<1024)return bytes+" B";
+  if(bytes<1024*1024)return(bytes/1024).toFixed(1)+" KB";
+  return(bytes/(1024*1024)).toFixed(1)+" MB";
+}
+
+function validateMediaFile(file){
+  if(!file)return null;
+  const mediaType=ALLOWED_IMAGE_TYPES.has(file.type)?"image":ALLOWED_VIDEO_TYPES.has(file.type)?"video":"";
+  if(!mediaType)throw new Error("仅支持 JPG、PNG、WebP、GIF、MP4、WebM 或 OGG 文件");
+  const limit=mediaType==="image"?IMAGE_SIZE_LIMIT:VIDEO_SIZE_LIMIT;
+  if(file.size>limit)throw new Error(mediaType==="image"?"照片不能超过 10 MB":"视频不能超过 50 MB");
+  if(file.size===0)throw new Error("这个文件是空的，请重新选择");
+  return{mediaType,extension:FILE_EXTENSIONS[file.type]};
+}
+
+function clearSelectedMedia(clearInput){
+  if(previewObjectUrl){
+    URL.revokeObjectURL(previewObjectUrl);
+    previewObjectUrl="";
+  }
+  mediaPreview.replaceChildren();
+  mediaPreview.hidden=true;
+  removeMediaButton.hidden=true;
+  mediaPickerText.textContent="添加照片或视频（可选）";
+  uploadState.hidden=true;
+  uploadProgress.value=0;
+  uploadPercent.textContent="0%";
+  if(clearInput)mediaInput.value="";
+}
+
+function showSelectedMedia(file,meta){
+  clearSelectedMedia(false);
+  previewObjectUrl=URL.createObjectURL(file);
+  const preview=document.createElement(meta.mediaType==="image"?"img":"video");
+  preview.src=previewObjectUrl;
+  if(meta.mediaType==="image")preview.alt="待上传照片预览";
+  else{
+    preview.controls=true;
+    preview.preload="metadata";
+    preview.playsInline=true;
+  }
+  const info=document.createElement("div");
+  info.className="media-file-meta";
+  const name=document.createElement("span");
+  name.textContent=file.name;
+  const size=document.createElement("span");
+  size.textContent=formatFileSize(file.size);
+  info.append(name,size);
+  mediaPreview.append(preview,info);
+  mediaPreview.hidden=false;
+  removeMediaButton.hidden=false;
+  mediaPickerText.textContent=meta.mediaType==="image"?"已选择一张照片":"已选择一个视频";
+}
+
+function setUploadState(label,percent){
+  const value=Math.max(0,Math.min(100,Math.round(percent)));
+  uploadState.hidden=false;
+  uploadStatusText.textContent=label;
+  uploadProgress.value=value;
+  uploadPercent.textContent=value+"%";
+}
+
+async function uploadMemoryMedia(file,meta,objectPath){
+  if(file.size<=RESUMABLE_UPLOAD_THRESHOLD){
+    setUploadState("正在上传媒体",12);
+    const{error}=await supabase.storage.from(MEDIA_BUCKET).upload(objectPath,file,{
+      cacheControl:"3600",
+      contentType:file.type,
+      upsert:false
+    });
+    if(error)throw error;
+    setUploadState("媒体上传完成",100);
+    return;
+  }
+  const{data:{session},error:sessionError}=await supabase.auth.getSession();
+  if(sessionError||!session)throw sessionError||new Error("登录状态已失效，请重新登录");
+  setUploadState("正在分片上传，可自动重试",0);
+  await new Promise((resolve,reject)=>{
+    const upload=new tus.Upload(file,{
+      endpoint:"https://"+SUPABASE_PROJECT_REF+".storage.supabase.co/storage/v1/upload/resumable",
+      retryDelays:[0,3000,5000,10000,20000],
+      headers:{authorization:"Bearer "+session.access_token,"x-upsert":"false"},
+      uploadDataDuringCreation:true,
+      removeFingerprintOnSuccess:true,
+      chunkSize:6*1024*1024,
+      metadata:{bucketName:MEDIA_BUCKET,objectName:objectPath,contentType:file.type,cacheControl:"3600"},
+      onError:reject,
+      onProgress:(uploaded,total)=>setUploadState("正在分片上传，可自动重试",total?uploaded/total*100:0),
+      onSuccess:resolve
+    });
+    upload.start();
+  });
+  setUploadState("媒体上传完成",100);
+}
+
+function makeMediaElement(memory){
+  if(!memory.mediaUrl||!memory.mediaType)return null;
+  const figure=document.createElement("figure");
+  figure.className="memory-media";
+  if(memory.mediaType==="image"){
+    const image=document.createElement("img");
+    image.src=memory.mediaUrl;
+    image.alt=memory.title+"的照片";
+    image.loading="lazy";
+    image.decoding="async";
+    figure.append(image);
+  }else{
+    const video=document.createElement("video");
+    video.src=memory.mediaUrl;
+    video.controls=true;
+    video.preload="metadata";
+    video.playsInline=true;
+    if(memory.mediaMime)video.type=memory.mediaMime;
+    figure.append(video);
+  }
+  const caption=document.createElement("figcaption");
+  caption.textContent=(memory.mediaType==="image"?"照片":"视频")+(memory.mediaName?" · "+memory.mediaName:"");
+  figure.append(caption);
+  return figure;
+}
+
+function enhanceRenderedMemories(){
+  const memories=allMemories(activeStage);
+  memoryList.querySelectorAll(".memory").forEach((card,index)=>{
+    const content=card.children[1];
+    if(!content)return;
+    content.classList.add("memory-content");
+    if(content.querySelector(".memory-media"))return;
+    const media=makeMediaElement(memories[index]);
+    if(media)content.insertBefore(media,content.querySelector(".delete-memory"));
+  });
+}
+
+new MutationObserver(enhanceRenderedMemories).observe(memoryList,{childList:true});
+mediaInput.addEventListener("change",()=>{
+  const file=mediaInput.files?.[0];
+  if(!file){
+    clearSelectedMedia(false);
+    return;
+  }
+  try{showSelectedMedia(file,validateMediaFile(file))}
+  catch(error){
+    clearSelectedMedia(true);
+    showToast(error.message);
+  }
+});
+removeMediaButton.addEventListener("click",()=>clearSelectedMedia(true));
+dialog.addEventListener("close",()=>{
+  if(isSavingMemory)return;
+  form.reset();
+  clearSelectedMedia(false);
+});
+dialog.addEventListener("cancel",event=>{
+  if(!isSavingMemory)return;
+  event.preventDefault();
+  showToast("媒体正在上传，请稍候");
+});
+closeDialogButton.addEventListener("click",event=>{
+  if(!isSavingMemory)return;
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  showToast("媒体正在上传，请稍候");
+},true);
+
+memoryList.addEventListener("click",async event=>{
+  const button=event.target.closest(".delete-memory");
+  if(!button||!isOwner)return;
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  if(button.dataset.confirming!=="true"){
+    button.dataset.confirming="true";
+    button.textContent="再点一次确认删除";
+    setTimeout(()=>{
+      if(button.isConnected){
+        button.dataset.confirming="false";
+        button.textContent="删除这条记忆";
+      }
+    },2400);
+    return;
+  }
+  button.disabled=true;
+  const memory=customMemories.find(item=>item.id===button.dataset.id);
+  const{error}=await supabase.from("life_memories").delete().eq("id",button.dataset.id);
+  if(error){
+    button.disabled=false;
+    button.textContent="删除失败，请重试";
+    showToast("删除失败："+error.message);
+    return;
+  }
+  let cleanupFailed=false;
+  if(memory?.mediaPath){
+    const{error:storageError}=await supabase.storage.from(MEDIA_BUCKET).remove([memory.mediaPath]);
+    cleanupFailed=Boolean(storageError);
+  }
+  customMemories=customMemories.filter(item=>item.id!==button.dataset.id);
+  renderStory(activeStage);
+  showToast(cleanupFailed?"记忆已删除，但媒体文件清理失败":"这段记忆和媒体已删除");
+},true);
+
+form.addEventListener("submit",async event=>{
+  event.preventDefault();
+  event.stopImmediatePropagation();
+  if(isSavingMemory)return;
+  if(!isOwner||!currentUser){
+    showToast("当前账号没有编辑权限");
+    return;
+  }
+  const values=new FormData(form);
+  const date=String(values.get("date")||"").trim();
+  const title=String(values.get("title")||"").trim();
+  const description=String(values.get("text")||"").trim();
+  const tag=String(values.get("tag")||"").trim()||"记忆";
+  if(!date||!title||!description){
+    showToast("请把时间、标题和故事填写完整");
+    const empty=["date","title","text"].find(name=>!String(values.get(name)||"").trim());
+    form.elements[empty].focus();
+    return;
+  }
+  const file=mediaInput.files?.[0]||null;
+  let mediaMeta=null;
+  try{mediaMeta=validateMediaFile(file)}
+  catch(error){
+    showToast(error.message);
+    mediaInput.focus();
+    return;
+  }
+  const submit=form.querySelector('button[type="submit"]');
+  isSavingMemory=true;
+  submit.disabled=true;
+  closeDialogButton.disabled=true;
+  mediaInput.disabled=true;
+  removeMediaButton.disabled=true;
+  submit.textContent=file?"正在上传……":"正在保存……";
+  let uploadedPath="";
+  try{
+    if(file){
+      const uniqueId=crypto.randomUUID?crypto.randomUUID():Date.now()+"-"+Math.random().toString(16).slice(2);
+      uploadedPath=currentUser.id+"/"+uniqueId+"."+mediaMeta.extension;
+      await uploadMemoryMedia(file,mediaMeta,uploadedPath);
+      submit.textContent="正在保存……";
+      setUploadState("正在保存记忆",100);
+    }
+    const payload={
+      stage:activeStage,
+      event_date:date,
+      title,
+      description,
+      tag,
+      author_id:currentUser.id,
+      media_path:uploadedPath||null,
+      media_type:mediaMeta?.mediaType||null,
+      media_mime:file?.type||null,
+      media_name:file?.name.slice(0,255)||null,
+      media_size:file?.size||null
+    };
+    const{data,error}=await supabase.from("life_memories").insert(payload)
+      .select("id,stage,event_date,title,description,tag,media_path,media_type,media_mime,media_name,media_size")
+      .single();
+    if(error)throw error;
+    let mediaUrl="";
+    if(data.media_path){
+      const{data:signed}=await supabase.storage.from(MEDIA_BUCKET).createSignedUrl(data.media_path,6*60*60);
+      mediaUrl=signed?.signedUrl||"";
+    }
+    customMemories.push({
+      id:data.id,
+      stage:data.stage,
+      date:data.event_date,
+      title:data.title,
+      text:data.description,
+      tag:data.tag||"记忆",
+      mediaPath:data.media_path||"",
+      mediaType:data.media_type||"",
+      mediaMime:data.media_mime||"",
+      mediaName:data.media_name||"",
+      mediaSize:data.media_size||0,
+      mediaUrl,
+      custom:true
+    });
+    form.reset();
+    clearSelectedMedia(false);
+    isSavingMemory=false;
+    dialog.close();
+    renderStory(activeStage);
+    showToast("已保存到“"+stages[activeStage].name+"”阶段");
+  }catch(error){
+    if(uploadedPath)await supabase.storage.from(MEDIA_BUCKET).remove([uploadedPath]);
+    const rawMessage=String(error?.message||error||"未知错误");
+    const needsSetup=/media_path|bucket not found|row-level security|violates row-level/i.test(rawMessage);
+    showToast(needsSetup?"保存失败：请先运行新版 supabase-setup.sql":"保存失败："+rawMessage);
+  }finally{
+    isSavingMemory=false;
+    submit.disabled=false;
+    closeDialogButton.disabled=false;
+    mediaInput.disabled=false;
+    removeMediaButton.disabled=false;
+    submit.innerHTML='保存记忆 <span aria-hidden="true">&rarr;</span>';
+    if(dialog.open)uploadState.hidden=true;
+  }
+},true);
+
+function showToast(message){const t=document.getElementById("toast");t.textContent=message;t.classList.add("show");clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.classList.remove("show"),3200)}
 function registerVisit(){let count=0;try{count=Number.parseInt(localStorage.getItem(visitStorageKey)||"0",10);if(!Number.isSafeInteger(count)||count<0)count=0;count+=1;localStorage.setItem(visitStorageKey,String(count))}catch(error){count=1}const counter=document.getElementById("visitorCount");counter.textContent=String(count).padStart(6,"0");counter.classList.remove("bump");void counter.offsetWidth;counter.classList.add("bump")}
 
 function loginPageUrl(){return new URL("login/",window.location.href).href}

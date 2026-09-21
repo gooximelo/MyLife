@@ -41,10 +41,81 @@ create table if not exists public.life_memories (
   title text not null check (char_length(title) between 1 and 80),
   description text not null check (char_length(description) between 1 and 1000),
   tag text not null default '记忆' check (char_length(tag) between 1 and 20),
+  media_path text,
+  media_type text,
+  media_mime text,
+  media_name text,
+  media_size bigint,
   author_id uuid not null default auth.uid() references auth.users(id) on delete cascade,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+-- Safe to run for an existing life_memories table.
+alter table public.life_memories add column if not exists media_path text;
+alter table public.life_memories add column if not exists media_type text;
+alter table public.life_memories add column if not exists media_mime text;
+alter table public.life_memories add column if not exists media_name text;
+alter table public.life_memories add column if not exists media_size bigint;
+
+do $$
+begin
+  if not exists (
+    select 1 from pg_constraint
+    where conname = 'life_memories_media_type_check'
+      and conrelid = 'public.life_memories'::regclass
+  ) then
+    alter table public.life_memories
+      add constraint life_memories_media_type_check
+      check (media_type is null or media_type in ('image', 'video'));
+  end if;
+
+  if not exists (
+    select 1 from pg_constraint
+    where conname = 'life_memories_media_mime_check'
+      and conrelid = 'public.life_memories'::regclass
+  ) then
+    alter table public.life_memories
+      add constraint life_memories_media_mime_check
+      check (
+        media_mime is null or media_mime in (
+          'image/jpeg', 'image/png', 'image/webp', 'image/gif',
+          'video/mp4', 'video/webm', 'video/ogg'
+        )
+      );
+  end if;
+
+  if not exists (
+    select 1 from pg_constraint
+    where conname = 'life_memories_media_size_check'
+      and conrelid = 'public.life_memories'::regclass
+  ) then
+    alter table public.life_memories
+      add constraint life_memories_media_size_check
+      check (media_size is null or media_size between 1 and 52428800);
+  end if;
+
+  if not exists (
+    select 1 from pg_constraint
+    where conname = 'life_memories_media_name_check'
+      and conrelid = 'public.life_memories'::regclass
+  ) then
+    alter table public.life_memories
+      add constraint life_memories_media_name_check
+      check (media_name is null or char_length(media_name) <= 255);
+  end if;
+
+  if not exists (
+    select 1 from pg_constraint
+    where conname = 'life_memories_media_path_check'
+      and conrelid = 'public.life_memories'::regclass
+  ) then
+    alter table public.life_memories
+      add constraint life_memories_media_path_check
+      check (media_path is null or char_length(media_path) <= 500);
+  end if;
+end
+$$;
 
 create index if not exists life_memories_stage_created_idx
 on public.life_memories(stage, created_at);
@@ -91,6 +162,58 @@ using (
 
 revoke all on table public.life_memories from anon;
 grant select, insert, update, delete on table public.life_memories to authenticated;
+
+-- Private media bucket for photos and videos. Running this is safe even if the
+-- bucket was already created in the Dashboard with the same exact name.
+insert into storage.buckets (
+  id,
+  name,
+  public,
+  file_size_limit,
+  allowed_mime_types
+)
+values (
+  'Beautiful Memories',
+  'Beautiful Memories',
+  false,
+  52428800,
+  array[
+    'image/jpeg', 'image/png', 'image/webp', 'image/gif',
+    'video/mp4', 'video/webm', 'video/ogg'
+  ]::text[]
+)
+on conflict (id) do update
+set
+  public = excluded.public,
+  file_size_limit = excluded.file_size_limit,
+  allowed_mime_types = excluded.allowed_mime_types;
+
+drop policy if exists beautiful_memories_read_signed_in on storage.objects;
+drop policy if exists beautiful_memories_owner_insert on storage.objects;
+drop policy if exists beautiful_memories_owner_delete on storage.objects;
+
+create policy beautiful_memories_read_signed_in
+on storage.objects for select
+to authenticated
+using (bucket_id = 'Beautiful Memories');
+
+create policy beautiful_memories_owner_insert
+on storage.objects for insert
+to authenticated
+with check (
+  bucket_id = 'Beautiful Memories'
+  and lower(coalesce(auth.jwt() ->> 'email', '')) = '1223157269@qq.com'
+  and (storage.foldername(name))[1] = (select auth.uid())::text
+);
+
+create policy beautiful_memories_owner_delete
+on storage.objects for delete
+to authenticated
+using (
+  bucket_id = 'Beautiful Memories'
+  and lower(coalesce(auth.jwt() ->> 'email', '')) = '1223157269@qq.com'
+  and (storage.foldername(name))[1] = (select auth.uid())::text
+);
 
 -- Keep updated_at accurate when memories are edited later.
 create or replace function public.set_updated_at()

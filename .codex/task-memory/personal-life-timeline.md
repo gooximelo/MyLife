@@ -747,3 +747,83 @@ gooxi21.cn 未登录先显示登录页；所有账号登录后回首页；仅 12
 
 ### Notes
 - None recorded.
+
+## Checkpoint 2026-09-21T09:26:11+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+规划为分阶段记忆增加 Supabase Storage 图片上传；当前仍缺准确 bucket 名称和 public/private 状态，尚未改代码。
+
+### Latest User Request
+在添加记忆时选择图片，将照片保存到已创建的 Supabase Storage 存储桶，并解决对象路径问题。
+
+### Active Requirements
+- 照片路径由前端生成并保存到 life_memories，不能将 service role key 放入前端；只允许站长上传和删除，已登录读者可查看。
+
+### Decisions And Rationale
+- 推荐保存相对 image_path 而不是完整 URL；对象路径格式为 user-id/random-uuid.ext。私有桶使用 RLS + signed URL，公有桶使用 getPublicUrl；具体实现取决于 bucket 名称与公开状态。
+
+### Stable Facts
+- 当前 life_memories 表没有 image_path 列；记忆弹窗没有 file input；Storage bucket 列表通过 publishable key返回空数组，无法从客户端匿名确定用户新建桶名。
+
+### Files And Artifacts
+- None recorded.
+
+### Commands
+- None recorded.
+
+### Verification
+- None recorded.
+
+### Open Issues And Risks
+- 需要用户提供 Storage bucket 的准确名称以及 Public 开关状态；没有这两个信息无法安全写死代码常量和 storage.objects RLS。
+
+### Next Steps
+- 取得桶名与 public/private 后，修改 supabase-setup.sql、index.html 上传/预览/显示/删除图片，并给出需在 Supabase SQL Editor 执行的增量 SQL。
+
+### Notes
+- None recorded.
+
+## Checkpoint 2026-09-21T14:21:00+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+Implemented one optional photo or video attachment per biography memory using the private Supabase bucket Beautiful Memories.
+
+### Latest User Request
+Add photo and video selection to the add-memory dialog and store uploaded media in the shown Supabase bucket.
+
+### Active Requirements
+- Only the owner email can upload/delete media; all authenticated users can read it through short-lived signed URLs.
+
+### Decisions And Rationale
+- Store binary files in Supabase Storage and only media path/type/name/size metadata in public.life_memories. Generate object paths as user-id/random-uuid.extension.
+- Use standard upload up to 6 MB and TUS resumable upload above 6 MB with progress and retry. Limit images to 10 MB and videos to 50 MB.
+
+### Stable Facts
+- None recorded.
+
+### Files And Artifacts
+- index.html: media picker, validation, preview, progress, upload, signed display, cleanup on delete.
+- supabase-setup.sql: media columns, private bucket restrictions, and storage.objects RLS policies.
+
+### Commands
+- None recorded.
+
+### Verification
+- Extracted module script passes node --check; duplicate static HTML IDs none; git diff --check has only line-ending warnings.
+
+### Open Issues And Risks
+- The user must run the updated supabase-setup.sql in Supabase SQL Editor before media save can work. Browser UI verification was unavailable in this session.
+
+### Next Steps
+- Run the full SQL file once, then test one small JPG and one MP4 while signed in as 1223157269@qq.com.
+
+### Notes
+- None recorded.
