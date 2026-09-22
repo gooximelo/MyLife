@@ -1146,3 +1146,165 @@ Fix the playable transcoded video's oversized and mismatched display dimensions.
 
 ### Notes
 - None recorded.
+
+## Checkpoint 2026-09-22T15:52:11+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+Removed visible photo filename captions while preserving image display and video download filename handling.
+
+### Latest User Request
+Do not expose or display photo filenames; show only the image.
+
+### Active Requirements
+- Rendered photos must not include the original filename or a photo caption.
+
+### Decisions And Rationale
+- Remove image figcaption creation from makeMediaElement and delete its unused CSS; retain media_name internally because videos still use it for downloaded filenames.
+
+### Stable Facts
+- None recorded.
+
+### Files And Artifacts
+- index.html: removed photo caption DOM generation and obsolete figcaption styling.
+
+### Commands
+- None recorded.
+
+### Verification
+- JavaScript syntax check passed and git diff --check passed; no figcaption references remain.
+
+### Open Issues And Risks
+- None recorded.
+
+### Next Steps
+- Deploy and refresh the live page to confirm only the image is visible.
+
+### Notes
+- None recorded.
+
+## Checkpoint 2026-09-22T16:10:52+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+Removed the auth-gate subtitle, removed the profile link, and deleted the account profile page so the account menu only offers account switching.
+
+### Latest User Request
+Delete the login verification subtitle, remove the personal profile navigation, delete the profile page, and keep only switch account.
+
+### Active Requirements
+- The signed-in account menu must not expose a personal profile page or profile link; it should retain only 切换账号.
+
+### Decisions And Rationale
+- Delete account/index.html and remove all account/ navigation references; simplify auth failure display to title plus retry without a subtitle line.
+
+### Stable Facts
+- None recorded.
+
+### Files And Artifacts
+- index.html: removed authGateMessage, personal profile link, and related script reference while preserving Supabase local sign-out and login redirect.
+- account/index.html: deleted as explicitly requested; recoverable from Git history if needed.
+
+### Commands
+- None recorded.
+
+### Verification
+- No account/, 个人资料, authGateMessage, or 登录后即可阅读 references remain; JavaScript syntax and git diff --check passed. In-app browser unavailable.
+
+### Open Issues And Risks
+- None recorded.
+
+### Next Steps
+- Deploy and confirm the account dropdown contains only the current account details, access badge, and 切换账号.
+
+### Notes
+- None recorded.
+
+## Checkpoint 2026-09-22T16:22:50+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+Audited profiles and owner authorization for privilege escalation; current schema has no writable role field and biography writes are protected by server-side email RLS.
+
+### Latest User Request
+Determine whether self-update access to profiles creates a user-to-admin privilege escalation vulnerability.
+
+### Active Requirements
+- Do not treat frontend owner checks as the security boundary; verify Supabase grants and RLS.
+
+### Decisions And Rationale
+- No code or SQL change in this audit. Current profiles contains only id and nickname, so self-update cannot set an admin role. Flag table-level UPDATE as a future hazard if role is ever added.
+
+### Stable Facts
+- profiles update policy restricts both existing and resulting rows to auth.uid() = id; id cannot be reassigned, and nickname is the only mutable application column.
+- life_stages, life_memories, and Beautiful Memories storage write policies independently require JWT email 1223157269@qq.com; life_memories/storage also bind ownership/path to auth.uid().
+
+### Files And Artifacts
+- None recorded.
+
+### Commands
+- None recorded.
+
+### Verification
+- Searched supabase-setup.sql and all HTML/JS/TS files: no profiles role/is_admin field and no frontend profiles update remain. Reviewed official Supabase RLS and column-level privilege documentation.
+
+### Open Issues And Risks
+- profiles has table-level UPDATE granted to authenticated. If a role/security column is added later, users could update that column unless grants/policies are redesigned.
+
+### Next Steps
+- If roles are ever introduced, keep them in a non-self-writable role table or custom server-managed claim, and restrict profile INSERT/UPDATE to explicit safe columns.
+
+### Notes
+- None recorded.
+
+## Checkpoint 2026-09-22T16:30:43+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+Documented the exact Storage/Postgres linkage for memory media: private object bytes live in Beautiful Memories and life_memories stores the unique object path used to regenerate signed URLs.
+
+### Latest User Request
+Explain how the frontend saves, retrieves, and matches images/videos between Supabase Storage and PostgreSQL.
+
+### Active Requirements
+- None recorded.
+
+### Decisions And Rationale
+- None recorded.
+
+### Stable Facts
+- Uploads use object path currentUser.id/randomUUID.extension; the identical string is stored in life_memories.media_path.
+- On load, the frontend queries life_memories and calls createSignedUrl(media_path, 6 hours) for each media object, then supplies that temporary URL to img/video elements.
+- stage_id links each memory row to a life_stages row; media_path links that memory to storage.objects.name inside the Beautiful Memories bucket.
+- Matching is exact path lookup, not filename matching or checksum validation. Upload/DB insert and DB delete/Storage delete are compensating operations, not one cross-service transaction.
+
+### Files And Artifacts
+- index.html: loadRemoteMemories, uploadMemoryMedia, memory form submit, delete cleanup, and signed URL generation implement the flow.
+- supabase-setup.sql: life_memories media metadata columns and Beautiful Memories private bucket/RLS policies define persistence and access.
+
+### Commands
+- None recorded.
+
+### Verification
+- Read current frontend upload/load/delete code and SQL schema/policies; no code changes made.
+
+### Open Issues And Risks
+- None recorded.
+
+### Next Steps
+- If stronger consistency is needed later, add an orphan cleanup job or server-side transaction-like workflow and optional content hash metadata.
+
+### Notes
+- None recorded.
