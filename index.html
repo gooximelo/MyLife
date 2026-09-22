@@ -111,7 +111,13 @@ body.auth-pending>header,body.auth-pending>main,body.auth-pending>footer,body.au
 .memory{grid-template-columns:78px minmax(0,1fr) auto}
 .memory-content{min-width:0}
 .memory-media{overflow:hidden;margin:15px 0 2px;border:1px solid var(--line);border-radius:4px;background:#efede6}
-.memory-media img,.memory-media video{display:block;width:100%;max-height:520px;object-fit:contain;background:#151918}
+.memory-media img{display:block;width:100%;max-height:520px;object-fit:contain;background:#151918}
+.memory-media.video-media{width:min(100%,820px);margin:16px auto 2px;background:#0b0e0d}
+.memory-video-shell{position:relative;display:grid;width:100%;aspect-ratio:16/9;place-items:center;overflow:hidden;background:#0b0e0d}
+.memory-video-shell video{display:block;width:100%;height:100%;max-height:none;object-fit:contain;background:#0b0e0d}
+.video-playback-status{position:absolute;inset:0;display:grid;place-items:center;padding:28px;color:#ffffffd9;background:rgba(11,14,13,.82);font-size:12px;line-height:1.7;text-align:center;pointer-events:none}
+.video-playback-status[hidden]{display:none}
+.video-playback-status.error{color:#fff;background:rgba(73,31,23,.9)}
 .memory-media figcaption{padding:8px 11px;color:var(--muted);background:rgba(255,253,248,.9);font-size:10px}
 dialog{max-height:calc(100vh - 32px);overflow:auto}
 .dialog-context{margin:8px 0 0;color:var(--muted);font-size:12px}
@@ -126,7 +132,8 @@ dialog{max-height:calc(100vh - 32px);overflow:auto}
 .media-picker-copy strong{color:var(--ink);font-size:13px}
 .media-picker-copy small{color:var(--muted);font-size:10px;line-height:1.5}
 .media-preview{overflow:hidden;margin-top:12px;border:1px solid var(--line);border-radius:4px;background:#171b1a}
-.media-preview img,.media-preview video{display:block;width:100%;max-height:260px;object-fit:contain}
+.media-preview img{display:block;width:100%;max-height:260px;object-fit:contain}
+.media-preview video{display:block;width:100%;aspect-ratio:16/9;object-fit:contain;background:#0b0e0d}
 .media-file-meta{display:flex;justify-content:space-between;gap:14px;padding:8px 11px;color:#ffffffb8;font-size:10px}
 .remove-media{margin-top:9px;padding:0;border:0;color:#9b6c61;background:none;font-size:11px;cursor:pointer}
 .upload-state{margin-top:12px}
@@ -452,6 +459,36 @@ function validateMediaFile(file){
   return{mediaType,extension:FILE_EXTENSIONS[file.type]};
 }
 
+function verifyVideoDecoding(file){
+  if(!file||!ALLOWED_VIDEO_TYPES.has(file.type))return Promise.resolve();
+  return new Promise((resolve,reject)=>{
+    const probe=document.createElement("video");
+    const objectUrl=URL.createObjectURL(file);
+    let finished=false;
+    const finish=error=>{
+      if(finished)return;
+      finished=true;
+      clearTimeout(timer);
+      probe.removeAttribute("src");
+      probe.load();
+      URL.revokeObjectURL(objectUrl);
+      if(error)reject(error);
+      else resolve();
+    };
+    const timer=setTimeout(()=>finish(new Error("视频解析超时，请转换为 H.264/AAC 编码的 MP4 后重试")),12000);
+    probe.preload="auto";
+    probe.muted=true;
+    probe.playsInline=true;
+    probe.addEventListener("loadeddata",()=>{
+      if(probe.videoWidth>0&&probe.videoHeight>0)finish();
+      else finish(new Error("没有检测到可播放的画面，请转换为 H.264/AAC 编码的 MP4"));
+    },{once:true});
+    probe.addEventListener("error",()=>finish(new Error("当前浏览器无法解析这个视频编码，请转换为 H.264/AAC 编码的 MP4")), {once:true});
+    probe.src=objectUrl;
+    probe.load();
+  });
+}
+
 function clearSelectedMedia(clearInput){
   if(previewObjectUrl){
     URL.revokeObjectURL(previewObjectUrl);
@@ -544,13 +581,44 @@ function makeMediaElement(memory){
     image.decoding="async";
     figure.append(image);
   }else{
+    figure.classList.add("video-media");
+    const shell=document.createElement("div");
+    shell.className="memory-video-shell";
     const video=document.createElement("video");
-    video.src=memory.mediaUrl;
     video.controls=true;
     video.preload="metadata";
     video.playsInline=true;
-    if(memory.mediaMime)video.type=memory.mediaMime;
-    figure.append(video);
+    const source=document.createElement("source");
+    source.src=memory.mediaUrl;
+    if(memory.mediaMime)source.type=memory.mediaMime;
+    const status=document.createElement("div");
+    status.className="video-playback-status";
+    status.textContent="正在准备视频……";
+    const showPlaybackError=()=>{
+      status.hidden=false;
+      status.classList.add("error");
+      status.textContent="视频画面无法解析。请将原文件转换为 H.264/AAC 编码的 MP4 后重新上传。";
+    };
+    video.addEventListener("loadeddata",()=>{status.hidden=true},{once:true});
+    video.addEventListener("error",showPlaybackError);
+    source.addEventListener("error",showPlaybackError);
+    video.addEventListener("play",()=>{
+      if(!("requestVideoFrameCallback" in video))return;
+      let frameRendered=false;
+      status.classList.remove("error");
+      status.textContent="正在解码画面……";
+      status.hidden=false;
+      video.requestVideoFrameCallback(()=>{
+        frameRendered=true;
+        status.hidden=true;
+      });
+      setTimeout(()=>{
+        if(!frameRendered&&!video.paused&&!video.ended)showPlaybackError();
+      },3500);
+    });
+    video.append(source);
+    shell.append(video,status);
+    figure.append(shell);
   }
   const caption=document.createElement("figcaption");
   caption.textContent=(memory.mediaType==="image"?"照片":"视频")+(memory.mediaName?" · "+memory.mediaName:"");
@@ -672,6 +740,12 @@ form.addEventListener("submit",async event=>{
   submit.textContent=file?"正在上传……":"正在保存……";
   let uploadedPath="";
   try{
+    if(file&&mediaMeta.mediaType==="video"){
+      submit.textContent="正在检查视频……";
+      setUploadState("正在检查视频画面是否可播放",5);
+      await verifyVideoDecoding(file);
+      submit.textContent="正在上传……";
+    }
     if(file){
       const uniqueId=crypto.randomUUID?crypto.randomUUID():Date.now()+"-"+Math.random().toString(16).slice(2);
       uploadedPath=currentUser.id+"/"+uniqueId+"."+mediaMeta.extension;

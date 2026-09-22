@@ -907,3 +907,42 @@ Remove the section guidance text and let the owner edit or add any number of tim
 
 ### Notes
 - None recorded.
+
+## Checkpoint 2026-09-22T10:29:05+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+Improved memory video playback sizing and codec diagnostics. Videos now render in a capped 16:9 player and new uploads are decoded locally before upload.
+
+### Latest User Request
+Uploaded video plays as a black screen and has the wrong size. Diagnose and fix playback.
+
+### Active Requirements
+- Video player must be normally sized and unsupported browser codecs must be detected before upload.
+
+### Decisions And Rationale
+- Treat the reported issue as likely an unsupported video track codec because duration/playback controls work. Supabase Storage serves original bytes and does not transcode.
+
+### Stable Facts
+- None recorded.
+
+### Files And Artifacts
+- index.html: 16:9 video shell, 820px cap, source element, playback/frame diagnostics, and pre-upload decode probe.
+
+### Commands
+- None recorded.
+
+### Verification
+- Module passes node --check; checks confirm decode probe executes before upload, source element is used, frame diagnostics exist, and player size rules are present.
+
+### Open Issues And Risks
+- Existing csgo.mp4 may need conversion to H.264 video plus AAC audio and re-upload; no local copy was available for ffprobe codec inspection.
+
+### Next Steps
+- Deploy index.html, refresh, test the current video, and if it remains black convert the original to H.264/AAC MP4 before replacing it.
+
+### Notes
+- None recorded.
