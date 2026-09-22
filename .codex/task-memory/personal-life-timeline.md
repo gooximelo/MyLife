@@ -1068,3 +1068,42 @@ Allow directly recorded mainstream videos to upload, remove the large empty imag
 
 ### Notes
 - None recorded.
+
+## Checkpoint 2026-09-22T14:12:26+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+Researched the black-video cause and replaced the open/download link with a true browser download workflow for private Supabase video objects.
+
+### Latest User Request
+Determine why uploaded videos still cannot play, and make the UI provide only a Download original video button that saves through the browser.
+
+### Active Requirements
+- The video fallback area should contain only a 下载原视频 button, with no filename caption or open-in-new-page behavior.
+
+### Decisions And Rationale
+- Use supabase.storage.from(Beautiful Memories).download(media_path) to retrieve the private object as a Blob, then click a temporary same-origin blob URL with the original filename so the browser starts a real download.
+
+### Stable Facts
+- Chromium documents HEVC/H.265 playback as Google Chrome-only and hardware-dependent. An MP4 container and readable duration do not guarantee that the current device has a decoder for its internal video codec.
+
+### Files And Artifacts
+- index.html: added safeDownloadName and downloadOriginalVideo, changed fallback to a button with progress/error states, and removed the video filename caption.
+
+### Commands
+- None recorded.
+
+### Verification
+- JavaScript syntax check passed and git diff --check passed. Official Chromium, Microsoft, and Supabase documentation reviewed. In-app visual browser remained unavailable.
+
+### Open Issues And Risks
+- Universal inline playback still requires transcoding uploaded originals to a widely supported web delivery codec; Supabase Storage itself does not transcode videos.
+
+### Next Steps
+- Deploy, click 下载原视频 on the live authenticated page, and confirm the file appears in the browser download list/default Downloads folder.
+
+### Notes
+- None recorded.

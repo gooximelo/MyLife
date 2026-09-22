@@ -118,8 +118,9 @@ body.auth-pending>header,body.auth-pending>main,body.auth-pending>footer,body.au
 .video-playback-status{position:absolute;inset:0;display:grid;place-items:center;padding:28px;color:#ffffffd9;background:rgba(11,14,13,.82);font-size:12px;line-height:1.7;text-align:center;pointer-events:none}
 .video-playback-status[hidden]{display:none}
 .video-playback-status.error{color:#fff;background:rgba(73,31,23,.9)}
-.video-download-link{display:inline-flex;align-items:center;justify-content:center;margin:10px 11px 2px;padding:9px 13px;border:1px solid rgba(46,89,77,.24);border-radius:3px;color:var(--green);background:#fbfaf6;font-size:11px;font-weight:700}
+.video-download-link{display:inline-flex;align-items:center;justify-content:center;margin:10px 11px 2px;padding:9px 13px;border:1px solid rgba(46,89,77,.24);border-radius:3px;color:var(--green);background:#fbfaf6;font-size:11px;font-weight:700;cursor:pointer}
 .video-download-link:hover{color:var(--white);border-color:var(--green);background:var(--green)}
+.video-download-link:disabled{cursor:wait;opacity:.58}
 .memory-media figcaption{padding:8px 11px;color:var(--muted);background:rgba(255,253,248,.9);font-size:10px}
 dialog{max-height:calc(100vh - 32px);overflow:auto}
 .dialog-context{margin:8px 0 0;color:var(--muted);font-size:12px}
@@ -571,6 +572,48 @@ async function uploadMemoryMedia(file,meta,objectPath){
   setUploadState("媒体上传完成",100);
 }
 
+function safeDownloadName(memory){
+  const fallback=memory.mediaPath?.split("/").pop()||"video";
+  return String(memory.mediaName||fallback).replace(/[\\/:*?"<>|]/g,"_");
+}
+
+async function downloadOriginalVideo(memory,button){
+  if(button.disabled)return;
+  const originalText=button.textContent;
+  button.disabled=true;
+  button.textContent="正在准备下载……";
+  let objectUrl="";
+  try{
+    let blob;
+    if(memory.mediaPath){
+      const{data,error}=await supabase.storage.from(MEDIA_BUCKET).download(memory.mediaPath);
+      if(error)throw error;
+      blob=data;
+    }else{
+      const response=await fetch(memory.mediaUrl);
+      if(!response.ok)throw new Error("无法读取原视频");
+      blob=await response.blob();
+    }
+    objectUrl=URL.createObjectURL(blob);
+    const anchor=document.createElement("a");
+    anchor.href=objectUrl;
+    anchor.download=safeDownloadName(memory);
+    anchor.style.display="none";
+    document.body.append(anchor);
+    anchor.click();
+    anchor.remove();
+    setTimeout(()=>URL.revokeObjectURL(objectUrl),60000);
+    objectUrl="";
+    showToast("下载已开始，可在浏览器下载列表中查看");
+  }catch(error){
+    if(objectUrl)URL.revokeObjectURL(objectUrl);
+    showToast("下载失败："+String(error?.message||error||"未知错误"));
+  }finally{
+    button.disabled=false;
+    button.textContent=originalText;
+  }
+}
+
 function makeMediaElement(memory){
   if(!memory.mediaUrl||!memory.mediaType)return null;
   const figure=document.createElement("figure");
@@ -599,7 +642,7 @@ function makeMediaElement(memory){
     const showPlaybackError=()=>{
       status.hidden=false;
       status.classList.add("error");
-      status.textContent="当前浏览器无法直接播放这个视频，但原视频已经保留，可以使用下方入口打开或下载。";
+      status.textContent="当前浏览器缺少这个视频所需的解码能力，可以使用下方按钮下载原视频。";
     };
     video.addEventListener("loadeddata",()=>{status.hidden=true},{once:true});
     video.addEventListener("error",showPlaybackError);
@@ -619,19 +662,19 @@ function makeMediaElement(memory){
       },3500);
     });
     video.append(source);
-    const download=document.createElement("a");
+    const download=document.createElement("button");
+    download.type="button";
     download.className="video-download-link";
-    download.href=memory.mediaUrl;
-    download.target="_blank";
-    download.rel="noopener";
-    download.download=memory.mediaName||"video";
-    download.textContent="打开或下载原视频";
+    download.textContent="下载原视频";
+    download.addEventListener("click",()=>downloadOriginalVideo(memory,download));
     shell.append(video,status);
     figure.append(shell,download);
   }
-  const caption=document.createElement("figcaption");
-  caption.textContent=(memory.mediaType==="image"?"照片":"视频")+(memory.mediaName?" · "+memory.mediaName:"");
-  figure.append(caption);
+  if(memory.mediaType==="image"){
+    const caption=document.createElement("figcaption");
+    caption.textContent="照片"+(memory.mediaName?" · "+memory.mediaName:"");
+    figure.append(caption);
+  }
   return figure;
 }
 
