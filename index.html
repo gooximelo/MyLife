@@ -83,6 +83,30 @@ body.auth-pending>header,body.auth-pending>main,body.auth-pending>footer,body.au
 .access-badge{display:inline-flex;align-items:center;width:max-content;padding:6px 9px;border:1px solid var(--line);border-radius:99px;color:var(--muted);font-size:10px;white-space:nowrap}.access-badge.owner{color:var(--orange);border-color:rgba(184,71,42,.35);background:rgba(184,71,42,.06)}
 .account-menu{position:relative;z-index:30}.account-menu summary{display:flex;align-items:center;gap:9px;min-width:190px;padding:7px 13px;border:1px solid var(--line);border-radius:99px;background:rgba(255,253,248,.72);cursor:pointer;list-style:none;transition:.2s}.account-menu summary::-webkit-details-marker{display:none}.account-menu summary:hover,.account-menu[open] summary{border-color:rgba(46,89,77,.42);background:var(--white)}.account-summary{display:grid;min-width:0;gap:1px}.account-summary small{color:var(--muted);font-size:9px;letter-spacing:.08em}.account-summary strong{max-width:145px;overflow:hidden;color:var(--ink);font-size:11px;font-weight:600;text-overflow:ellipsis;white-space:nowrap}.account-chevron{margin-left:auto;color:var(--muted);font-size:12px;transition:.2s}.account-menu[open] .account-chevron{transform:rotate(180deg)}.account-menu-panel{position:absolute;top:calc(100% + 12px);right:0;width:278px;padding:18px;background:var(--white);border:1px solid rgba(24,33,31,.08);border-radius:6px;box-shadow:0 24px 65px rgba(24,33,31,.2)}.account-menu-panel:before{content:"";position:absolute;right:24px;top:-6px;width:11px;height:11px;background:var(--white);border-top:1px solid rgba(24,33,31,.08);border-left:1px solid rgba(24,33,31,.08);transform:rotate(45deg)}.account-menu-label{display:block;margin-bottom:8px;color:var(--muted);font-size:9px;letter-spacing:.16em}.account-menu-email{display:block;margin-bottom:12px;overflow-wrap:anywhere;font-size:13px}.account-menu-actions{display:grid;gap:8px;margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}.account-menu-actions a,.account-menu-actions button{width:100%;display:flex;align-items:center;justify-content:space-between;padding:11px 12px;border:0;border-radius:3px;color:var(--ink);background:#f7f3eb;font-size:12px;cursor:pointer;text-align:left}.account-menu-actions a:after{display:none}.account-menu-actions a:hover{color:var(--green);background:var(--green2)}.account-menu-actions button{color:var(--orange);background:rgba(184,71,42,.07)}.account-menu-actions button:hover{background:rgba(184,71,42,.13)}.account-menu-actions button:disabled{opacity:.55;cursor:wait}
 @media(max-width:620px){.account-menu summary{min-width:0;padding:7px 11px}.account-chevron{display:none}.account-summary strong{max-width:118px}.account-menu-panel{width:min(278px,calc(100vw - 28px))}.account-menu-panel a{display:flex}.access-badge{display:inline-flex}}
+/* 可由管理员维护的时间轴 */
+.section-note{display:none}
+.section-head.has-admin-tools{align-items:center}
+.timeline-admin-tools{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:10px}
+.timeline-admin-tools[hidden]{display:none}
+.timeline-admin-button{min-height:42px;padding:10px 16px;border:1px solid rgba(46,89,77,.28);border-radius:99px;color:var(--green);background:var(--green2);font-size:12px;font-weight:700;cursor:pointer;transition:.2s}
+.timeline-admin-button:hover{color:var(--white);background:var(--green);border-color:var(--green);transform:translateY(-2px)}
+.timeline-admin-button.primary-stage{color:var(--white);background:var(--green);border-color:var(--green)}
+.stage-graph{overflow-x:auto;overflow-y:hidden;scrollbar-width:thin;scrollbar-color:var(--orange2) transparent}
+.graph-track{min-width:760px}
+.stage-visual-placeholder{position:relative;overflow:hidden;min-height:190px;margin:28px 0 4px;border:1px solid rgba(24,33,31,.08);border-radius:4px;background:linear-gradient(145deg,#f4f0e7,#ebe8df)}
+.stage-visual-placeholder:before,.stage-visual-placeholder:after{content:"";position:absolute;border-radius:50%;background:rgba(46,89,77,.07)}
+.stage-visual-placeholder:before{width:220px;height:220px;right:-65px;top:-95px}
+.stage-visual-placeholder:after{width:130px;height:130px;left:-38px;bottom:-62px;background:rgba(184,71,42,.07)}
+.stage-visual-placeholder span{position:absolute;left:22px;bottom:18px;color:rgba(86,91,86,.55);font-size:10px;letter-spacing:.16em}
+.timeline-empty{display:grid;place-items:center;min-height:250px;color:var(--muted);border:1px dashed var(--line);font-size:13px;text-align:center}
+#stageDialog{width:min(620px,calc(100% - 32px))}
+.stage-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+.stage-dialog-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:10px}
+.stage-dialog-actions .secondary{padding:12px 18px;border:1px solid var(--line);border-radius:3px;color:var(--muted);background:transparent;cursor:pointer}
+.stage-dialog-actions .secondary:hover{color:var(--ink);border-color:rgba(24,33,31,.28)}
+.stage-dialog-actions button:disabled{cursor:wait;opacity:.6}
+@media(max-width:620px){.section-head.has-admin-tools{align-items:flex-start}.timeline-admin-tools{justify-content:flex-start;margin-top:18px}.stage-form-grid{grid-template-columns:1fr}.stage-visual-placeholder{min-height:150px}}
+
 /* 照片与视频：私有桶上传、预览和记忆卡片展示 */
 .memory{grid-template-columns:78px minmax(0,1fr) auto}
 .memory-content{min-width:0}
@@ -135,13 +159,7 @@ const supabase=createClient(
   "sb_publishable_fEMwadF6BygFMuGxdt2eBA_euB38tR4",
   {auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}}
 );
-const stages=[
-{age:"0—12 岁",name:"童年",years:"第一章 · 最初的世界",title:"一切故事，都从这里开始",lead:"那时候，世界很小，小到只装得下家、学校和放学路上的风。许多性格的底色，也在这些看似平常的日子里悄悄形成。",memories:[{date:"小时候",title:"关于故乡的第一帧画面",text:"这里可以写出生的城市、家附近的风景，或记忆里最早的声音。",tag:"故乡"},{date:"小学",title:"第一次发现自己的热爱",text:"一本书、一个玩具、一场比赛——写下第一次让你忘记时间的事情。",tag:"启蒙"}]},
-{age:"13—17 岁",name:"少年",years:"第二章 · 开始认识自己",title:"在好奇与倔强之间长大",lead:"青春把生活忽然推远，也把内心忽然放大。我开始拥有自己的判断，第一次认真思考想成为怎样的人。",memories:[{date:"初中",title:"一位影响很久的人",text:"可以是老师、同桌、朋友，也可以是某本书里的一个角色。",tag:"遇见"},{date:"高中",title:"为一件事全力以赴",text:"记录一场考试、一次比赛，或那个曾经咬牙坚持下来的目标。",tag:"坚持"}]},
-{age:"18—22 岁",name:"远行",years:"第三章 · 走向更大的世界",title:"离开熟悉的坐标之后",lead:"第一次真正意义上的远行，让我看见不同的生活，也重新理解来处。自由和责任，大概就是从这时一起抵达的。",memories:[{date:"大学",title:"初到一座陌生的城市",text:"记下当时的车站、宿舍、第一顿饭，和面对未知时的心情。",tag:"远行"},{date:"某一天",title:"第一次独立做出的选择",text:"不是因为别人希望，而是因为自己真的想要——那是成长的一个标点。",tag:"选择"}]},
-{age:"23 岁至今",name:"生长",years:"第四章 · 成为自己的过程",title:"生活没有答案，只有行动",lead:"进入真实世界以后，我一边解决问题，一边更新自己。那些走过的弯路、完成的作品和真心珍惜的人，共同组成此刻的我。",memories:[{date:"工作后",title:"完成第一个真正满意的作品",text:"在这里写下你的项目、职业转折，或者第一次被认可的那个时刻。",tag:"创造"},{date:"最近",title:"我正在成为怎样的人",text:"写一写现在最看重的事，以及今天的你与从前有什么不同。",tag:"此刻"}]},
-{age:"未来",name:"待续",years:"下一章 · 尚未抵达",title:"把空白留给明天",lead:"未来不是一个等着被揭晓的答案，而是今天的选择一点点写成的故事。愿我一直保留出发的勇气，也保留回望的温柔。",memories:[]}
-];
+let stages=[];
 const MEDIA_BUCKET="Beautiful Memories";
 const SUPABASE_PROJECT_REF="zckpkhktthgwzcnumadb";
 const RESUMABLE_UPLOAD_THRESHOLD=6*1024*1024;
@@ -158,10 +176,29 @@ let isOwner=false;
 let previewObjectUrl="";
 let isSavingMemory=false;
 
-async function loadRemoteMemories(){
-  const{data,error}=await supabase.from("life_memories").select("id,stage,event_date,title,description,tag,media_path,media_type,media_mime,media_name,media_size,created_at").order("created_at",{ascending:true});
+async function loadRemoteStages(){
+  const{data,error}=await supabase.from("life_stages")
+    .select("id,sort_order,period,name,chapter,title,lead,created_at")
+    .order("sort_order",{ascending:true})
+    .order("created_at",{ascending:true});
   if(error)throw error;
-  const rows=(data||[]).filter(item=>Number.isInteger(item.stage)&&item.stage>=0&&item.stage<stages.length);
+  stages=(data||[]).map(item=>({
+    id:item.id,
+    sortOrder:item.sort_order,
+    age:item.period,
+    name:item.name,
+    years:item.chapter,
+    title:item.title,
+    lead:item.lead,
+    memories:[]
+  }));
+}
+
+async function loadRemoteMemories(){
+  const{data,error}=await supabase.from("life_memories").select("id,stage_id,event_date,title,description,tag,media_path,media_type,media_mime,media_name,media_size,created_at").order("created_at",{ascending:true});
+  if(error)throw error;
+  const stageIds=new Set(stages.map(stage=>stage.id));
+  const rows=(data||[]).filter(item=>stageIds.has(item.stage_id));
   customMemories=await Promise.all(rows.map(async item=>{
     let mediaUrl="";
     if(item.media_path){
@@ -170,7 +207,7 @@ async function loadRemoteMemories(){
     }
     return{
       id:item.id,
-      stage:item.stage,
+      stageId:item.stage_id,
       date:item.event_date,
       title:item.title,
       text:item.description,
@@ -187,7 +224,7 @@ async function loadRemoteMemories(){
 }
 const stageList=document.getElementById("stageList"),storyPanel=document.getElementById("storyPanel"),memoryList=document.getElementById("memoryList"),dialog=document.getElementById("memoryDialog"),form=document.getElementById("memoryForm");
 const stageGraph=document.getElementById("stageGraph"),graphTrack=document.getElementById("graphTrack"),graphSvg=document.getElementById("graphSvg"),graphBase=document.getElementById("graphBase"),graphProgress=document.getElementById("graphProgress");
-function allMemories(index){return[...stages[index].memories,...customMemories.filter(item=>item.stage===index)]}
+function allMemories(index){const stage=stages[index];return stage?[...stage.memories,...customMemories.filter(item=>item.stageId===stage.id)]:[]}
 function escapeHtml(value){return String(value).replace(/[&<>'"]/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[char]))}
 const NODE_X=[12,31,50,69,88],NODE_Y=[0,-44,26,-18,40];
 const reduceMotion=()=>window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -221,6 +258,158 @@ stageList.addEventListener("keydown",e=>{if(!["ArrowDown","ArrowRight","ArrowUp"
 memoryList.addEventListener("click",async e=>{const b=e.target.closest(".delete-memory");if(!b||!isOwner)return;if(b.dataset.confirming!=="true"){b.dataset.confirming="true";b.textContent="再点一次确认删除";setTimeout(()=>{if(b.isConnected){b.dataset.confirming="false";b.textContent="删除这条记忆"}},2400);return}b.disabled=true;const{error}=await supabase.from("life_memories").delete().eq("id",b.dataset.id);if(error){b.disabled=false;b.textContent="删除失败，请重试";showToast(`删除失败：${error.message}`);return}customMemories=customMemories.filter(item=>item.id!==b.dataset.id);renderStory(activeStage);showToast("这段记忆已删除")});
 document.querySelectorAll(".js-open-dialog").forEach(b=>b.addEventListener("click",()=>{if(!isOwner){showToast("当前账号只有阅读权限");return}document.getElementById("dialogStage").textContent=`将写入：${stages[activeStage].name}`;dialog.showModal();setTimeout(()=>form.elements.date.focus(),80)}));document.getElementById("closeDialog").addEventListener("click",()=>dialog.close());dialog.addEventListener("click",e=>{if(e.target===dialog)dialog.close()});
 form.addEventListener("submit",async e=>{e.preventDefault();if(!isOwner||!currentUser){showToast("当前账号没有编辑权限");return}const d=new FormData(form),date=d.get("date").trim(),title=d.get("title").trim(),text=d.get("text").trim(),tag=d.get("tag").trim()||"记忆";if(!date||!title||!text){showToast("请把时间、标题和故事填写完整");const empty=["date","title","text"].find(name=>!d.get(name).trim());form.elements[empty].focus();return}const submit=form.querySelector('button[type="submit"]');submit.disabled=true;submit.textContent="正在保存……";const{data,error}=await supabase.from("life_memories").insert({stage:activeStage,event_date:date,title,description:text,tag,author_id:currentUser.id}).select("id,stage,event_date,title,description,tag").single();submit.disabled=false;submit.innerHTML='保存记忆 <span aria-hidden="true">&rarr;</span>';if(error){showToast(`保存失败：${error.message}`);return}customMemories.push({id:data.id,stage:data.stage,date:data.event_date,title:data.title,text:data.description,tag:data.tag||"记忆",custom:true});form.reset();dialog.close();renderStory(activeStage);showToast(`已保存到“${stages[activeStage].name}”阶段`)});
+document.querySelector(".section-note")?.remove();
+const sectionHead=document.querySelector(".timeline-section .section-head");
+sectionHead.classList.add("has-admin-tools");
+const stageAdminTools=document.createElement("div");
+stageAdminTools.className="timeline-admin-tools owner-only";
+stageAdminTools.hidden=true;
+stageAdminTools.innerHTML=
+  '<button class="timeline-admin-button" id="editStage" type="button">编辑当前节点</button>'+
+  '<button class="timeline-admin-button primary-stage" id="addStage" type="button">＋ 添加时间节点</button>';
+sectionHead.append(stageAdminTools);
+
+const stageVisualPlaceholder=document.createElement("div");
+stageVisualPlaceholder.className="stage-visual-placeholder";
+stageVisualPlaceholder.setAttribute("aria-hidden","true");
+document.getElementById("storyLead").insertAdjacentElement("afterend",stageVisualPlaceholder);
+
+const stageDialog=document.createElement("dialog");
+stageDialog.id="stageDialog";
+stageDialog.setAttribute("aria-labelledby","stageDialogTitle");
+stageDialog.innerHTML=
+  '<form class="dialog-inner" id="stageForm">'+
+  '<div class="dialog-head"><div><span>TIMELINE NODE</span><h3 id="stageDialogTitle">添加时间节点</h3>'+
+  '<p class="dialog-context" id="stageDialogContext">新节点将添加在时间轴末尾</p></div>'+
+  '<button class="icon-button" type="button" id="closeStageDialog" aria-label="关闭">&#215;</button></div>'+
+  '<div class="stage-form-grid"><label>年龄或年份<input name="period" placeholder="例如：18—22 岁 / 2024" maxlength="30" required></label>'+
+  '<label>节点名称<input name="name" placeholder="例如：远行" maxlength="20" required></label></div>'+
+  '<label>章节说明<input name="chapter" placeholder="例如：第三章 · 走向更大的世界" maxlength="60" required></label>'+
+  '<label>详情标题<input name="title" placeholder="例如：离开熟悉的坐标之后" maxlength="80" required></label>'+
+  '<label>阶段介绍<textarea name="lead" placeholder="写下这一阶段的概述……" maxlength="500" required></textarea></label>'+
+  '<div class="stage-dialog-actions"><button class="secondary" id="cancelStageDialog" type="button">取消</button>'+
+  '<button class="primary" type="submit">保存节点 <span aria-hidden="true">&rarr;</span></button></div></form>';
+document.body.append(stageDialog);
+
+const stageForm=document.getElementById("stageForm");
+const addStageButton=document.getElementById("addStage");
+const editStageButton=document.getElementById("editStage");
+const closeStageDialogButton=document.getElementById("closeStageDialog");
+const cancelStageDialogButton=document.getElementById("cancelStageDialog");
+let stageDialogMode="add";
+let stageSaving=false;
+
+renderButtons=function(){
+  const count=stages.length;
+  graphTrack.style.minWidth=Math.max(760,count*180)+"px";
+  const offsets=[0,-44,26,-18,40,-28,18];
+  stageList.innerHTML=stages.map((stage,index)=>{
+    const x=count===1?50:7+index*86/(count-1);
+    const y=offsets[index%offsets.length];
+    return '<button id="stage-tab-'+index+'" class="stage-node" role="tab" aria-controls="storyPanel" data-stage="'+index+
+      '" style="--x:'+x+'%;--y:'+y+'px"><span class="node-dot" aria-hidden="true"></span>'+
+      '<span class="node-label"><span class="stage-age">'+escapeHtml(stage.age)+'</span>'+
+      '<span class="stage-name">'+escapeHtml(stage.name)+'</span></span></button>';
+  }).join("");
+  stageList.querySelectorAll("[data-stage]").forEach((button,index)=>{
+    const selected=index===activeStage;
+    button.classList.toggle("active",selected);
+    button.setAttribute("aria-selected",String(selected));
+    button.tabIndex=selected?0:-1;
+  });
+};
+
+function openStageDialog(mode){
+  if(!isOwner){
+    showToast("当前账号只有阅读权限");
+    return;
+  }
+  stageDialogMode=mode;
+  stageForm.reset();
+  const editing=mode==="edit";
+  const stage=stages[activeStage];
+  if(editing&&!stage)return;
+  document.getElementById("stageDialogTitle").textContent=editing?"编辑时间节点":"添加时间节点";
+  document.getElementById("stageDialogContext").textContent=editing?"修改后会同步更新上方时间轴和下方详情":"新节点将添加在时间轴末尾";
+  if(editing){
+    stageForm.elements.period.value=stage.age;
+    stageForm.elements.name.value=stage.name;
+    stageForm.elements.chapter.value=stage.years;
+    stageForm.elements.title.value=stage.title;
+    stageForm.elements.lead.value=stage.lead;
+  }
+  stageDialog.showModal();
+  setTimeout(()=>stageForm.elements.period.focus(),80);
+}
+
+addStageButton.addEventListener("click",()=>openStageDialog("add"));
+editStageButton.addEventListener("click",()=>openStageDialog("edit"));
+closeStageDialogButton.addEventListener("click",()=>{if(!stageSaving)stageDialog.close()});
+cancelStageDialogButton.addEventListener("click",()=>{if(!stageSaving)stageDialog.close()});
+stageDialog.addEventListener("click",event=>{if(event.target===stageDialog&&!stageSaving)stageDialog.close()});
+stageDialog.addEventListener("cancel",event=>{
+  if(stageSaving){
+    event.preventDefault();
+    showToast("正在保存节点，请稍候");
+  }
+});
+
+stageForm.addEventListener("submit",async event=>{
+  event.preventDefault();
+  if(stageSaving||!isOwner)return;
+  const values=new FormData(stageForm);
+  const payload={
+    period:String(values.get("period")||"").trim(),
+    name:String(values.get("name")||"").trim(),
+    chapter:String(values.get("chapter")||"").trim(),
+    title:String(values.get("title")||"").trim(),
+    lead:String(values.get("lead")||"").trim()
+  };
+  if(Object.values(payload).some(value=>!value)){
+    showToast("请把节点信息填写完整");
+    return;
+  }
+  const submit=stageForm.querySelector('button[type="submit"]');
+  stageSaving=true;
+  submit.disabled=true;
+  closeStageDialogButton.disabled=true;
+  cancelStageDialogButton.disabled=true;
+  submit.textContent="正在保存……";
+  try{
+    if(stageDialogMode==="add"){
+      payload.sort_order=stages.length?Math.max(...stages.map(stage=>stage.sortOrder))+1:0;
+      const{data,error}=await supabase.from("life_stages").insert(payload)
+        .select("id,sort_order,period,name,chapter,title,lead").single();
+      if(error)throw error;
+      stages.push({id:data.id,sortOrder:data.sort_order,age:data.period,name:data.name,years:data.chapter,title:data.title,lead:data.lead,memories:[]});
+      activeStage=stages.length-1;
+      showToast("时间节点已添加");
+    }else{
+      const current=stages[activeStage];
+      const{data,error}=await supabase.from("life_stages").update(payload).eq("id",current.id)
+        .select("id,sort_order,period,name,chapter,title,lead").single();
+      if(error)throw error;
+      stages[activeStage]={...current,sortOrder:data.sort_order,age:data.period,name:data.name,years:data.chapter,title:data.title,lead:data.lead};
+      showToast("时间节点已更新");
+    }
+    stageDialog.close();
+    renderStory(activeStage);
+    requestAnimationFrame(()=>{
+      const node=stageList.querySelector('[data-stage="'+activeStage+'"]');
+      if(node)revealNode(node);
+    });
+  }catch(error){
+    const message=String(error?.message||error||"未知错误");
+    showToast(/life_stages|relation/i.test(message)?"保存失败：请先运行新版 supabase-setup.sql":"保存失败："+message);
+  }finally{
+    stageSaving=false;
+    submit.disabled=false;
+    closeStageDialogButton.disabled=false;
+    cancelStageDialogButton.disabled=false;
+    submit.innerHTML='保存节点 <span aria-hidden="true">&rarr;</span>';
+  }
+});
+
 const mediaField=document.createElement("div");
 mediaField.className="media-field";
 mediaField.innerHTML=
@@ -235,7 +424,7 @@ mediaField.innerHTML=
   '<progress id="uploadProgress" max="100" value="0"></progress></div>';
 const dialogActions=form.querySelector(".dialog-actions");
 dialogActions.insertAdjacentElement("beforebegin",mediaField);
-dialogActions.querySelector(".save-note").textContent="媒体保存在私有存储桶，登录后可查看";
+dialogActions.querySelector(".save-note")?.remove();
 
 const mediaInput=document.getElementById("memoryMedia");
 const mediaPreview=document.getElementById("mediaPreview");
@@ -491,7 +680,7 @@ form.addEventListener("submit",async event=>{
       setUploadState("正在保存记忆",100);
     }
     const payload={
-      stage:activeStage,
+      stage_id:stages[activeStage].id,
       event_date:date,
       title,
       description,
@@ -504,7 +693,7 @@ form.addEventListener("submit",async event=>{
       media_size:file?.size||null
     };
     const{data,error}=await supabase.from("life_memories").insert(payload)
-      .select("id,stage,event_date,title,description,tag,media_path,media_type,media_mime,media_name,media_size")
+      .select("id,stage_id,event_date,title,description,tag,media_path,media_type,media_mime,media_name,media_size")
       .single();
     if(error)throw error;
     let mediaUrl="";
@@ -514,7 +703,7 @@ form.addEventListener("submit",async event=>{
     }
     customMemories.push({
       id:data.id,
-      stage:data.stage,
+      stageId:data.stage_id,
       date:data.event_date,
       title:data.title,
       text:data.description,
@@ -536,7 +725,7 @@ form.addEventListener("submit",async event=>{
   }catch(error){
     if(uploadedPath)await supabase.storage.from(MEDIA_BUCKET).remove([uploadedPath]);
     const rawMessage=String(error?.message||error||"未知错误");
-    const needsSetup=/media_path|bucket not found|row-level security|violates row-level/i.test(rawMessage);
+    const needsSetup=/media_path|stage_id|life_stages|bucket not found|row-level security|violates row-level/i.test(rawMessage);
     showToast(needsSetup?"保存失败：请先运行新版 supabase-setup.sql":"保存失败："+rawMessage);
   }finally{
     isSavingMemory=false;
@@ -584,14 +773,34 @@ async function initializeSite(){
   badge.textContent=isOwner?"管理模式":"阅读模式";
   badge.classList.toggle("owner",isOwner);
   badge.title=isOwner?"你可以管理生平内容":"此账号只能阅读生平内容";
-  let memoryLoadError=null;
-  try{await loadRemoteMemories()}catch(loadError){memoryLoadError=loadError;customMemories=[]}
+  let timelineLoadError=null;
+  try{
+    await loadRemoteStages();
+    if(!stages.length)throw new Error("时间轴还没有节点");
+    await loadRemoteMemories();
+  }catch(loadError){
+    timelineLoadError=loadError;
+    customMemories=[];
+  }
   document.getElementById("authGate").hidden=true;
   document.body.classList.remove("auth-pending");
   document.getElementById("currentYear").textContent=new Date().getFullYear();
   registerVisit();
-  renderStory(0);
-  if(memoryLoadError)setTimeout(()=>showToast("云端记忆暂时无法加载，请检查 Supabase 配置"),200);
+  if(stages.length){
+    activeStage=0;
+    renderStory(0);
+  }else{
+    graphTrack.style.minWidth="0";
+    stageList.replaceChildren();
+    document.getElementById("storyYears").textContent="";
+    document.getElementById("storyProgress").textContent="";
+    document.getElementById("storyTitle").textContent="时间轴尚未配置";
+    document.getElementById("storyLead").textContent=isOwner?"请先运行新版 SQL，然后在这里添加时间节点。":"时间轴内容正在准备中。";
+    document.getElementById("memoryList").replaceChildren();
+    document.getElementById("stageAddMemory").hidden=true;
+    editStageButton.disabled=true;
+  }
+  if(timelineLoadError)setTimeout(()=>showToast("时间轴暂时无法加载，请运行新版 Supabase SQL"),200);
 }
 
 document.getElementById("authRetry").addEventListener("click",initializeSite);

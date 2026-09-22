@@ -827,3 +827,83 @@ Add photo and video selection to the add-memory dialog and store uploaded media 
 
 ### Notes
 - None recorded.
+
+## Checkpoint 2026-09-22T09:35:16+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+Removed the private-bucket explanatory note from the add-memory dialog and removed all built-in sample memories from every life stage.
+
+### Latest User Request
+Remove the private storage note and all prefilled example memories because the owner will add all content.
+
+### Active Requirements
+- All five stage memory arrays start empty; only memories loaded from Supabase or newly added by the owner are displayed.
+
+### Decisions And Rationale
+- None recorded.
+
+### Stable Facts
+- None recorded.
+
+### Files And Artifacts
+- index.html: removed sample memory objects and removes the save-note element at runtime.
+
+### Commands
+- None recorded.
+
+### Verification
+- Module script passes node --check; all five stage arrays are empty; sample strings and private-storage note are absent.
+
+### Open Issues And Risks
+- None recorded.
+
+### Next Steps
+- Deploy index.html and refresh the production page to verify the simplified modal and empty stages.
+
+### Notes
+- None recorded.
+
+## Checkpoint 2026-09-22T10:00:14+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+Converted the fixed five-node timeline into a Supabase-backed editable timeline. Owner can add and edit nodes; authenticated viewers can only read.
+
+### Latest User Request
+Remove the section guidance text and let the owner edit or add any number of timeline nodes, including period and name, with matching detail content and blank image placeholders.
+
+### Active Requirements
+- Owner-only add/edit controls; viewers read only; dynamic node count with horizontal scrolling; every node drives the corresponding detail panel.
+
+### Decisions And Rationale
+- Created public.life_stages and linked memories through stage_id. Kept the existing five stages as one-time seeded editable rows and migrated legacy stage indexes to stage_id.
+- Did not implement stage deletion because it could destroy or orphan real memories and the user requested only add/edit.
+
+### Stable Facts
+- None recorded.
+
+### Files And Artifacts
+- index.html: dynamic stage loading, owner toolbar and stage editor dialog, scalable graph, blank detail visual, memory stage_id association.
+- supabase-setup.sql: life_stages table, owner RLS, one-time seeds, legacy memory migration, stage_id FK and update trigger.
+
+### Commands
+- None recorded.
+
+### Verification
+- Module passes node --check; structural checks confirm dynamic insert/update, viewer-only controls, stage_id memory linkage, one-time seed migration, and no stage delete path. Browser UI was unavailable.
+
+### Open Issues And Risks
+- User must rerun the full updated supabase-setup.sql before deploying the new index.html.
+
+### Next Steps
+- Run the SQL in Supabase, deploy index.html, then test editing an existing node and adding a sixth node as the owner; verify a reader sees no management controls.
+
+### Notes
+- None recorded.
