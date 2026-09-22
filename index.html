@@ -118,6 +118,8 @@ body.auth-pending>header,body.auth-pending>main,body.auth-pending>footer,body.au
 .video-playback-status{position:absolute;inset:0;display:grid;place-items:center;padding:28px;color:#ffffffd9;background:rgba(11,14,13,.82);font-size:12px;line-height:1.7;text-align:center;pointer-events:none}
 .video-playback-status[hidden]{display:none}
 .video-playback-status.error{color:#fff;background:rgba(73,31,23,.9)}
+.video-download-link{display:inline-flex;align-items:center;justify-content:center;margin:10px 11px 2px;padding:9px 13px;border:1px solid rgba(46,89,77,.24);border-radius:3px;color:var(--green);background:#fbfaf6;font-size:11px;font-weight:700}
+.video-download-link:hover{color:var(--white);border-color:var(--green);background:var(--green)}
 .memory-media figcaption{padding:8px 11px;color:var(--muted);background:rgba(255,253,248,.9);font-size:10px}
 dialog{max-height:calc(100vh - 32px);overflow:auto}
 .dialog-context{margin:8px 0 0;color:var(--muted);font-size:12px}
@@ -154,6 +156,7 @@ dialog{max-height:calc(100vh - 32px);overflow:auto}
 .message-dialog-inner h3{margin:0 0 10px;font-family:var(--serif);font-size:27px;font-weight:500}
 .message-dialog-inner p{margin:0;color:var(--muted);font-size:13px;line-height:1.8;white-space:pre-wrap;overflow-wrap:anywhere}
 .message-dialog-confirm{width:100%;margin-top:24px;padding:13px 18px;border:0;border-radius:3px;color:var(--white);background:var(--green);font-weight:700;cursor:pointer}
+.story-panel:after,#storyProgress{display:none}
 @media(max-width:620px){.media-picker{align-items:flex-start}.media-choice-buttons{grid-template-columns:1fr}.memory-media img,.memory-media video{max-height:360px}}
 </style>
 </head>
@@ -287,11 +290,6 @@ stageAdminTools.innerHTML=
   '<button class="timeline-admin-button" id="editStage" type="button">编辑当前节点</button>'+
   '<button class="timeline-admin-button primary-stage" id="addStage" type="button">＋ 添加时间节点</button>';
 sectionHead.append(stageAdminTools);
-
-const stageVisualPlaceholder=document.createElement("div");
-stageVisualPlaceholder.className="stage-visual-placeholder";
-stageVisualPlaceholder.setAttribute("aria-hidden","true");
-document.getElementById("storyLead").insertAdjacentElement("afterend",stageVisualPlaceholder);
 
 const stageDialog=document.createElement("dialog");
 stageDialog.id="stageDialog";
@@ -448,7 +446,7 @@ mediaField.innerHTML=
   '<input class="media-input" id="memoryMedia" name="media" type="file" accept="image/*,video/*">'+
   '<div class="media-picker" id="mediaDropZone" role="button" tabindex="0"><span class="media-picker-icon" aria-hidden="true">＋</span>'+
   '<span class="media-picker-copy"><strong id="mediaPickerText">拖放照片或视频到这里</strong>'+
-  '<small>照片最大 10 MB；视频最大 50 MB。支持 MP4、WebM、MOV、M4V、OGG、MPEG、MKV，上传前会检查画面编码</small></span></div>'+
+  '<small>照片最大 10 MB；视频最大 50 MB。支持 MP4、WebM、MOV、M4V、OGG、MPEG、MKV</small></span></div>'+
   '<div class="media-choice-buttons"><button class="media-choice-button" id="choosePhoto" type="button">选择照片</button>'+
   '<button class="media-choice-button" id="chooseVideo" type="button">选择视频</button></div>'+
   '<div class="media-preview" id="mediaPreview" hidden></div>'+
@@ -489,60 +487,6 @@ function validateMediaFile(file){
   if(file.size>limit)throw new Error(mediaType==="image"?"照片不能超过 10 MB":"视频不能超过 50 MB");
   if(file.size===0)throw new Error("这个文件是空的，请重新选择");
   return{mediaType,mime,extension:FILE_EXTENSIONS[mime]};
-}
-
-async function detectVideoCodecMarker(file){
-  const sampleSize=2*1024*1024;
-  const slices=[file.slice(0,Math.min(sampleSize,file.size))];
-  if(file.size>sampleSize)slices.push(file.slice(Math.max(0,file.size-sampleSize),file.size));
-  const samples=await Promise.all(slices.map(slice=>slice.arrayBuffer().then(buffer=>new Uint8Array(buffer))));
-  const markers=["avc1","avc3","hvc1","hev1","av01","vp09","mp4v","M4S2"];
-  const contains=(bytes,text)=>{
-    const target=[...text].map(char=>char.charCodeAt(0));
-    outer:for(let index=0;index<=bytes.length-target.length;index++){
-      for(let offset=0;offset<target.length;offset++)if(bytes[index+offset]!==target[offset])continue outer;
-      return true;
-    }
-    return false;
-  };
-  return markers.find(marker=>samples.some(bytes=>contains(bytes,marker)))||"";
-}
-
-async function verifyVideoDecoding(file){
-  if(!file)return;
-  const codecMarker=await detectVideoCodecMarker(file);
-  if(codecMarker==="mp4v"||codecMarker==="M4S2"){
-    throw new Error("这个文件虽然是 MP4，但内部是 mp4v/M4S2 编码，浏览器无法正常显示画面。请先转换为 H.264/AAC MP4");
-  }
-  if(codecMarker==="hvc1"||codecMarker==="hev1"){
-    throw new Error("检测到 HEVC/H.265 编码，部分浏览器会黑屏。请先转换为 H.264/AAC MP4");
-  }
-  return new Promise((resolve,reject)=>{
-    const probe=document.createElement("video");
-    const objectUrl=URL.createObjectURL(file);
-    let finished=false;
-    const finish=error=>{
-      if(finished)return;
-      finished=true;
-      clearTimeout(timer);
-      probe.removeAttribute("src");
-      probe.load();
-      URL.revokeObjectURL(objectUrl);
-      if(error)reject(error);
-      else resolve();
-    };
-    const timer=setTimeout(()=>finish(new Error("视频解析超时，请转换为 H.264/AAC 编码的 MP4 后重试")),12000);
-    probe.preload="auto";
-    probe.muted=true;
-    probe.playsInline=true;
-    probe.addEventListener("loadeddata",()=>{
-      if(probe.videoWidth>0&&probe.videoHeight>0)finish();
-      else finish(new Error("没有检测到可播放的画面，请转换为 H.264/AAC 编码的 MP4"));
-    },{once:true});
-    probe.addEventListener("error",()=>finish(new Error("当前浏览器无法解析这个视频编码，请转换为 H.264/AAC 编码的 MP4")), {once:true});
-    probe.src=objectUrl;
-    probe.load();
-  });
 }
 
 function clearSelectedMedia(clearInput){
@@ -655,7 +599,7 @@ function makeMediaElement(memory){
     const showPlaybackError=()=>{
       status.hidden=false;
       status.classList.add("error");
-      status.textContent="视频画面无法解析。请将原文件转换为 H.264/AAC 编码的 MP4 后重新上传。";
+      status.textContent="当前浏览器无法直接播放这个视频，但原视频已经保留，可以使用下方入口打开或下载。";
     };
     video.addEventListener("loadeddata",()=>{status.hidden=true},{once:true});
     video.addEventListener("error",showPlaybackError);
@@ -675,8 +619,15 @@ function makeMediaElement(memory){
       },3500);
     });
     video.append(source);
+    const download=document.createElement("a");
+    download.className="video-download-link";
+    download.href=memory.mediaUrl;
+    download.target="_blank";
+    download.rel="noopener";
+    download.download=memory.mediaName||"video";
+    download.textContent="打开或下载原视频";
     shell.append(video,status);
-    figure.append(shell);
+    figure.append(shell,download);
   }
   const caption=document.createElement("figcaption");
   caption.textContent=(memory.mediaType==="image"?"照片":"视频")+(memory.mediaName?" · "+memory.mediaName:"");
@@ -831,12 +782,7 @@ form.addEventListener("submit",async event=>{
   submit.textContent=file?"正在上传……":"正在保存……";
   let uploadedPath="";
   try{
-    if(file&&mediaMeta.mediaType==="video"){
-      submit.textContent="正在检查视频……";
-      setUploadState("正在检查视频画面是否可播放",5);
-      await verifyVideoDecoding(file);
-      submit.textContent="正在上传……";
-    }
+    if(file&&mediaMeta.mediaType==="video")setUploadState("正在上传原视频",5);
     if(file){
       const uniqueId=crypto.randomUUID?crypto.randomUUID():Date.now()+"-"+Math.random().toString(16).slice(2);
       uploadedPath=currentUser.id+"/"+uniqueId+"."+mediaMeta.extension;

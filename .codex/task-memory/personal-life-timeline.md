@@ -1028,3 +1028,43 @@ Show upload errors above the memory dialog until manually dismissed, and offer m
 
 ### Notes
 - None recorded.
+
+## Checkpoint 2026-09-22T13:51:09+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+Removed blanket HEVC/M4S2 upload rejection, preserved original-video upload with playback fallback, and removed the stage placeholder plus story sequence markers.
+
+### Latest User Request
+Allow directly recorded mainstream videos to upload, remove the large empty image box, and remove 01/05 plus the large background sequence number.
+
+### Active Requirements
+- Do not reject an upload solely because its codec marker is HEVC/H.265, mp4v, or M4S2.
+- Do not show a decorative empty image placeholder when a stage has no image; hide story sequence markers.
+
+### Decisions And Rationale
+- Upload accepted original video files without a browser decode gate. If a viewer browser cannot decode the codec, display a clear message and an open/download-original link instead of blocking storage.
+
+### Stable Facts
+- MP4/MOV are containers; whether inline browser playback works depends on the internal codec and the viewer device/browser. Removing the gate fixes upload but cannot make an unsupported browser decode HEVC.
+
+### Files And Artifacts
+- index.html: removed codec scanning/decode rejection, added original-video fallback link, removed stageVisualPlaceholder creation, and hid storyProgress/story-panel numeric decoration.
+
+### Commands
+- None recorded.
+
+### Verification
+- JavaScript syntax check passed; git diff --check passed; old codec functions and placeholder creation no longer exist; one form submit listener remains. Visual browser test unavailable because iab browser was unavailable.
+
+### Open Issues And Risks
+- Cross-browser playback of every original codec still requires transcoding to a web codec such as H.264/AAC; current fallback preserves and exposes the original file.
+
+### Next Steps
+- Deploy and upload the original recorded video again; verify upload succeeds and test playback/download on the live site.
+
+### Notes
+- None recorded.
