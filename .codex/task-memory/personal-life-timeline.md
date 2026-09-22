@@ -946,3 +946,85 @@ Uploaded video plays as a black screen and has the wrong size. Diagnose and fix 
 
 ### Notes
 - None recorded.
+
+## Checkpoint 2026-09-22T10:52:53+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+Diagnosed the user-provided csgo.mp4 and added exact MP4 codec marker detection before upload.
+
+### Latest User Request
+The specific D:/录制/csgo.mp4 cannot upload even though it has an .mp4 extension.
+
+### Active Requirements
+- None recorded.
+
+### Decisions And Rationale
+- Keep the decode gate because allowing this file would recreate the black-screen problem; add explicit mp4v/M4S2 and HEVC messages instead.
+
+### Stable Facts
+- csgo.mp4 is 21.33 MB, 1918x1078, 24.555 seconds, about 24.72 fps and 6.95 Mbps video bitrate. It is below the 50 MB limit.
+- The file contains mp4v and M4S2 video identifiers (MPEG-4 Part 2) and mp4a audio, not H.264/AVC. This explains prior black playback and the new pre-upload rejection.
+
+### Files And Artifacts
+- index.html: scans the first/last 2 MB for codec markers and gives targeted conversion guidance before the browser decode probe.
+
+### Commands
+- None recorded.
+
+### Verification
+- Read-only local metadata inspection completed; module passes node --check and codec-detection structural checks.
+
+### Open Issues And Risks
+- None recorded.
+
+### Next Steps
+- Convert the original to H.264 video plus AAC audio, then upload the converted MP4.
+
+### Notes
+- None recorded.
+
+## Checkpoint 2026-09-22T11:45:48+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+Made upload errors modal and persistent, expanded media picking and formats, synchronized Supabase MIME rules, and removed a duplicate legacy submit handler.
+
+### Latest User Request
+Show upload errors above the memory dialog until manually dismissed, and offer more video selection options.
+
+### Active Requirements
+- Validation and upload errors must stay visible above the memory dialog until the user clicks 我知道了.
+- Owner can choose photos or videos separately or drag/drop; one media file per memory remains.
+
+### Decisions And Rationale
+- Use a second native modal dialog for errors so it enters the top layer above the existing memory dialog; Escape is disabled and explicit confirmation closes it.
+- Accept MP4, WebM, OGG, MOV, M4V, MPEG, and MKV containers but retain browser decode/codec validation to prevent black playback.
+
+### Stable Facts
+- D:/录制/csgo.mp4 uses mp4v/M4S2 video and must be converted to H.264/AAC despite its .mp4 extension.
+
+### Files And Artifacts
+- index.html: persistent top-layer error dialog, separate photo/video pickers, drag/drop support, expanded MIME mapping, decode validation, and one submit handler only.
+- supabase-setup.sql: refreshed life_memories media MIME constraint and storage bucket allowed_mime_types including video/x-matroska.
+
+### Commands
+- None recorded.
+
+### Verification
+- JavaScript module syntax check passed; git diff --check passed; confirmed one memoryForm submit listener; browser visual verification unavailable because the in-app browser was unavailable.
+
+### Open Issues And Risks
+- Run the updated supabase-setup.sql in Supabase before newly added container MIME types can be accepted by Storage/database constraints.
+
+### Next Steps
+- Convert csgo.mp4 to H.264/AAC MP4, rerun supabase-setup.sql, deploy, and test the persistent error dialog plus upload chooser in the live site.
+
+### Notes
+- None recorded.

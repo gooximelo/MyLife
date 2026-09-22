@@ -121,6 +121,18 @@ alter table public.life_memories add column if not exists media_size bigint;
 alter table public.life_memories add column if not exists stage_id uuid
   references public.life_stages(id);
 
+-- Refresh the MIME constraint when new browser-playable formats are added.
+alter table public.life_memories drop constraint if exists life_memories_media_mime_check;
+alter table public.life_memories
+  add constraint life_memories_media_mime_check
+  check (
+    media_mime is null or media_mime in (
+      'image/jpeg', 'image/png', 'image/webp', 'image/gif',
+      'video/mp4', 'video/webm', 'video/ogg',
+        'video/quicktime', 'video/x-m4v', 'video/mpeg', 'video/x-matroska'
+    )
+  );
+
 -- Link memories created by the previous fixed five-node version.
 update public.life_memories as memory
 set stage_id = timeline.id
@@ -154,7 +166,8 @@ begin
       check (
         media_mime is null or media_mime in (
           'image/jpeg', 'image/png', 'image/webp', 'image/gif',
-          'video/mp4', 'video/webm', 'video/ogg'
+          'video/mp4', 'video/webm', 'video/ogg',
+          'video/quicktime', 'video/x-m4v', 'video/mpeg', 'video/x-matroska'
         )
       );
   end if;
@@ -256,7 +269,8 @@ values (
   52428800,
   array[
     'image/jpeg', 'image/png', 'image/webp', 'image/gif',
-    'video/mp4', 'video/webm', 'video/ogg'
+    'video/mp4', 'video/webm', 'video/ogg',
+    'video/quicktime', 'video/x-m4v', 'video/mpeg', 'video/x-matroska'
   ]::text[]
 )
 on conflict (id) do update
