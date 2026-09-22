@@ -1308,3 +1308,42 @@ Explain how the frontend saves, retrieves, and matches images/videos between Sup
 
 ### Notes
 - None recorded.
+
+## Checkpoint 2026-09-22T17:03:24+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+Removed all five red-boxed texts from the ending quote and footer, cleaned associated CSS and removed the obsolete currentYear script reference.
+
+### Latest User Request
+Delete all text marked by red boxes in the ending section and footer.
+
+### Active Requirements
+- Keep unboxed quote, visitor count, thank-you sentence, and the right-side footer sentence.
+
+### Decisions And Rationale
+- Removed the generated vertical label pseudo-element and real text nodes; realigned remaining quote/footer text so deleted content leaves no awkward gap.
+
+### Stable Facts
+- None recorded.
+
+### Files And Artifacts
+- index.html: ending quote and footer text cleanup, CSS alignment updates, obsolete currentYear code removal.
+
+### Commands
+- None recorded.
+
+### Verification
+- Target strings absent by rg; git diff --check passed; embedded module JavaScript syntax check passed. In-app browser was unavailable, so no live visual inspection was possible.
+
+### Open Issues And Risks
+- None recorded.
+
+### Next Steps
+- Deploy or refresh the site and visually confirm the ending section on desktop and mobile.
+
+### Notes
+- None recorded.
