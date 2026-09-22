@@ -1107,3 +1107,42 @@ Determine why uploaded videos still cannot play, and make the UI provide only a 
 
 ### Notes
 - None recorded.
+
+## Checkpoint 2026-09-22T14:37:01+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+Made rendered videos adapt to intrinsic dimensions and viewport height instead of forcing every file into a large fixed 16:9 player.
+
+### Latest User Request
+Fix the playable transcoded video's oversized and mismatched display dimensions.
+
+### Active Requirements
+- Video player must preserve each video's real aspect ratio, remain fully visible, and adapt across landscape, portrait, desktop, mobile, and window resizing.
+
+### Decisions And Rationale
+- Read videoWidth/videoHeight on loadedmetadata, set the shell aspect-ratio to the intrinsic ratio, and calculate figure max-width using a 760px width cap plus a 68vh/620px height cap; recalculate after window resize.
+
+### Stable Facts
+- None recorded.
+
+### Files And Artifacts
+- index.html: updated video-media CSS, added fitVideoFrame and a debounced resize handler, and attached fitting to loadedmetadata.
+
+### Commands
+- None recorded.
+
+### Verification
+- JavaScript syntax check passed; git diff --check passed; relevant CSS and event binding confirmed. In-app visual browser unavailable.
+
+### Open Issues And Risks
+- Live authenticated playback should be visually checked after deployment because the browser test surface was unavailable.
+
+### Next Steps
+- Deploy, refresh the live page, and test one landscape and one portrait transcoded video at desktop and mobile widths.
+
+### Notes
+- None recorded.
