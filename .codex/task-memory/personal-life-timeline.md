@@ -1466,3 +1466,82 @@ Set a clear announcement display policy: show current-to-one-month content on th
 
 ### Notes
 - None recorded.
+
+## Checkpoint 2026-09-23T14:00:29+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+公告栏观看者视角优化：移除暂停轮播按钮，修复悬停导致轮播停住，改成持续自动往返滚动，左右箭头快速滑过一张公告卡片。
+
+### Latest User Request
+移除暂停轮播，修复公告无法轮播，左右按钮点击快速加速，自动轮播略微提速。
+
+### Active Requirements
+- None recorded.
+
+### Decisions And Rationale
+- 不再因鼠标悬停、焦点或指针按下停止轮播；仅在页面隐藏、减少动态效果或公告编辑弹窗打开时暂停。
+
+### Stable Facts
+- None recorded.
+
+### Files And Artifacts
+- index.html
+
+### Commands
+- None recorded.
+
+### Verification
+- git diff --check 通过；旧暂停按钮及事件处理已移除；自动滚动速度 56px/s；箭头动画 300ms；in-app browser unavailable, 未做现场视觉测试。
+
+### Open Issues And Risks
+- 需要用户在网站实际环境确认轮播视觉效果。
+
+### Next Steps
+- None recorded.
+
+### Notes
+- None recorded.
+
+## Checkpoint 2026-09-23T14:13:35+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+为网站首页、登录页、重置密码页、历史公告页配置 SunShine.png 浏览器标签页图标。
+
+### Latest User Request
+将新添加的 Sunshine 图片设置为网站页面上的图标。
+
+### Active Requirements
+- 同一图标覆盖所有现有页面；保留之前的页面和轮播修改。
+
+### Decisions And Rationale
+- 使用工作区根目录现有的 SunShine.png（实际大小写）；根页面用相对路径，子目录页面用 ../SunShine.png。
+
+### Stable Facts
+- None recorded.
+
+### Files And Artifacts
+- SunShine.png: 现有 200×200 PNG，尚未纳入 Git 跟踪。
+- index.html, login/index.html, reset-password/index.html, announcements/index.html: 添加 favicon link。
+
+### Commands
+- None recorded.
+
+### Verification
+- 四处图标引用核对；根目录与子目录相对路径存在；git diff --check 通过。
+
+### Open Issues And Risks
+- 部署时需确保 SunShine.png 随页面一起上传；浏览器可能缓存旧标签图标。
+
+### Next Steps
+- None recorded.
+
+### Notes
+- None recorded.
