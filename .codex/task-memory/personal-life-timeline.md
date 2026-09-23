@@ -1426,3 +1426,43 @@ Create a text-focused announcement board like the reference image, managed by th
 
 ### Notes
 - None recorded.
+
+## Checkpoint 2026-09-23T11:44:14+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+Reworked announcements to remove cloned cards, show only the real announcements from the last 30 days on the homepage, auto-advance one card every 7 seconds only when overflow exists, and added a separate monthly history archive page for older announcements.
+
+### Latest User Request
+Set a clear announcement display policy: show current-to-one-month content on the homepage, move older content into a separate history board reached by a button, and rethink the layout.
+
+### Active Requirements
+- Historical announcements must not appear on the homepage; users must click into a separate history view. Keep administrator publishing/management and viewer read-only permissions.
+
+### Decisions And Rationale
+- Homepage has no hard record cap: every announcement dated within the last 30 days is eligible. Desktop shows about three cards at once, mobile one; autoplay only activates on overflow and advances every 7 seconds. Two visible cards stay static instead of being duplicated. Older-than-cutoff records are dynamically archived, not physically moved to another table.
+
+### Stable Facts
+- The same site_announcements table powers both views. Homepage filters in the browser for cutoff <= published_on <= today; history page queries published_on < cutoff directly from Supabase.
+
+### Files And Artifacts
+- index.html: removed seamless-clone marquee, added 30-day filter/count, previous/pause/next controls, 7-second real-card scroller, and history link/count.
+- announcements/index.html: new authenticated monthly archive page with return navigation, account switching, owner-only edit/delete, and responsive layout.
+
+### Commands
+- None recorded.
+
+### Verification
+- Both module scripts passed JavaScript syntax checks; git diff --check passed; strict 30-day boundary test passed; old copy/marquee identifiers are absent; cross-page relative links and Supabase history query were verified. In-app browser was unavailable, so live visual screenshot verification was not possible.
+
+### Open Issues And Risks
+- None recorded.
+
+### Next Steps
+- Deploy/refresh the site and verify the homepage/history appearance with the existing two announcements; no additional SQL is required.
+
+### Notes
+- None recorded.
