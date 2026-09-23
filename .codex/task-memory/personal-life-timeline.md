@@ -1625,3 +1625,83 @@ Set a clear announcement display policy: show current-to-one-month content on th
 
 ### Notes
 - None recorded.
+
+## Checkpoint 2026-09-23T16:02:23+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+在近期动态与时间轴之间新增深色关于我总述区，预留标题和多段正文排版；管理员可通过弹窗填写并保存到 Supabase，访客只读。
+
+### Latest User Request
+参考 ABOUT ME 样式留出一块总述区域，标题和正文由用户之后自行输入。
+
+### Active Requirements
+- 不代写用户经历；未填写前只向管理员显示编辑占位，访客不见空区；已填写内容跨设备可见；只有指定管理员账号可写。
+
+### Decisions And Rationale
+- 使用独立的 public.site_overview 单行表和 RLS，登录用户可读，只有 1223157269@qq.com 的 JWT 可插入或更新；正文按空行分段并用 textContent 安全渲染。
+
+### Stable Facts
+- None recorded.
+
+### Files And Artifacts
+- index.html: 深色总述区、标题及正文样式、管理员编辑弹窗、加载与保存逻辑。
+- supabase-overview.sql: 可重复运行的新表与权限策略，不改旧表。
+
+### Commands
+- None recorded.
+
+### Verification
+- 首页模块 JavaScript 语法与 HTML 位置检查通过；管理员空占位、访客未发布隐藏、双段正文渲染的隔离测试通过；git diff --check 通过。
+
+### Open Issues And Risks
+- 需用户在 Supabase SQL Editor 手动运行 supabase-overview.sql 后才能保存；未做登录后浏览器实测。
+
+### Next Steps
+- 用户运行 SQL、部署代码后，以管理员登录填写标题正文，并用访客账号确认只读展示。
+
+### Notes
+- None recorded.
+
+## Checkpoint 2026-09-23T16:45:03+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+Added a full-width dark footer like section with pink heart button, account-based toggle, and global count from Supabase.
+
+### Latest User Request
+At the bottom add an interactive like button and text styled like the reference screenshot.
+
+### Active Requirements
+- None recorded.
+
+### Decisions And Rationale
+- Store one like per authenticated user in public.site_likes; expose only aggregate count through a security-definer RPC, with own-row RLS policies.
+
+### Stable Facts
+- None recorded.
+
+### Files And Artifacts
+- index.html
+- supabase-likes.sql
+
+### Commands
+- None recorded.
+
+### Verification
+- Homepage JavaScript syntax check passed; git diff --check passed.
+
+### Open Issues And Risks
+- User must run supabase-likes.sql in Supabase SQL Editor before the live like button works.
+
+### Next Steps
+- After SQL is applied, deploy index.html and test from two accounts for like/unlike and shared count.
+
+### Notes
+- None recorded.
