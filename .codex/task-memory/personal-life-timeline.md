@@ -1347,3 +1347,82 @@ Delete all text marked by red boxes in the ending section and footer.
 
 ### Notes
 - None recorded.
+
+## Checkpoint 2026-09-23T09:45:58+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+Audited the current Supabase browser session behavior and documented options for automatic logout; no code changes were made.
+
+### Latest User Request
+Ask how to make users automatically sign out and log in again after a defined duration.
+
+### Active Requirements
+- Do not make users re-login every one or two days; retain a reasonably long login period.
+
+### Decisions And Rationale
+- For the current static frontend and likely Free Supabase plan, use a client-side absolute login deadline checked on page load, pageshow/visibility changes, and periodically; keep persistSession and autoRefreshToken enabled. Prefer a 30-day absolute lifetime unless the user chooses another period. Pro plans can enforce time-boxed/inactivity sessions server-side.
+
+### Stable Facts
+- Current createClient config enables persistSession and autoRefreshToken in index.html, login/index.html, and reset-password/index.html; this stores the session and continuously refreshes short-lived access tokens.
+
+### Files And Artifacts
+- index.html and login/index.html: inspected only, not modified.
+
+### Commands
+- None recorded.
+
+### Verification
+- Reviewed current authentication code and Supabase official sessions, JavaScript auth, sign-out, and pricing documentation.
+
+### Open Issues And Risks
+- Client-side timeout is a UX/session cleanup control rather than tamper-proof server enforcement; Supabase Pro session timeout is needed for strict server-side enforcement.
+
+### Next Steps
+- Have the user choose the duration, then implement the shared timeout helper across login, main page, and reset-password flow.
+
+### Notes
+- None recorded.
+
+## Checkpoint 2026-09-23T10:48:09+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+Added a Supabase-backed recent-updates announcement board between the hero and timeline, with slow seamless text-card rotation and owner-only publishing, editing, and deletion.
+
+### Latest User Request
+Create a text-focused announcement board like the reference image, managed by the administrator and automatically rotating at a slow speed.
+
+### Active Requirements
+- Announcements are primarily text; rotation must be slow; only the owner can publish/manage while all authenticated users can read.
+
+### Decisions And Rationale
+- Used a 72-second-or-longer seamless two-group marquee, paused on hover/focus or by a visible control. Added no seed announcements; the owner creates all content. Created a standalone SQL migration so the user does not need to rerun the full setup file.
+
+### Stable Facts
+- The announcement table is site_announcements; authenticated users have SELECT, while insert/update/delete RLS requires JWT email 1223157269@qq.com and author_id=auth.uid().
+
+### Files And Artifacts
+- index.html: announcement section, responsive sticky-note styling, slow rotation, publish/edit/delete dialog and Supabase loading.
+- supabase-announcements.sql: standalone idempotent table, index, RLS policies, grants, and updated_at trigger.
+
+### Commands
+- None recorded.
+
+### Verification
+- JavaScript syntax passed; git diff --check passed; database/UI linkage strings and RLS policies verified. In-app browser was unavailable, so live visual verification was not possible.
+
+### Open Issues And Risks
+- The user must run supabase-announcements.sql once in Supabase SQL Editor before publishing announcements.
+
+### Next Steps
+- Run supabase-announcements.sql, deploy or refresh the site, sign in as the owner, and publish the first announcement.
+
+### Notes
+- None recorded.

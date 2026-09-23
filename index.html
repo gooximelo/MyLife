@@ -157,6 +157,42 @@ dialog{max-height:calc(100vh - 32px);overflow:auto}
 .message-dialog-inner p{margin:0;color:var(--muted);font-size:13px;line-height:1.8;white-space:pre-wrap;overflow-wrap:anywhere}
 .message-dialog-confirm{width:100%;margin-top:24px;padding:13px 18px;border:0;border-radius:3px;color:var(--white);background:var(--green);font-weight:700;cursor:pointer}
 .story-panel:after,#storyProgress{display:none}
+/* 近况公告栏：缓慢循环的文字便签 */
+.updates-section{padding:82px 0 104px;border-top:1px solid var(--line);overflow:hidden}
+.updates-head{display:flex;align-items:end;justify-content:space-between;gap:36px;margin-bottom:42px}
+.updates-heading .section-number{letter-spacing:.14em}
+.updates-heading h2{font-size:clamp(36px,4.8vw,56px)}
+.updates-heading p{max-width:560px;margin:16px 0 0;color:var(--muted);font-size:14px;line-height:1.8}
+.updates-controls{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap}
+.updates-control{min-height:42px;padding:10px 16px;border:1px solid var(--line);border-radius:99px;color:var(--green);background:rgba(255,253,248,.72);font-size:12px;font-weight:700;cursor:pointer;transition:.2s}
+.updates-control:hover,.updates-control:focus-visible{border-color:var(--green);background:var(--white);transform:translateY(-1px)}
+.updates-control.publish{border-color:var(--green);color:var(--white);background:var(--green)}
+.updates-window{position:relative;width:100%;min-height:280px;overflow:hidden;padding:18px 0 28px}
+.updates-window:before,.updates-window:after{content:"";position:absolute;z-index:3;top:0;bottom:0;width:max(38px,6vw);pointer-events:none}
+.updates-window:before{left:0;background:linear-gradient(90deg,var(--paper),rgba(244,240,231,0))}
+.updates-window:after{right:0;background:linear-gradient(270deg,var(--paper),rgba(244,240,231,0))}
+.updates-track{display:flex;width:max-content;animation:updates-marquee var(--updates-duration,72s) linear infinite;will-change:transform}
+.updates-group{display:flex;flex:none;gap:24px;padding-right:24px}
+.updates-window:hover .updates-track,.updates-window:focus-within .updates-track,.updates-window.is-paused .updates-track{animation-play-state:paused}
+.update-card{--note:#e0eadf;position:relative;display:flex;width:320px;min-height:238px;flex:none;flex-direction:column;padding:42px 30px 25px;background:var(--note);box-shadow:0 16px 35px rgba(52,43,30,.13);transform:rotate(-.7deg);transition:transform .25s,box-shadow .25s}
+.update-card.tone-warm{--note:#f5e5ae;transform:rotate(.65deg)}
+.update-card.tone-rose{--note:#efd0d0;transform:rotate(-.35deg)}
+.update-card.tone-sage{--note:#d4e7dc;transform:rotate(.45deg)}
+.update-card:hover,.update-card:focus-within{z-index:2;transform:translateY(-5px) rotate(0);box-shadow:0 22px 42px rgba(52,43,30,.18)}
+.update-pin{position:absolute;top:-10px;left:50%;width:20px;height:20px;border-radius:50%;background:#c75238;box-shadow:0 4px 9px rgba(118,49,35,.3),inset 0 2px 3px rgba(255,255,255,.42);transform:translateX(-50%)}
+.update-kicker{display:block;margin-bottom:15px;color:rgba(24,33,31,.55);font-size:10px;font-weight:800;letter-spacing:.15em;text-transform:uppercase}
+.update-card h3{margin:0;font-family:var(--serif);font-size:24px;font-weight:600;line-height:1.35}
+.update-card p{margin:13px 0 24px;color:#4f5753;font-size:13px;line-height:1.75;white-space:pre-wrap;overflow-wrap:anywhere}
+.update-card-meta{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:auto;color:rgba(24,33,31,.55);font-size:11px}
+.update-card-actions{display:flex;gap:10px}
+.update-card-action{padding:5px 0;border:0;border-bottom:1px solid transparent;color:var(--green);background:none;font-size:11px;cursor:pointer}
+.update-card-action:hover,.update-card-action:focus-visible{border-bottom-color:currentColor}
+.update-card-action.delete{color:#9b4d3c}
+.updates-empty{width:min(1240px,calc(100vw - 48px));margin:0 auto;padding:62px 28px;border:1px dashed rgba(46,89,77,.28);color:var(--muted);background:rgba(255,253,248,.5);text-align:center;line-height:1.8}
+@keyframes updates-marquee{to{transform:translateX(-50%)}}
+#announcementDialog textarea{min-height:150px}
+@media(max-width:700px){.updates-section{padding:68px 0 82px}.updates-head{align-items:flex-start;flex-direction:column;margin-bottom:30px}.updates-controls{justify-content:flex-start}.updates-window{min-height:265px}.update-card{width:278px;min-height:222px;padding:39px 24px 22px}.update-card h3{font-size:21px}.updates-empty{width:calc(100vw - 28px)}}
+@media(prefers-reduced-motion:reduce){.updates-track{animation:none}.updates-window:before,.updates-window:after{display:none}.updates-window{overflow-x:auto;padding-inline:14px}.updates-control[data-motion]{display:none}}
 @media(max-width:620px){.media-picker{align-items:flex-start}.media-choice-buttons{grid-template-columns:1fr}.memory-media img,.memory-media video{max-height:360px}}
 </style>
 </head>
@@ -165,10 +201,12 @@ dialog{max-height:calc(100vh - 32px);overflow:auto}
 <header class="shell"><nav class="nav" aria-label="账号导航"><div class="nav-account"><details class="account-menu" id="accountMenu"><summary aria-label="打开账户菜单"><span class="account-summary"><small>当前账号</small><strong id="accountEmailShort">正在读取……</strong></span><span class="account-chevron" aria-hidden="true">⌄</span></summary><div class="account-menu-panel"><span class="account-menu-label">SIGNED IN AS</span><strong class="account-menu-email" id="accountEmail">正在读取账号……</strong><span class="access-badge" id="accessBadge">阅读模式</span><div class="account-menu-actions"><button id="switchAccount" type="button">切换账号 <span aria-hidden="true">↗</span></button></div></div></details></div></nav></header>
 <main id="top">
 <section class="hero shell"><div><div class="eyebrow">My life, in chapters</div><h1>时间向前，<br>故事<em>留下来</em>。</h1><p class="hero-copy">这里收藏我走过的路、遇见的人，以及那些塑造了“我”的微小瞬间。它不是一份写完的简历，而是一条仍在生长的生命线。</p><div class="hero-actions"><a class="primary" href="#timeline">开始阅读 <span aria-hidden="true">&darr;</span></a></div></div><div class="hero-art" aria-hidden="true"><div class="arch"><span class="sun"></span><span class="path"></span></div></div></section>
+<section class="updates-section" id="updates"><div class="shell"><header class="updates-head"><div class="updates-heading"><span class="section-number">RECENT UPDATES</span><h2>最近，在做什么</h2><p>一些正在发生的小事、刚完成的计划，以及生活留下的新消息。</p></div><div class="updates-controls"><button class="updates-control" id="toggleUpdatesMotion" data-motion type="button" aria-pressed="false">暂停轮播</button><button class="updates-control publish owner-only" id="openAnnouncementDialog" type="button" hidden>＋ 发布近况</button></div></header></div><div class="updates-window" id="updatesWindow" aria-label="最近动态公告栏"><div class="updates-track" id="updatesTrack"></div></div></section>
 <section class="timeline-section" id="timeline"><div class="shell"><header class="section-head"><div><span class="section-number">01 / CHAPTERS</span><h2>沿着时间，认识我</h2></div><p class="section-note">点击图中的任一节点，查看那段时光里的故事。现在的文字只是一个起点，你可以慢慢把它们换成真正属于你的记忆。</p></header><div class="timeline-layout"><div class="stage-graph" id="stageGraph"><div class="graph-track" id="graphTrack"><svg class="graph-line" id="graphSvg" viewBox="0 0 1200 320" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path class="graph-base" id="graphBase" d="" vector-effect="non-scaling-stroke"/><path class="graph-progress" id="graphProgress" d="" pathLength="1" vector-effect="non-scaling-stroke"/></svg><div class="stage-list" id="stageList" role="tablist" aria-label="人生阶段" aria-orientation="horizontal"></div></div></div><article class="story-panel" id="storyPanel" role="tabpanel" tabindex="0" data-index="01"><div class="story-kicker"><span id="storyYears"></span><span id="storyProgress"></span></div><h3 class="story-title" id="storyTitle"></h3><p class="story-lead" id="storyLead"></p><div class="story-actions"><button class="stage-add-memory js-open-dialog owner-only" id="stageAddMemory" type="button" hidden>＋ 添加本阶段记忆</button></div><div class="memory-list" id="memoryList"></div></article></div></div></section>
 <section class="quote-section shell" id="epilogue"><div class="quote-card"><div class="quote-side" aria-hidden="true"></div><div class="quote-copy"><blockquote>&ldquo;人不是活一辈子，不是活几年、几月、几天，而是活那么几个瞬间。&rdquo;</blockquote><div class="quote-meta"><span><strong>愿每个瞬间，都值得被记住。</strong></span></div></div></div></section>
 </main>
 <footer class="site-footer"><div class="shell"><div class="visit-card"><div class="visit-label"><span class="live-dot" aria-hidden="true"></span><div><p>谢谢你，再一次来到我的故事里。</p></div></div><div class="visit-count" title="当前浏览器中的累计到访次数" aria-live="polite" aria-atomic="true"><span>此设备第</span><strong id="visitorCount">------</strong><span>次到访</span></div></div><div class="footer-bottom"><span>过去成为故事，未来正在发生。</span></div></div></footer>
+<dialog id="announcementDialog" aria-labelledby="announcementDialogTitle"><form class="dialog-inner" id="announcementForm"><div class="dialog-head"><div><span>RECENT UPDATE</span><h3 id="announcementDialogTitle">发布一条近况</h3><p class="dialog-context" id="announcementDialogContext">这条内容会展示在首页公告栏</p></div><button class="icon-button" type="button" id="closeAnnouncementDialog" aria-label="关闭">&#215;</button></div><label>日期<input type="date" name="publishedOn" required></label><label>标题<input name="title" placeholder="例如：完成了网站的新页面" maxlength="60" required></label><label>近况内容<textarea name="content" placeholder="简单记录最近完成了什么、正在做什么……" maxlength="600" required></textarea></label><div class="stage-dialog-actions"><button class="secondary" id="cancelAnnouncementDialog" type="button">取消</button><button class="primary" id="saveAnnouncement" type="submit">发布近况 <span aria-hidden="true">&rarr;</span></button></div></form></dialog>
 <dialog id="memoryDialog" aria-labelledby="dialogTitle"><form class="dialog-inner" id="memoryForm"><div class="dialog-head"><div><span>NEW MEMORY</span><h3 id="dialogTitle">写下一段记忆</h3><p class="dialog-context" id="dialogStage">将写入：童年</p></div><button class="icon-button" type="button" id="closeDialog" aria-label="关闭">&#215;</button></div><div class="form-row"><label>时间<input name="date" placeholder="例如：2018" maxlength="20" required></label><label>标签<input name="tag" placeholder="例如：成长" maxlength="12"></label></div><label>这段故事的标题<input name="title" placeholder="给这个瞬间起一个名字" maxlength="40" required></label><label>发生了什么<textarea name="text" placeholder="写下当时的地点、人物、感受……" maxlength="260" required></textarea></label><div class="dialog-actions"><span class="save-note">保存后所有读者都能看到</span><button class="primary" type="submit">保存记忆 <span aria-hidden="true">&rarr;</span></button></div></form></dialog><div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true">记忆已保存</div>
 <script type="module">
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
@@ -198,6 +236,9 @@ let isOwner=false;
 let previewObjectUrl="";
 let isSavingMemory=false;
 let selectedMediaFile=null;
+let announcements=[];
+let announcementTableReady=true;
+let editingAnnouncementId=null;
 
 async function loadRemoteStages(){
   const{data,error}=await supabase.from("life_stages")
@@ -245,10 +286,81 @@ async function loadRemoteMemories(){
     };
   }));
 }
+async function loadRemoteAnnouncements(){
+  const{data,error}=await supabase.from("site_announcements")
+    .select("id,title,content,published_on,created_at")
+    .order("published_on",{ascending:false})
+    .order("created_at",{ascending:false});
+  if(error)throw error;
+  announcements=(data||[]).map(item=>({
+    id:item.id,
+    title:item.title,
+    content:item.content,
+    publishedOn:item.published_on,
+    createdAt:item.created_at
+  }));
+  announcementTableReady=true;
+}
 const stageList=document.getElementById("stageList"),storyPanel=document.getElementById("storyPanel"),memoryList=document.getElementById("memoryList"),dialog=document.getElementById("memoryDialog"),form=document.getElementById("memoryForm");
 const stageGraph=document.getElementById("stageGraph"),graphTrack=document.getElementById("graphTrack"),graphSvg=document.getElementById("graphSvg"),graphBase=document.getElementById("graphBase"),graphProgress=document.getElementById("graphProgress");
+const updatesWindow=document.getElementById("updatesWindow"),updatesTrack=document.getElementById("updatesTrack"),toggleUpdatesMotion=document.getElementById("toggleUpdatesMotion");
+const announcementDialog=document.getElementById("announcementDialog"),announcementForm=document.getElementById("announcementForm"),saveAnnouncementButton=document.getElementById("saveAnnouncement");
 function allMemories(index){const stage=stages[index];return stage?[...stage.memories,...customMemories.filter(item=>item.stageId===stage.id)]:[]}
 function escapeHtml(value){return String(value).replace(/[&<>'"]/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[char]))}
+function formatAnnouncementDate(value){
+  const date=new Date(String(value)+"T00:00:00");
+  if(Number.isNaN(date.getTime()))return String(value||"");
+  return new Intl.DateTimeFormat("zh-CN",{year:"numeric",month:"short",day:"numeric"}).format(date);
+}
+function sortAnnouncements(){
+  announcements.sort((a,b)=>String(b.publishedOn).localeCompare(String(a.publishedOn))||String(b.createdAt).localeCompare(String(a.createdAt)));
+}
+function localToday(){
+  const now=new Date(),pad=value=>String(value).padStart(2,"0");
+  return now.getFullYear()+"-"+pad(now.getMonth()+1)+"-"+pad(now.getDate());
+}
+function announcementCardMarkup(item,index,interactive){
+  const tones=["tone-sage","tone-warm","tone-rose"];
+  const actions=isOwner&&interactive
+    ?'<span class="update-card-actions"><button class="update-card-action" type="button" data-announcement-action="edit" data-id="'+escapeHtml(item.id)+'">编辑</button><button class="update-card-action delete" type="button" data-announcement-action="delete" data-id="'+escapeHtml(item.id)+'">删除</button></span>'
+    :"";
+  return '<article class="update-card '+tones[index%tones.length]+'" tabindex="'+(interactive?"0":"-1")+'"><span class="update-pin" aria-hidden="true"></span><span class="update-kicker">近期动态</span><h3>'+escapeHtml(item.title)+'</h3><p>'+escapeHtml(item.content)+'</p><div class="update-card-meta"><time datetime="'+escapeHtml(item.publishedOn)+'">'+escapeHtml(formatAnnouncementDate(item.publishedOn))+'</time>'+actions+'</div></article>';
+}
+function renderAnnouncements(){
+  updatesWindow.classList.remove("is-paused","is-static");
+  toggleUpdatesMotion.setAttribute("aria-pressed","false");
+  toggleUpdatesMotion.textContent="暂停轮播";
+  if(!announcements.length){
+    const message=isOwner&&!announcementTableReady?"公告栏尚未连接数据库，请先运行 supabase-announcements.sql。":"最近还没有发布新动态。";
+    updatesTrack.style.removeProperty("--updates-duration");
+    updatesTrack.innerHTML='<div class="updates-empty">'+escapeHtml(message)+'</div>';
+    updatesWindow.classList.add("is-static");
+    toggleUpdatesMotion.disabled=true;
+    toggleUpdatesMotion.textContent="暂无轮播";
+    return;
+  }
+  const copiesPerGroup=Math.max(1,Math.ceil(4/announcements.length));
+  const displayItems=Array.from({length:copiesPerGroup},()=>announcements).flat();
+  const primary=displayItems.map((item,index)=>announcementCardMarkup(item,index,true)).join("");
+  const duplicate=displayItems.map((item,index)=>announcementCardMarkup(item,index,false)).join("");
+  updatesTrack.style.setProperty("--updates-duration",Math.max(72,displayItems.length*18)+"s");
+  updatesTrack.innerHTML='<div class="updates-group">'+primary+'</div><div class="updates-group" aria-hidden="true">'+duplicate+'</div>';
+  toggleUpdatesMotion.disabled=reduceMotion();
+  if(reduceMotion())toggleUpdatesMotion.textContent="已关闭动态";
+}
+function openAnnouncementEditor(item=null){
+  if(!isOwner){showToast("当前账号只有阅读权限");return}
+  editingAnnouncementId=item?.id||null;
+  announcementForm.reset();
+  document.getElementById("announcementDialogTitle").textContent=item?"编辑这条近况":"发布一条近况";
+  document.getElementById("announcementDialogContext").textContent=item?"保存后公告栏会立即更新":"这条内容会展示在首页公告栏";
+  saveAnnouncementButton.firstChild.textContent=item?"保存修改 ":"发布近况 ";
+  announcementForm.elements.publishedOn.value=item?.publishedOn||localToday();
+  announcementForm.elements.title.value=item?.title||"";
+  announcementForm.elements.content.value=item?.content||"";
+  announcementDialog.showModal();
+  setTimeout(()=>announcementForm.elements.title.focus(),80);
+}
 const NODE_X=[12,31,50,69,88],NODE_Y=[0,-44,26,-18,40];
 const reduceMotion=()=>window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 function drawGraphLine(animate){
@@ -278,6 +390,72 @@ function renderButtons(){if(!stageList.childElementCount)stageList.innerHTML=sta
 function renderStory(index){const changed=index!==activeStage;activeStage=index;const s=stages[index],memories=allMemories(index);storyPanel.classList.remove("is-changing");void storyPanel.offsetWidth;storyPanel.classList.add("is-changing");storyPanel.setAttribute("aria-labelledby",`stage-tab-${index}`);storyPanel.dataset.index=String(index+1).padStart(2,"0");document.getElementById("storyYears").textContent=s.years;document.getElementById("storyProgress").textContent=`${String(index+1).padStart(2,"0")} / ${String(stages.length).padStart(2,"0")}`;document.getElementById("storyTitle").textContent=s.title;document.getElementById("storyLead").textContent=s.lead;const addButton=document.getElementById("stageAddMemory");addButton.textContent=`＋ 添加“${s.name}”记忆`;addButton.setAttribute("aria-label",`添加一条${s.name}阶段的记忆`);memoryList.innerHTML=memories.length?memories.map((m,i)=>`<div class="memory" style="animation-delay:${i*60}ms"><div class="memory-date">${escapeHtml(m.date)}</div><div><h4>${escapeHtml(m.title)}</h4><p>${escapeHtml(m.text)}</p>${isOwner&&m.custom?`<button class="delete-memory" data-id="${escapeHtml(m.id)}">删除这条记忆</button>`:""}</div><span class="memory-tag">${escapeHtml(m.tag||"记忆")}</span></div>`).join(""):`<div class="empty">这里还没有故事。未来会替你写下答案，也可以现在就添加一个愿望。</div>`;renderButtons();drawGraphLine(changed)}
 stageList.addEventListener("click",e=>{const b=e.target.closest("[data-stage]");if(!b)return;renderStory(Number(b.dataset.stage));revealNode(b)});
 stageList.addEventListener("keydown",e=>{if(!["ArrowDown","ArrowRight","ArrowUp","ArrowLeft","Home","End"].includes(e.key))return;e.preventDefault();let next=activeStage;if(e.key==="Home")next=0;else if(e.key==="End")next=stages.length-1;else if(e.key==="ArrowDown"||e.key==="ArrowRight")next=(activeStage+1)%stages.length;else next=(activeStage-1+stages.length)%stages.length;renderStory(next);const nextNode=stageList.querySelector(`[data-stage="${next}"]`);nextNode.focus({preventScroll:true});revealNode(nextNode)});
+toggleUpdatesMotion.addEventListener("click",()=>{
+  if(toggleUpdatesMotion.disabled)return;
+  const paused=updatesWindow.classList.toggle("is-paused");
+  toggleUpdatesMotion.setAttribute("aria-pressed",String(paused));
+  toggleUpdatesMotion.textContent=paused?"继续轮播":"暂停轮播";
+});
+document.getElementById("openAnnouncementDialog").addEventListener("click",()=>openAnnouncementEditor());
+document.getElementById("closeAnnouncementDialog").addEventListener("click",()=>announcementDialog.close());
+document.getElementById("cancelAnnouncementDialog").addEventListener("click",()=>announcementDialog.close());
+announcementDialog.addEventListener("click",event=>{if(event.target===announcementDialog)announcementDialog.close()});
+announcementDialog.addEventListener("close",()=>{editingAnnouncementId=null;announcementForm.reset()});
+updatesTrack.addEventListener("click",async event=>{
+  const button=event.target.closest("[data-announcement-action]");
+  if(!button||!isOwner)return;
+  const item=announcements.find(entry=>entry.id===button.dataset.id);
+  if(!item)return;
+  if(button.dataset.announcementAction==="edit"){openAnnouncementEditor(item);return}
+  if(button.dataset.confirming!=="true"){
+    button.dataset.confirming="true";
+    button.textContent="确认删除";
+    setTimeout(()=>{if(button.isConnected){button.dataset.confirming="false";button.textContent="删除"}},2600);
+    return;
+  }
+  button.disabled=true;
+  const{error}=await supabase.from("site_announcements").delete().eq("id",item.id);
+  if(error){button.disabled=false;button.textContent="删除失败";showToast("公告删除失败："+error.message);return}
+  announcements=announcements.filter(entry=>entry.id!==item.id);
+  renderAnnouncements();
+  showToast("这条近况已删除");
+});
+announcementForm.addEventListener("submit",async event=>{
+  event.preventDefault();
+  if(!isOwner||!currentUser){showToast("当前账号没有发布权限");return}
+  const publishedOn=announcementForm.elements.publishedOn.value;
+  const title=announcementForm.elements.title.value.trim();
+  const content=announcementForm.elements.content.value.trim();
+  if(!publishedOn||!title||!content){showToast("请把日期、标题和近况内容填写完整");return}
+  const editingId=editingAnnouncementId;
+  saveAnnouncementButton.disabled=true;
+  saveAnnouncementButton.firstChild.textContent=editingId?"正在保存 ":"正在发布 ";
+  try{
+    const payload={published_on:publishedOn,title,content};
+    let result;
+    if(editingId){
+      result=await supabase.from("site_announcements").update(payload).eq("id",editingId).select("id,title,content,published_on,created_at").single();
+    }else{
+      result=await supabase.from("site_announcements").insert({...payload,author_id:currentUser.id}).select("id,title,content,published_on,created_at").single();
+    }
+    if(result.error)throw result.error;
+    const saved={id:result.data.id,title:result.data.title,content:result.data.content,publishedOn:result.data.published_on,createdAt:result.data.created_at};
+    if(editingId)announcements=announcements.map(item=>item.id===saved.id?saved:item);
+    else announcements.unshift(saved);
+    announcementTableReady=true;
+    sortAnnouncements();
+    announcementDialog.close();
+    renderAnnouncements();
+    showToast(editingId?"近况已更新":"近况已发布");
+  }catch(error){
+    const message=String(error?.message||error||"未知错误");
+    const needsSetup=/site_announcements|relation|row-level security|schema cache/i.test(message);
+    showToast(needsSetup?"发布失败：请先运行 supabase-announcements.sql":"发布失败："+message);
+  }finally{
+    saveAnnouncementButton.disabled=false;
+    saveAnnouncementButton.innerHTML=(editingId?"保存修改":"发布近况")+' <span aria-hidden="true">&rarr;</span>';
+  }
+});
 memoryList.addEventListener("click",async e=>{const b=e.target.closest(".delete-memory");if(!b||!isOwner)return;if(b.dataset.confirming!=="true"){b.dataset.confirming="true";b.textContent="再点一次确认删除";setTimeout(()=>{if(b.isConnected){b.dataset.confirming="false";b.textContent="删除这条记忆"}},2400);return}b.disabled=true;const{error}=await supabase.from("life_memories").delete().eq("id",b.dataset.id);if(error){b.disabled=false;b.textContent="删除失败，请重试";showToast(`删除失败：${error.message}`);return}customMemories=customMemories.filter(item=>item.id!==b.dataset.id);renderStory(activeStage);showToast("这段记忆已删除")});
 document.querySelectorAll(".js-open-dialog").forEach(b=>b.addEventListener("click",()=>{if(!isOwner){showToast("当前账号只有阅读权限");return}document.getElementById("dialogStage").textContent=`将写入：${stages[activeStage].name}`;dialog.showModal();setTimeout(()=>form.elements.date.focus(),80)}));document.getElementById("closeDialog").addEventListener("click",()=>dialog.close());dialog.addEventListener("click",e=>{if(e.target===dialog)dialog.close()});
 document.querySelector(".section-note")?.remove();
@@ -961,6 +1139,14 @@ async function initializeSite(){
   badge.textContent=isOwner?"管理模式":"阅读模式";
   badge.classList.toggle("owner",isOwner);
   badge.title=isOwner?"你可以管理生平内容":"此账号只能阅读生平内容";
+  let announcementLoadError=null;
+  try{
+    await loadRemoteAnnouncements();
+  }catch(loadError){
+    announcementLoadError=loadError;
+    announcementTableReady=false;
+    announcements=[];
+  }
   let timelineLoadError=null;
   try{
     await loadRemoteStages();
@@ -973,6 +1159,7 @@ async function initializeSite(){
   document.getElementById("authGate").hidden=true;
   document.body.classList.remove("auth-pending");
   registerVisit();
+  renderAnnouncements();
   if(stages.length){
     activeStage=0;
     renderStory(0);
@@ -987,6 +1174,7 @@ async function initializeSite(){
     document.getElementById("stageAddMemory").hidden=true;
     editStageButton.disabled=true;
   }
+  if(announcementLoadError&&isOwner)setTimeout(()=>showToast("公告栏暂时无法加载，请先运行 supabase-announcements.sql"),120);
   if(timelineLoadError)setTimeout(()=>showToast("时间轴暂时无法加载，请运行新版 Supabase SQL"),200);
 }
 
