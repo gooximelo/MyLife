@@ -1545,3 +1545,44 @@ Set a clear announcement display policy: show current-to-one-month content on th
 
 ### Notes
 - None recorded.
+
+## Checkpoint 2026-09-23T14:51:00+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+首页近30天公告由触边反向改为首尾无缝循环；左右箭头跨接缝快速滑动。新版 SunShine.png 通过内容指纹刷新四页 favicon 缓存。
+
+### Latest User Request
+轮播末尾后要直接衔接下一轮开头，不能反向；同名替换的新 Sunshine 图片也要更新到网站图标。
+
+### Active Requirements
+- 公告仍只取近30天真实记录，历史公告另页显示；可编辑权限不变；重复卡片仅为前端视觉循环，不新增数据库行。
+
+### Decisions And Rationale
+- 为公告列表渲染足够的前端循环副本，滚动位置按单轮宽度取模，无缝接续；只有一条公告时不滚动；左右箭头继续按一次快速移动一张。
+- 四个页面 favicon URL 增加当前 SunShine.png SHA-256 前缀 3b394244 作为缓存版本号，文件名与路径不变。
+
+### Stable Facts
+- SunShine.png 是 200x200 PNG，当前 SHA-256 前缀 3b394244，已在 Git 跟踪中；本轮无需修改二进制图片。
+
+### Files And Artifacts
+- index.html: 循环滚动、按钮和首页 favicon。
+- login/index.html, reset-password/index.html, announcements/index.html: favicon 缓存版本。
+
+### Commands
+- None recorded.
+
+### Verification
+- 首页模块 JavaScript 语法检查通过；循环首尾双向边界测试通过；2/3/6 张卡及移动端宽度覆盖测试通过；四页 favicon 版本均匹配图片指纹；git diff --check 通过。
+
+### Open Issues And Risks
+- 未连接实际浏览器进行视觉播放测试，部署后需要在网站检查实际动画与图标缓存效果。
+
+### Next Steps
+- None recorded.
+
+### Notes
+- None recorded.

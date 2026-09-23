@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-<link rel=icon type=image/png href=SunShine.png>
+<link rel="icon" type="image/png" href="SunShine.png?3b394244">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#f4f0e7">
@@ -250,6 +250,8 @@ let updateAutoplayFrame=0;
 let updateLastFrame=0;
 let updateDirection=1;
 let updateNudgeFrame=0;
+let updateCycleWidth=0;
+let updatesViewportWidth=0;
 
 async function loadRemoteStages(){
   const{data,error}=await supabase.from("life_stages")
@@ -365,13 +367,17 @@ function stopUpdateAutoplay(){
   updateLastFrame=0;
 }
 function canMoveUpdates(){
-  return visibleAnnouncements.length>1&&updatesWindow.scrollWidth>updatesWindow.clientWidth+4;
+  return visibleAnnouncements.length>1&&updateCycleWidth>0;
 }
 function syncUpdateControls(){
   const movable=canMoveUpdates();
-  const maxScroll=Math.max(0,updatesWindow.scrollWidth-updatesWindow.clientWidth);
-  previousUpdateButton.disabled=!movable||updatesWindow.scrollLeft<=1;
-  nextUpdateButton.disabled=!movable||updatesWindow.scrollLeft>=maxScroll-1;
+  previousUpdateButton.disabled=!movable;
+  nextUpdateButton.disabled=!movable;
+}
+function setUpdateLoopPosition(position){
+  if(!updateCycleWidth)return;
+  const offset=((position-updateCycleWidth)%updateCycleWidth+updateCycleWidth)%updateCycleWidth;
+  updatesWindow.scrollLeft=updateCycleWidth+offset;
 }
 function updateAutoplayStep(now){
   if(document.hidden||reduceMotion()||announcementDialog.open||!canMoveUpdates()){
@@ -380,11 +386,7 @@ function updateAutoplayStep(now){
   }
   if(updateLastFrame){
     const elapsed=Math.min(now-updateLastFrame,64)/1000;
-    const maxScroll=updatesWindow.scrollWidth-updatesWindow.clientWidth;
-    let next=updatesWindow.scrollLeft+updateDirection*UPDATE_AUTOPLAY_SPEED*elapsed;
-    if(next>=maxScroll){next=maxScroll;updateDirection=-1}
-    else if(next<=0){next=0;updateDirection=1}
-    updatesWindow.scrollLeft=next;
+    setUpdateLoopPosition(updatesWindow.scrollLeft+updateDirection*UPDATE_AUTOPLAY_SPEED*elapsed);
   }
   updateLastFrame=now;
   updateAutoplayFrame=requestAnimationFrame(updateAutoplayStep);
@@ -396,20 +398,18 @@ function startUpdateAutoplay(){
   updateAutoplayFrame=requestAnimationFrame(updateAutoplayStep);
 }
 function nudgeUpdates(direction){
-  const cards=[...updatesTrack.querySelectorAll(".update-card")];
+  const cards=updatesTrack.querySelectorAll(".update-card");
   if(!cards.length||!canMoveUpdates())return;
   stopUpdateAutoplay();
   cancelAnimationFrame(updateNudgeFrame);
   updateNudgeFrame=0;
   const gap=parseFloat(getComputedStyle(updatesTrack).gap)||0;
   const step=cards[0].offsetWidth+gap;
-  const maxScroll=Math.max(0,updatesWindow.scrollWidth-updatesWindow.clientWidth);
   const from=updatesWindow.scrollLeft;
-  const target=Math.max(0,Math.min(maxScroll,from+direction*step));
-  if(Math.abs(target-from)<1){startUpdateAutoplay();return}
+  const target=from+direction*step;
   updateDirection=direction;
   if(reduceMotion()){
-    updatesWindow.scrollLeft=target;
+    setUpdateLoopPosition(target);
     syncUpdateControls();
     return;
   }
@@ -418,7 +418,7 @@ function nudgeUpdates(direction){
     if(!began)began=now;
     const progress=Math.min(1,(now-began)/UPDATE_NUDGE_DURATION);
     const eased=1-Math.pow(1-progress,3);
-    updatesWindow.scrollLeft=from+(target-from)*eased;
+    setUpdateLoopPosition(from+(target-from)*eased);
     if(progress<1)updateNudgeFrame=requestAnimationFrame(animate);
     else{updateNudgeFrame=0;syncUpdateControls();startUpdateAutoplay()}
   };
@@ -429,8 +429,10 @@ function renderAnnouncements(){
   cancelAnimationFrame(updateNudgeFrame);
   updateNudgeFrame=0;
   updateDirection=1;
+  updateCycleWidth=0;
   visibleAnnouncements=announcements.filter(isRecentAnnouncement);
-  updatesTrack.classList.toggle("few-updates",visibleAnnouncements.length>0&&visibleAnnouncements.length<=3);
+  updatesTrack.classList.toggle("few-updates",visibleAnnouncements.length===1);
+  updatesViewportWidth=updatesWindow.clientWidth;
   const historyCount=announcements.filter(isHistoricalAnnouncement).length;
   historyAnnouncementCount.textContent=String(historyCount);
   recentUpdatesSummary.textContent="近 30 天 · "+(visibleAnnouncements.length?visibleAnnouncements.length+" 条动态":"暂无新动态");
@@ -445,7 +447,24 @@ function renderAnnouncements(){
     requestAnimationFrame(syncUpdateControls);
     return;
   }
-  updatesTrack.innerHTML=visibleAnnouncements.map((item,index)=>announcementCardMarkup(item,index,true)).join("");
+  const cardMarkup=visibleAnnouncements.map((item,index)=>announcementCardMarkup(item,index,true)).join("");
+  updatesTrack.innerHTML=cardMarkup;
+  if(visibleAnnouncements.length===1){
+    requestAnimationFrame(syncUpdateControls);
+    return;
+  }
+  const cards=updatesTrack.querySelectorAll(".update-card");
+  const gap=parseFloat(getComputedStyle(updatesTrack).gap)||0;
+  const cycleWidth=cards[cards.length-1].offsetLeft+cards[cards.length-1].offsetWidth-cards[0].offsetLeft+gap;
+  if(!cycleWidth){
+    requestAnimationFrame(syncUpdateControls);
+    return;
+  }
+  const repeatCount=Math.max(3,Math.ceil(updatesViewportWidth/cycleWidth)+3);
+  updatesTrack.innerHTML=cardMarkup.repeat(repeatCount);
+  const loopCards=updatesTrack.querySelectorAll(".update-card");
+  updateCycleWidth=loopCards[visibleAnnouncements.length].offsetLeft-loopCards[0].offsetLeft;
+  setUpdateLoopPosition(updateCycleWidth);
   requestAnimationFrame(startUpdateAutoplay);
 }
 function openAnnouncementEditor(item=null){
@@ -494,8 +513,15 @@ stageList.addEventListener("click",e=>{const b=e.target.closest("[data-stage]");
 stageList.addEventListener("keydown",e=>{if(!["ArrowDown","ArrowRight","ArrowUp","ArrowLeft","Home","End"].includes(e.key))return;e.preventDefault();let next=activeStage;if(e.key==="Home")next=0;else if(e.key==="End")next=stages.length-1;else if(e.key==="ArrowDown"||e.key==="ArrowRight")next=(activeStage+1)%stages.length;else next=(activeStage-1+stages.length)%stages.length;renderStory(next);const nextNode=stageList.querySelector(`[data-stage="${next}"]`);nextNode.focus({preventScroll:true});revealNode(nextNode)});
 previousUpdateButton.addEventListener("click",()=>nudgeUpdates(-1));
 nextUpdateButton.addEventListener("click",()=>nudgeUpdates(1));
-updatesWindow.addEventListener("scroll",syncUpdateControls,{passive:true});
-window.addEventListener("resize",()=>requestAnimationFrame(startUpdateAutoplay));
+updatesWindow.addEventListener("scroll",()=>{
+  if(canMoveUpdates()&&(updatesWindow.scrollLeft<updateCycleWidth-1||updatesWindow.scrollLeft>=updateCycleWidth*2))
+    setUpdateLoopPosition(updatesWindow.scrollLeft);
+  syncUpdateControls();
+},{passive:true});
+window.addEventListener("resize",()=>requestAnimationFrame(()=>{
+  if(Math.abs(updatesWindow.clientWidth-updatesViewportWidth)>2)renderAnnouncements();
+  else startUpdateAutoplay();
+}));
 document.addEventListener("visibilitychange",()=>{if(document.hidden)stopUpdateAutoplay();else startUpdateAutoplay()});
 document.getElementById("openAnnouncementDialog").addEventListener("click",()=>openAnnouncementEditor());
 document.getElementById("closeAnnouncementDialog").addEventListener("click",()=>announcementDialog.close());
