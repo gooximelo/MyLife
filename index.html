@@ -176,13 +176,14 @@ dialog{max-height:calc(100vh - 32px);overflow:auto}
 .updates-control.publish{border-color:var(--green);color:var(--white);background:var(--green)}
 .updates-window{position:relative;width:min(1240px,calc(100% - 48px));min-height:280px;margin:auto;overflow-x:auto;overflow-y:hidden;scrollbar-width:none;overscroll-behavior-inline:contain}
 .updates-window::-webkit-scrollbar{display:none}
-.updates-track{display:flex;width:max-content;min-width:100%;gap:24px;padding:18px 16px 28px}
+.updates-track{display:flex;width:max-content;min-width:100%;gap:24px;padding:30px 16px 38px}
 .updates-track.few-updates{justify-content:center}
-.update-card{--note:#e0eadf;position:relative;display:flex;width:320px;min-height:238px;flex:none;flex-direction:column;padding:42px 30px 25px;background:var(--note);box-shadow:0 16px 35px rgba(52,43,30,.13);transform:rotate(-.7deg);transition:transform .25s,box-shadow .25s}
-.update-card.tone-warm{--note:#f5e5ae;transform:rotate(.65deg)}
-.update-card.tone-rose{--note:#efd0d0;transform:rotate(-.35deg)}
-.update-card.tone-sage{--note:#d4e7dc;transform:rotate(.45deg)}
-.update-card:hover,.update-card:focus-within{z-index:2;transform:translateY(-5px) rotate(0);box-shadow:0 22px 42px rgba(52,43,30,.18)}
+.update-card{--note:#e0eadf;--tilt:-1deg;position:relative;display:flex;width:320px;min-height:238px;flex:none;flex-direction:column;padding:42px 30px 25px;background:var(--note);box-shadow:0 16px 35px rgba(52,43,30,.13);transform:rotate(var(--tilt));transition:transform .28s cubic-bezier(.2,.75,.25,1),box-shadow .28s}
+.update-card:nth-child(even){--tilt:1deg}
+.update-card.tone-warm{--note:#f5e5ae}
+.update-card.tone-rose{--note:#efd0d0}
+.update-card.tone-sage{--note:#d4e7dc}
+.update-card:hover,.update-card:focus-within{z-index:2;transform:translateY(-6px) scale(1.055) rotate(0);box-shadow:0 28px 52px rgba(52,43,30,.23)}
 .update-pin{position:absolute;top:-10px;left:50%;width:20px;height:20px;border-radius:50%;background:#c75238;box-shadow:0 4px 9px rgba(118,49,35,.3),inset 0 2px 3px rgba(255,255,255,.42);transform:translateX(-50%)}
 .update-kicker{display:block;margin-bottom:15px;color:rgba(24,33,31,.55);font-size:10px;font-weight:800;letter-spacing:.15em;text-transform:uppercase}
 .update-card h3{margin:0;font-family:var(--serif);font-size:24px;font-weight:600;line-height:1.35}
@@ -195,7 +196,7 @@ dialog{max-height:calc(100vh - 32px);overflow:auto}
 .updates-empty{width:calc(100vw - 80px);max-width:1208px;margin:0 auto;padding:62px 28px;border:1px dashed rgba(46,89,77,.28);color:var(--muted);background:rgba(255,253,248,.5);text-align:center;line-height:1.8}
 #announcementDialog textarea{min-height:150px}
 @media(max-width:700px){.updates-section{padding:68px 0 82px}.updates-head{align-items:flex-start;flex-direction:column;margin-bottom:30px}.updates-controls{justify-content:flex-start}.updates-window{width:calc(100% - 28px);min-height:265px}.updates-track{padding-inline:4px}.update-card{width:min(278px,calc(100vw - 52px));min-height:222px;padding:39px 24px 22px}.update-card h3{font-size:21px}.updates-empty{width:calc(100vw - 36px)}}
-@media(prefers-reduced-motion:reduce){.updates-window{scroll-behavior:auto}}
+@media(prefers-reduced-motion:reduce){.updates-window{scroll-behavior:auto}.update-card{transition:none}}
 @media(max-width:620px){.media-picker{align-items:flex-start}.media-choice-buttons{grid-template-columns:1fr}.memory-media img,.memory-media video{max-height:360px}}
 </style>
 </head>
@@ -252,6 +253,7 @@ let updateDirection=1;
 let updateNudgeFrame=0;
 let updateCycleWidth=0;
 let updatesViewportWidth=0;
+let hoveredUpdateCard=null;
 
 async function loadRemoteStages(){
   const{data,error}=await supabase.from("life_stages")
@@ -374,13 +376,23 @@ function syncUpdateControls(){
   previousUpdateButton.disabled=!movable;
   nextUpdateButton.disabled=!movable;
 }
+function isReadingUpdateCard(){
+  const focused=document.activeElement;
+  const keyboardFocus=focused?.matches?.(":focus-visible")&&focused.closest?.(".update-card")&&updatesTrack.contains(focused);
+  return Boolean(hoveredUpdateCard?.isConnected||keyboardFocus||(matchMedia("(hover: hover)").matches&&updatesTrack.querySelector(".update-card:hover")));
+}
+function pauseUpdateMotion(){
+  stopUpdateAutoplay();
+  cancelAnimationFrame(updateNudgeFrame);
+  updateNudgeFrame=0;
+}
 function setUpdateLoopPosition(position){
   if(!updateCycleWidth)return;
   const offset=((position-updateCycleWidth)%updateCycleWidth+updateCycleWidth)%updateCycleWidth;
   updatesWindow.scrollLeft=updateCycleWidth+offset;
 }
 function updateAutoplayStep(now){
-  if(document.hidden||reduceMotion()||announcementDialog.open||!canMoveUpdates()){
+  if(document.hidden||reduceMotion()||announcementDialog.open||isReadingUpdateCard()||!canMoveUpdates()){
     stopUpdateAutoplay();
     return;
   }
@@ -394,7 +406,7 @@ function updateAutoplayStep(now){
 function startUpdateAutoplay(){
   stopUpdateAutoplay();
   syncUpdateControls();
-  if(updateNudgeFrame||document.hidden||reduceMotion()||announcementDialog.open||!canMoveUpdates())return;
+  if(updateNudgeFrame||document.hidden||reduceMotion()||announcementDialog.open||isReadingUpdateCard()||!canMoveUpdates())return;
   updateAutoplayFrame=requestAnimationFrame(updateAutoplayStep);
 }
 function nudgeUpdates(direction){
@@ -430,6 +442,7 @@ function renderAnnouncements(){
   updateNudgeFrame=0;
   updateDirection=1;
   updateCycleWidth=0;
+  hoveredUpdateCard=null;
   visibleAnnouncements=announcements.filter(isRecentAnnouncement);
   updatesTrack.classList.toggle("few-updates",visibleAnnouncements.length===1);
   updatesViewportWidth=updatesWindow.clientWidth;
@@ -513,6 +526,24 @@ stageList.addEventListener("click",e=>{const b=e.target.closest("[data-stage]");
 stageList.addEventListener("keydown",e=>{if(!["ArrowDown","ArrowRight","ArrowUp","ArrowLeft","Home","End"].includes(e.key))return;e.preventDefault();let next=activeStage;if(e.key==="Home")next=0;else if(e.key==="End")next=stages.length-1;else if(e.key==="ArrowDown"||e.key==="ArrowRight")next=(activeStage+1)%stages.length;else next=(activeStage-1+stages.length)%stages.length;renderStory(next);const nextNode=stageList.querySelector(`[data-stage="${next}"]`);nextNode.focus({preventScroll:true});revealNode(nextNode)});
 previousUpdateButton.addEventListener("click",()=>nudgeUpdates(-1));
 nextUpdateButton.addEventListener("click",()=>nudgeUpdates(1));
+updatesTrack.addEventListener("pointerover",event=>{
+  if(event.pointerType==="touch")return;
+  const card=event.target.closest(".update-card");
+  if(!card||card.contains(event.relatedTarget))return;
+  hoveredUpdateCard=card;
+  pauseUpdateMotion();
+});
+updatesTrack.addEventListener("pointerout",event=>{
+  if(event.pointerType==="touch")return;
+  const card=event.target.closest(".update-card");
+  if(card!==hoveredUpdateCard||card.contains(event.relatedTarget))return;
+  hoveredUpdateCard=null;
+  requestAnimationFrame(startUpdateAutoplay);
+});
+updatesTrack.addEventListener("focusin",event=>{
+  if(event.target.closest(".update-card")&&event.target.matches(":focus-visible"))pauseUpdateMotion();
+});
+updatesTrack.addEventListener("focusout",()=>requestAnimationFrame(startUpdateAutoplay));
 updatesWindow.addEventListener("scroll",()=>{
   if(canMoveUpdates()&&(updatesWindow.scrollLeft<updateCycleWidth-1||updatesWindow.scrollLeft>=updateCycleWidth*2))
     setUpdateLoopPosition(updatesWindow.scrollLeft);

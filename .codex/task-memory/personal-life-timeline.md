@@ -1586,3 +1586,42 @@ Set a clear announcement display policy: show current-to-one-month content on th
 
 ### Notes
 - None recorded.
+
+## Checkpoint 2026-09-23T15:10:57+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+首页公告卡片改为左右交错微倾；悬停卡片时抬起摆正、加深阴影并暂停无缝轮播，离开后继续；键盘焦点可见时也暂停。
+
+### Latest User Request
+参考截图中的倾斜便签卡片，并在鼠标悬停时突出卡片、停止滚动以便阅读。
+
+### Active Requirements
+- 保留现有首尾无缝循环和左右箭头功能；只在卡片上暂停，不因鼠标停在公告空白区域而停止；离开后从原位置继续。
+
+### Decisions And Rationale
+- 用:nth-child(even)实现交错倾斜；卡片悬停上移6px并放大1.055；pointerover/pointerout委托处理暂停与恢复，同时检查实际hover状态，避免重绘后误恢复或永久卡住。
+
+### Stable Facts
+- None recorded.
+
+### Files And Artifacts
+- index.html: 公告卡片CSS样式与悬停/键盘焦点暂停逻辑。
+
+### Commands
+- None recorded.
+
+### Verification
+- 首页模块脚本语法检查通过；git diff --check 通过；核对 pointerover/pointerout、focusin/focusout 和恢复条件。
+
+### Open Issues And Risks
+- 未在实际浏览器做视觉与鼠标交互测试，发布后需检查动画观感。
+
+### Next Steps
+- None recorded.
+
+### Notes
+- None recorded.
