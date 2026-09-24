@@ -1824,3 +1824,82 @@ Remove the Start Reading button and the text above the bottom like button; reade
 
 ### Notes
 - None recorded.
+
+## Checkpoint 2026-09-24T10:49:37+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+Diagnosed photo black sidebars as CSS-created letterboxing: full-width image plus max-height/object-fit contain and dark image background. Changed saved photos and upload previews to natural proportional sizing on transparent background; video styles left intact.
+
+### Latest User Request
+Explain why every uploaded photo has black edges, then modify the page to remove them.
+
+### Active Requirements
+- Tell user cause before changes; show complete photo without cropping or dark bars; do not alter original uploads.
+
+### Decisions And Rationale
+- Remove forced width/object-fit/dark background for photos, center photos at natural ratio with max width/height, add image-preview class so video preview retains its separate styling.
+
+### Stable Facts
+- None recorded.
+
+### Files And Artifacts
+- index.html: memory image CSS, preview CSS, image-preview class toggle
+
+### Commands
+- None recorded.
+
+### Verification
+- JavaScript syntax and git diff --check passed; old photo dark-background rule absent; video styles still present.
+
+### Open Issues And Risks
+- No live browser/account photo was available to visually verify; source files with intrinsic black pixels would still need separate treatment.
+
+### Next Steps
+- Deploy page and visually check portrait and landscape photos; no reupload should be needed for CSS-generated bars.
+
+### Notes
+- None recorded.
+
+## Checkpoint 2026-09-24T11:20:27+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+Added owner-only editable footer contact details: button, address/email dialog, Supabase load/upsert, read-only viewer display, and one-row RLS-backed site_contact setup.
+
+### Latest User Request
+Address and email placeholders had no edit control; owner needs to modify them on the website.
+
+### Active Requirements
+- Admin can edit or clear address and email from the site; other signed-in visitors only view; changes persist across devices.
+
+### Decisions And Rationale
+- Create public.site_contact with owner-email RLS for insert/update and authenticated read; keep QR display unchanged and show an owner setup hint until SQL is applied.
+
+### Stable Facts
+- None recorded.
+
+### Files And Artifacts
+- index.html: admin contact editor UI and Supabase integration
+- supabase-contact.sql: one-row table and RLS policies
+
+### Commands
+- None recorded.
+
+### Verification
+- Homepage JS syntax and git diff --check passed; mock tested contact read, open, save, render, and viewer guard.
+
+### Open Issues And Risks
+- User must run supabase-contact.sql in Supabase SQL Editor and deploy updated index.html; no live database or browser test was performed.
+
+### Next Steps
+- Run SQL, deploy page, sign in as owner to save details, verify viewer sees updated address/email without editor.
+
+### Notes
+- None recorded.

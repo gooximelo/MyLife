@@ -87,12 +87,17 @@ dialog{max-height:calc(100dvh - 32px);overflow:auto}
 .visit-count{display:flex;align-items:baseline;gap:10px;color:rgba(255,255,255,.62);font-size:12px;white-space:nowrap}.visit-count strong{min-width:7ch;color:var(--white);font-family:var(--serif);font-size:34px;font-weight:500;letter-spacing:.09em;text-align:center;font-variant-numeric:tabular-nums}.visit-count strong.bump{animation:count-in .45s ease-out}@keyframes count-in{from{opacity:.35;transform:translateY(6px)}to{opacity:1;transform:none}}
 .footer-bottom{display:flex;justify-content:flex-end;gap:24px;padding:27px 0 0;color:rgba(255,255,255,.55);font-size:12px;text-align:right}
 .contact-section{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:40px;padding:44px 38px 50px;border-top:1px solid rgba(255,255,255,.16)}
+.contact-header{display:flex;align-items:start;justify-content:space-between;gap:20px;max-width:540px}
 .contact-eyebrow{margin:0;color:#f3abc4;font-size:11px;font-weight:800;letter-spacing:.22em}
 .contact-section h2{margin:9px 0 26px;color:#fff;font:800 clamp(23px,2.4vw,30px)/1.4 var(--sans);letter-spacing:0}
+.contact-edit{padding:9px 14px;border:1px solid rgba(255,255,255,.42);border-radius:99px;background:transparent;color:#fff;font-size:12px;font-weight:700;white-space:nowrap;cursor:pointer}
+.contact-edit:hover,.contact-edit:focus-visible{border-color:#f3abc4;background:rgba(244,103,152,.16)}
 .contact-details{display:grid;gap:16px}
 .contact-detail{display:flex;align-items:end;gap:18px;min-height:28px}
 .contact-label{flex:0 0 64px;color:rgba(255,255,255,.74);font-size:14px;font-weight:600}
 .contact-value{display:block;flex:1;min-width:0;max-width:360px;min-height:27px;border-bottom:1px solid rgba(255,255,255,.35);font-size:15px;line-height:1.7;overflow-wrap:anywhere}
+.contact-value a{text-decoration:underline;text-decoration-color:rgba(255,255,255,.45);text-underline-offset:4px}
+.contact-setup{margin:15px 0 0;color:#f3abc4;font-size:12px}
 .contact-methods{display:flex;align-items:end;gap:14px;padding-bottom:2px}
 .contact-method{position:relative}
 .contact-trigger{min-width:115px;padding:13px 18px;border:1px solid rgba(255,255,255,.42);border-radius:99px;background:transparent;color:#fff;font:700 14px var(--sans);cursor:pointer;transition:background .2s,border-color .2s,transform .2s}
@@ -102,7 +107,7 @@ dialog{max-height:calc(100dvh - 32px);overflow:auto}
 .contact-qr-popover img{display:block;width:100%;height:auto;max-height:min(420px,68vh);object-fit:contain}
 .contact-trigger:focus-visible+.contact-qr-popover,.contact-method.is-open .contact-qr-popover{opacity:1;visibility:visible;transform:none;pointer-events:auto}
 @media(hover:hover) and (pointer:fine){.contact-method:hover .contact-qr-popover{opacity:1;visibility:visible;transform:none;pointer-events:auto}}
-@media(max-width:720px){.contact-section{grid-template-columns:1fr;gap:30px;padding:42px 24px 48px}.contact-methods{align-self:start}.contact-method:first-child .contact-qr-popover{right:auto;left:0}}
+@media(max-width:720px){.contact-section{grid-template-columns:1fr;gap:30px;padding:42px 24px 48px}.contact-header{flex-wrap:wrap}.contact-methods{align-self:start}.contact-method:first-child .contact-qr-popover{right:auto;left:0}}
 @media(max-width:620px){.hero-copy{font-size:15px}.hero-actions{align-items:flex-start;flex-direction:column;gap:20px}.visit-card{align-items:flex-start;flex-direction:column;padding:27px 24px}.visit-count{width:100%;justify-content:space-between}.visit-count strong{font-size:30px}.footer-bottom{display:block;line-height:1.8}.footer-bottom>span{display:block}.quote-meta{align-items:flex-start;flex-direction:column;gap:20px}.story-kicker{letter-spacing:.1em}.toast{right:14px;bottom:14px;left:14px;text-align:center}}
 .memory>div:nth-child(2){min-width:0;overflow-wrap:anywhere}.delete-memory{min-height:32px;padding:7px 0}@media(max-width:420px){.dialog-actions{align-items:stretch;flex-direction:column}.dialog-actions .primary{justify-content:center}.save-note{max-width:none}}
 @media(prefers-reduced-motion:reduce){.sun,.live-dot{animation:none}}
@@ -141,7 +146,8 @@ body.auth-pending>header,body.auth-pending>main,body.auth-pending>footer,body.au
 .memory{grid-template-columns:78px minmax(0,1fr) auto}
 .memory-content{min-width:0}
 .memory-media{overflow:hidden;margin:15px 0 2px;border:1px solid var(--line);border-radius:4px;background:#efede6}
-.memory-media img{display:block;width:100%;max-height:520px;object-fit:contain;background:#151918}
+.memory-media:not(.video-media){display:flex;justify-content:center;overflow:visible;border:0;background:transparent}
+.memory-media img{display:block;width:auto;max-width:100%;height:auto;max-height:520px;border-radius:4px}
 .memory-media.video-media{width:100%;max-width:760px;margin:16px auto 2px;overflow:visible;border:0;background:transparent}
 .memory-video-shell{position:relative;display:grid;width:100%;aspect-ratio:16/9;place-items:center;overflow:hidden;border:1px solid var(--line);border-radius:4px;background:#0b0e0d}
 .memory-video-shell video{display:block;width:100%;height:100%;max-height:none;object-fit:contain;background:#0b0e0d}
@@ -168,7 +174,9 @@ dialog{max-height:calc(100vh - 32px);overflow:auto}
 .media-choice-button:hover{color:var(--white);border-color:var(--green);background:var(--green)}
 .media-choice-button:disabled{cursor:wait;opacity:.5}
 .media-preview{overflow:hidden;margin-top:12px;border:1px solid var(--line);border-radius:4px;background:#171b1a}
-.media-preview img{display:block;width:100%;max-height:260px;object-fit:contain}
+.media-preview.image-preview{border:0;background:transparent}
+.media-preview img{display:block;width:auto;max-width:100%;height:auto;max-height:260px;margin:0 auto;border-radius:4px}
+.media-preview.image-preview .media-file-meta{color:var(--muted)}
 .media-preview video{display:block;width:100%;aspect-ratio:16/9;object-fit:contain;background:#0b0e0d}
 .media-file-meta{display:flex;justify-content:space-between;gap:14px;padding:8px 11px;color:#ffffffb8;font-size:10px}
 .remove-media{margin-top:9px;padding:0;border:0;color:#9b6c61;background:none;font-size:11px;cursor:pointer}
@@ -270,12 +278,12 @@ dialog{max-height:calc(100vh - 32px);overflow:auto}
     <div class="visit-card"><div class="visit-label"><span class="live-dot" aria-hidden="true"></span><div><p>谢谢你，再一次来到我的故事里。</p></div></div><div class="visit-count" title="当前浏览器中的累计到访次数" aria-live="polite" aria-atomic="true"><span>此设备第</span><strong id="visitorCount">------</strong><span>次到访</span></div></div>
     <section class="contact-section" id="contact" aria-labelledby="contactTitle">
       <div class="contact-copy">
-        <p class="contact-eyebrow">CONTACT ME</p>
-        <h2 id="contactTitle">联系我</h2>
+        <div class="contact-header"><div><p class="contact-eyebrow">CONTACT ME</p><h2 id="contactTitle">联系我</h2></div><button class="contact-edit owner-only" id="openContactDialog" type="button" hidden>编辑联系方式</button></div>
         <div class="contact-details">
           <div class="contact-detail"><span class="contact-label">地址</span><span class="contact-value" id="contactAddress"><!-- 在这里填写地址 --></span></div>
           <div class="contact-detail"><span class="contact-label">邮箱</span><span class="contact-value" id="contactEmail"><!-- 在这里填写邮箱 --></span></div>
         </div>
+        <p class="contact-setup owner-only" id="contactSetupHint" hidden>请先运行 supabase-contact.sql，再保存联系方式。</p>
       </div>
       <div class="contact-methods" aria-label="社交联系方式">
         <div class="contact-method"><button class="contact-trigger" type="button" aria-controls="qqQr" aria-expanded="false">QQ 二维码</button><div class="contact-qr-popover" id="qqQr"><img src="QQ.jpg" alt="QQ 联系方式二维码"></div></div>
@@ -288,6 +296,7 @@ dialog{max-height:calc(100vh - 32px);overflow:auto}
 <dialog id="announcementDialog" aria-labelledby="announcementDialogTitle"><form class="dialog-inner" id="announcementForm"><div class="dialog-head"><div><span>RECENT UPDATE</span><h3 id="announcementDialogTitle">发布一条近况</h3><p class="dialog-context" id="announcementDialogContext">这条内容会展示在首页公告栏</p></div><button class="icon-button" type="button" id="closeAnnouncementDialog" aria-label="关闭">&#215;</button></div><label>日期<input type="date" name="publishedOn" required></label><label>标题<input name="title" placeholder="例如：完成了网站的新页面" maxlength="60" required></label><label>近况内容<textarea name="content" placeholder="简单记录最近完成了什么、正在做什么……" maxlength="600" required></textarea></label><div class="stage-dialog-actions"><button class="secondary" id="cancelAnnouncementDialog" type="button">取消</button><button class="primary" id="saveAnnouncement" type="submit">发布近况 <span aria-hidden="true">&rarr;</span></button></div></form></dialog>
 <dialog id="memoryDialog" aria-labelledby="dialogTitle"><form class="dialog-inner" id="memoryForm"><div class="dialog-head"><div><span>NEW MEMORY</span><h3 id="dialogTitle">写下一段记忆</h3><p class="dialog-context" id="dialogStage">将写入：童年</p></div><button class="icon-button" type="button" id="closeDialog" aria-label="关闭">&#215;</button></div><div class="form-row"><label>时间<input name="date" placeholder="例如：2018" maxlength="20" required></label><label>标签<input name="tag" placeholder="例如：成长" maxlength="12"></label></div><label>这段故事的标题<input name="title" placeholder="给这个瞬间起一个名字" maxlength="40" required></label><label>发生了什么<textarea name="text" placeholder="写下当时的地点、人物、感受……" maxlength="260" required></textarea></label><div class="dialog-actions"><span class="save-note">保存后所有读者都能看到</span><button class="primary" type="submit">保存记忆 <span aria-hidden="true">&rarr;</span></button></div></form></dialog><div class="toast" id="toast" role="status" aria-live="polite" aria-atomic="true">记忆已保存</div>
 <dialog id="aboutDialog" aria-labelledby="aboutDialogTitle"><form class="dialog-inner" id="aboutForm"><div class="dialog-head"><div><span>ABOUT ME</span><h3 id="aboutDialogTitle">写下我的总述</h3><p class="dialog-context">标题和正文会展示给所有已登录的访客</p></div><button class="icon-button" id="closeAboutDialog" type="button" aria-label="关闭">&#215;</button></div><label>标题<input name="aboutTitle" maxlength="100" placeholder="输入这段总述的标题" required></label><label>正文<textarea name="aboutBody" maxlength="10000" placeholder="在这里写下你想讲述的内容。空一行即可分段。" required></textarea></label><div class="stage-dialog-actions"><button class="secondary" id="cancelAboutDialog" type="button">取消</button><button class="primary" id="saveAbout" type="submit">保存总述 <span aria-hidden="true">&rarr;</span></button></div></form></dialog>
+<dialog id="contactDialog" aria-labelledby="contactDialogTitle"><form class="dialog-inner" id="contactForm"><div class="dialog-head"><div><span>CONTACT ME</span><h3 id="contactDialogTitle">编辑联系方式</h3><p class="dialog-context">两项都可以留空，保存后会显示在页尾。</p></div><button class="icon-button" id="closeContactDialog" type="button" aria-label="关闭">&#215;</button></div><label>联系地址<input name="contactAddress" maxlength="240" autocomplete="street-address" placeholder="填写你的联系地址"></label><label>联系邮箱<input name="contactEmail" type="email" maxlength="254" autocomplete="email" placeholder="填写你的联系邮箱"></label><div class="stage-dialog-actions"><button class="secondary" id="cancelContactDialog" type="button">取消</button><button class="primary" id="saveContact" type="submit">保存联系方式 <span aria-hidden="true">&rarr;</span></button></div></form></dialog>
 <script type="module">
 import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
 import * as tus from "https://cdn.jsdelivr.net/npm/tus-js-client@4/+esm";
@@ -321,6 +330,8 @@ let announcementTableReady=true;
 let editingAnnouncementId=null;
 let siteOverview={title:"",body:""};
 let overviewTableReady=true;
+let siteContact={address:"",email:""};
+let contactTableReady=true;
 const RECENT_ANNOUNCEMENT_DAYS=30;
 const UPDATE_AUTOPLAY_SPEED=56;
 const UPDATE_NUDGE_DURATION=300;
@@ -403,6 +414,15 @@ async function loadRemoteOverview(){
   siteOverview={title:data?.title||"",body:data?.body||""};
   overviewTableReady=true;
 }
+async function loadRemoteContact(){
+  const{data,error}=await supabase.from("site_contact")
+    .select("address,email")
+    .eq("id",1)
+    .maybeSingle();
+  if(error)throw error;
+  siteContact={address:data?.address||"",email:data?.email||""};
+  contactTableReady=true;
+}
 const stageList=document.getElementById("stageList"),storyPanel=document.getElementById("storyPanel"),memoryList=document.getElementById("memoryList"),dialog=document.getElementById("memoryDialog"),form=document.getElementById("memoryForm");
 const stageGraph=document.getElementById("stageGraph"),graphTrack=document.getElementById("graphTrack"),graphSvg=document.getElementById("graphSvg"),graphBase=document.getElementById("graphBase"),graphProgress=document.getElementById("graphProgress");
 const updatesWindow=document.getElementById("updatesWindow"),updatesTrack=document.getElementById("updatesTrack");
@@ -411,6 +431,21 @@ const announcementDialog=document.getElementById("announcementDialog"),announcem
 const aboutSection=document.getElementById("about"),aboutTitle=document.getElementById("aboutTitle"),aboutBody=document.getElementById("aboutBody"),aboutEditButton=document.getElementById("openAboutDialog");
 const aboutDialog=document.getElementById("aboutDialog"),aboutForm=document.getElementById("aboutForm"),saveAboutButton=document.getElementById("saveAbout");
 const aboutTitleInput=aboutForm.elements.namedItem("aboutTitle"),aboutBodyInput=aboutForm.elements.namedItem("aboutBody");
+const contactAddress=document.getElementById("contactAddress"),contactEmail=document.getElementById("contactEmail"),contactSetupHint=document.getElementById("contactSetupHint");
+const contactDialog=document.getElementById("contactDialog"),contactForm=document.getElementById("contactForm"),saveContactButton=document.getElementById("saveContact");
+const contactAddressInput=contactForm.elements.namedItem("contactAddress"),contactEmailInput=contactForm.elements.namedItem("contactEmail");
+function renderContact(){
+  contactAddress.textContent=siteContact.address.trim();
+  contactEmail.replaceChildren();
+  const email=siteContact.email.trim();
+  if(email){
+    const link=document.createElement("a");
+    link.href="mailto:"+email;
+    link.textContent=email;
+    contactEmail.append(link);
+  }
+  contactSetupHint.hidden=!isOwner||contactTableReady;
+}
 function renderOverview(){
   const title=siteOverview.title.trim(),body=siteOverview.body.trim();
   const hasContent=Boolean(title&&body);
@@ -672,6 +707,43 @@ aboutForm.addEventListener("submit",async event=>{
   }finally{
     saveAboutButton.disabled=false;
     saveAboutButton.innerHTML='保存总述 <span aria-hidden="true">&rarr;</span>';
+  }
+});
+document.getElementById("openContactDialog").addEventListener("click",()=>{
+  if(!isOwner){showToast("当前账号只有阅读权限");return}
+  contactAddressInput.value=siteContact.address;
+  contactEmailInput.value=siteContact.email;
+  contactDialog.showModal();
+  requestAnimationFrame(()=>contactAddressInput.focus());
+});
+document.getElementById("closeContactDialog").addEventListener("click",()=>contactDialog.close());
+document.getElementById("cancelContactDialog").addEventListener("click",()=>contactDialog.close());
+contactDialog.addEventListener("click",event=>{if(event.target===contactDialog)contactDialog.close()});
+contactForm.addEventListener("submit",async event=>{
+  event.preventDefault();
+  if(!isOwner||!currentUser){showToast("当前账号没有编辑权限");return}
+  if(!contactEmailInput.checkValidity()){contactEmailInput.reportValidity();return}
+  const address=contactAddressInput.value.trim(),email=contactEmailInput.value.trim();
+  saveContactButton.disabled=true;
+  saveContactButton.textContent="正在保存…";
+  try{
+    const{data,error}=await supabase.from("site_contact")
+      .upsert({id:1,address,email,updated_at:new Date().toISOString()},{onConflict:"id"})
+      .select("address,email")
+      .single();
+    if(error)throw error;
+    siteContact={address:data.address,email:data.email};
+    contactTableReady=true;
+    renderContact();
+    contactDialog.close();
+    showToast("联系方式已保存");
+  }catch(error){
+    const message=String(error?.message||error||"未知错误");
+    const needsSetup=/site_contact|relation|schema cache|row-level security|permission denied/i.test(message);
+    showToast(needsSetup?"保存失败：请先运行 supabase-contact.sql":"保存失败："+message);
+  }finally{
+    saveContactButton.disabled=false;
+    saveContactButton.innerHTML='保存联系方式 <span aria-hidden="true">&rarr;</span>';
   }
 });
 updatesTrack.addEventListener("pointerover",event=>{
@@ -979,6 +1051,7 @@ function clearSelectedMedia(clearInput){
     previewObjectUrl="";
   }
   mediaPreview.replaceChildren();
+  mediaPreview.classList.remove("image-preview");
   mediaPreview.hidden=true;
   removeMediaButton.hidden=true;
   mediaPickerText.textContent="拖放照片或视频到这里";
@@ -992,6 +1065,7 @@ function clearSelectedMedia(clearInput){
 function showSelectedMedia(file,meta){
   clearSelectedMedia(false);
   selectedMediaFile=file;
+  mediaPreview.classList.toggle("image-preview",meta.mediaType==="image");
   previewObjectUrl=URL.createObjectURL(file);
   const preview=document.createElement(meta.mediaType==="image"?"img":"video");
   preview.src=previewObjectUrl;
@@ -1566,6 +1640,12 @@ async function initializeSite(){
     siteOverview={title:"",body:""};
     overviewTableReady=false;
   }
+  try{
+    await loadRemoteContact();
+  }catch(loadError){
+    siteContact={address:"",email:""};
+    contactTableReady=false;
+  }
   let timelineLoadError=null;
   try{
     await loadRemoteStages();
@@ -1579,6 +1659,7 @@ async function initializeSite(){
   document.body.classList.remove("auth-pending");
   registerVisit();
   renderOverview();
+  renderContact();
   renderAnnouncements();
   void loadSiteLikes();
   if(stages.length){
