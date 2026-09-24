@@ -1745,3 +1745,82 @@ Make footer likes and visits visually integrated; permit unlimited likes per use
 
 ### Notes
 - None recorded.
+
+## Checkpoint 2026-09-24T10:04:07+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+Added a CONTACT ME block beneath the visit counter within the charcoal footer, with blank address/email lines and hover/focus/touch QR previews for QQ and WeChat.
+
+### Latest User Request
+Add bottom contact area using provided QQ and WeChat QR images; reveal images on hover; reserve two blank lines for address and email.
+
+### Active Requirements
+- Keep QQ/WeChat QR hidden until interaction; reserve address and email slots; retain existing footer appearance and likes.
+
+### Decisions And Rationale
+- Reference root-level QQ.jpg and Wechat.jpg directly; use CSS hover/focus previews plus touch click toggle; leave address/email values blank with HTML comments for later filling.
+
+### Stable Facts
+- None recorded.
+
+### Files And Artifacts
+- index.html: contact styles, markup, and touch/keyboard interaction
+- QQ.jpg and Wechat.jpg: user-provided untracked assets referenced by page
+
+### Commands
+- None recorded.
+
+### Verification
+- JavaScript syntax, image-path/markup check, git diff --check, and touch interaction mock test passed.
+
+### Open Issues And Risks
+- In-app browser was unavailable, so no visual browser preview; deployment must include the two currently untracked JPG assets.
+
+### Next Steps
+- Deploy index.html with QQ.jpg and Wechat.jpg, visually check desktop hover and phone tap, fill address/email when user supplies them.
+
+### Notes
+- None recorded.
+
+## Checkpoint 2026-09-24T10:26:27+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+Removed the hero Start Reading anchor and the two lines of copy above the footer like button; reduced like-section vertical padding while retaining likes and contact area.
+
+### Latest User Request
+Remove the Start Reading button and the text above the bottom like button; readers should scroll normally.
+
+### Active Requirements
+- No hero jump button; like button/count remain, but no heading or explanatory copy above them.
+
+### Decisions And Rationale
+- Use a section aria-label for the now heading-free likes section; preserve all existing like logic and contact QR code.
+
+### Stable Facts
+- None recorded.
+
+### Files And Artifacts
+- index.html: hero markup and like-section copy/styles
+
+### Commands
+- None recorded.
+
+### Verification
+- JavaScript syntax and git diff --check passed; removed strings absent; like button still present.
+
+### Open Issues And Risks
+- Prior SQL deployment and visual browser verification are still external; user QR images remain untracked for deployment.
+
+### Next Steps
+- Deploy updated index.html together with QQ.jpg and Wechat.jpg; fill address/email when supplied.
+
+### Notes
+- None recorded.
