@@ -2022,3 +2022,42 @@ Update image paths after moving assets; picture1 must be behind park-story about
 
 ### Notes
 - None recorded.
+
+## Checkpoint 2026-09-24T14:57:25+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+Removed green quote split panel, placed epilogue text directly over picture3 photo, and moderately tightened footer vertical spacing.
+
+### Latest User Request
+Remove green quote frame and put text on the background; make bottom sections slightly more compact.
+
+### Active Requirements
+- Preserve readable white quote text over photo, responsive mobile layout, likes, visit counter, contact editor, and QR popovers.
+
+### Decisions And Rationale
+- Use one full-width photo-backed quote card with gradient overlay and right-weighted text; reduce quote, likes, visit, contact, and footer padding without shrinking controls.
+
+### Stable Facts
+- Landscape photo mapping remains about=picture1, updates=picture4, timeline=picture2, epilogue=picture3.
+
+### Files And Artifacts
+- index.html: quote markup and responsive footer styles
+
+### Commands
+- None recorded.
+
+### Verification
+- git diff --check passed; picture3 path exists; diff confined to requested quote/footer layout.
+
+### Open Issues And Risks
+- No live browser preview available; deploy and inspect mobile/desktop contrast.
+
+### Next Steps
+- Publish index.html and visually confirm quote photo and lower-page spacing.
+
+### Notes
+- None recorded.
