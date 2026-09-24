@@ -1942,3 +1942,83 @@ Remove horizontal lines under address/email and align labels with their text.
 
 ### Notes
 - None recorded.
+
+## Checkpoint 2026-09-24T14:21:52+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+Updated all local image references for picture/ relocation and added four unique landscape section backgrounds with responsive cover and legibility overlays.
+
+### Latest User Request
+Use moved picture assets; picture1 behind park-story about section, assign remaining three uniquely to recent updates, timeline, and ending area.
+
+### Active Requirements
+- Keep local favicon and contact QR paths working; use each landscape once, picture1 for the about story, readable responsive backgrounds.
+
+### Decisions And Rationale
+- About uses picture1; recent updates picture4; timeline picture2; epilogue image panel picture3. Cover sizing and translucent overlays retain text contrast; preserve Supabase media storage paths.
+
+### Stable Facts
+- None recorded.
+
+### Files And Artifacts
+- index.html: section backgrounds, QR and favicon references
+- login/index.html, reset-password/index.html, announcements/index.html: favicon paths
+
+### Commands
+- None recorded.
+
+### Verification
+- git diff --check passed; all seven referenced image files exist; no old HTML references remain.
+
+### Open Issues And Risks
+- In-app browser unavailable for visual preview; deployment must include new untracked picture/ directory and old root image removals.
+
+### Next Steps
+- Deploy the four HTML edits together with picture/ and visually check desktop/mobile crop and contrast.
+
+### Notes
+- None recorded.
+
+## Checkpoint 2026-09-24T14:26:14+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+Moved favicon and QR references into picture/ and styled four sections with distinct landscape photos; adjusted light overlays to keep photos visible and text legible.
+
+### Latest User Request
+Update image paths after moving assets; picture1 must be behind park-story about section and other three backgrounds must not repeat.
+
+### Active Requirements
+- All local assets resolve; picture1 about, other landscape photos unique; responsive crop and readable text; retain existing contact editor and Supabase media behavior.
+
+### Decisions And Rationale
+- About=picture1, updates=picture4, timeline=picture2, quote visual=picture3; cover backgrounds with light/dark overlays where text overlays imagery.
+
+### Stable Facts
+- None recorded.
+
+### Files And Artifacts
+- index.html: four section styles, favicon and QR paths
+- login/index.html, reset-password/index.html, announcements/index.html: favicon paths
+
+### Commands
+- None recorded.
+
+### Verification
+- All seven files exist; no stale local HTML asset references; git diff --check passed after final overlay adjustment.
+
+### Open Issues And Risks
+- In-app browser preview unavailable; picture/ currently untracked and must be included in deployment.
+
+### Next Steps
+- Deploy changed HTML and picture/ together, then visually review desktop/mobile crop.
+
+### Notes
+- None recorded.
