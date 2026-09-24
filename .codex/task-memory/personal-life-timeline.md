@@ -1903,3 +1903,42 @@ Address and email placeholders had no edit control; owner needs to modify them o
 
 ### Notes
 - None recorded.
+
+## Checkpoint 2026-09-24T11:39:28+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+Removed footer contact row underlines and baseline-aligned address and email labels with values.
+
+### Latest User Request
+Remove horizontal lines under address/email and align labels with their text.
+
+### Active Requirements
+- Contact rows have no underlines; each label aligns with the first line of its value.
+
+### Decisions And Rationale
+- Use baseline-aligned grid rows; remove decorative borders and email underline while retaining editing and QR controls.
+
+### Stable Facts
+- None recorded.
+
+### Files And Artifacts
+- index.html: contact row CSS
+
+### Commands
+- None recorded.
+
+### Verification
+- git diff --check passed; CSS inspection confirms contact row underline removal.
+
+### Open Issues And Risks
+- Live deployment and Supabase contact setup remain external.
+
+### Next Steps
+- Deploy index.html and visually confirm footer contact rows.
+
+### Notes
+- None recorded.

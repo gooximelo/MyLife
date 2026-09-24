@@ -93,10 +93,10 @@ dialog{max-height:calc(100dvh - 32px);overflow:auto}
 .contact-edit{padding:9px 14px;border:1px solid rgba(255,255,255,.42);border-radius:99px;background:transparent;color:#fff;font-size:12px;font-weight:700;white-space:nowrap;cursor:pointer}
 .contact-edit:hover,.contact-edit:focus-visible{border-color:#f3abc4;background:rgba(244,103,152,.16)}
 .contact-details{display:grid;gap:16px}
-.contact-detail{display:flex;align-items:end;gap:18px;min-height:28px}
-.contact-label{flex:0 0 64px;color:rgba(255,255,255,.74);font-size:14px;font-weight:600}
-.contact-value{display:block;flex:1;min-width:0;max-width:360px;min-height:27px;border-bottom:1px solid rgba(255,255,255,.35);font-size:15px;line-height:1.7;overflow-wrap:anywhere}
-.contact-value a{text-decoration:underline;text-decoration-color:rgba(255,255,255,.45);text-underline-offset:4px}
+.contact-detail{display:grid;grid-template-columns:64px minmax(0,1fr);align-items:baseline;gap:18px}
+.contact-label{color:rgba(255,255,255,.74);font-size:14px;font-weight:600}
+.contact-value{display:block;min-width:0;max-width:360px;font-size:15px;line-height:1.7;overflow-wrap:anywhere}
+.contact-value a{text-decoration:none}
 .contact-setup{margin:15px 0 0;color:#f3abc4;font-size:12px}
 .contact-methods{display:flex;align-items:end;gap:14px;padding-bottom:2px}
 .contact-method{position:relative}
