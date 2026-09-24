@@ -68,7 +68,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{
 .delete-memory:hover,.delete-memory:focus-visible{color:var(--orange);border-bottom-color:currentColor}
 dialog{max-height:calc(100dvh - 32px);overflow:auto}
 .dialog-context{margin:4px 0 0;color:var(--muted);font-size:12px;letter-spacing:0}
-.site-footer{display:block;border-top:0;padding:0 0 42px;color:inherit;font-size:inherit}
+.site-footer{display:block;border-top:0;padding:0 0 42px;color:#fff;font-size:inherit;background:#343539}
 .likes-section{background:#343539;color:#fff}
 .likes-inner{padding:74px 24px 82px;text-align:center}
 .likes-inner h2{margin:0;font-family:var(--sans);font-size:clamp(22px,2.4vw,30px);font-weight:800;line-height:1.55}
@@ -78,17 +78,16 @@ dialog{max-height:calc(100dvh - 32px);overflow:auto}
 .like-button:active:not(:disabled){transform:translateY(-1px) scale(.98)}
 .like-button:focus-visible{outline:3px solid #fff;outline-offset:5px}
 .like-button:disabled{opacity:.72;cursor:wait}
-.like-button[aria-pressed="true"]{background:linear-gradient(110deg,#ed548c,#b9507b)}
 .like-heart{width:31px;height:31px;fill:rgba(255,255,255,.7);transition:fill .25s ease,transform .25s ease}
-.like-button[aria-pressed="true"] .like-heart{fill:#fff;transform:scale(1.12)}
+.like-button:hover:not(:disabled) .like-heart,.like-button:active:not(:disabled) .like-heart{fill:#fff;transform:scale(1.12)}
 .like-count{min-width:2ch;padding-left:17px;border-left:1px solid rgba(255,255,255,.4);font-variant-numeric:tabular-nums}
 .like-status{margin:16px auto 0!important;color:#ffe0e9;font-size:13px!important;font-weight:400!important}
 @media(max-width:620px){.likes-inner{padding:64px 12px 70px}.like-button{width:min(100%,320px);min-width:0;min-height:72px}}
-.visit-card{display:flex;align-items:center;justify-content:space-between;gap:32px;padding:32px 38px;color:var(--white);background:var(--ink);box-shadow:var(--shadow)}
+.visit-card{display:flex;align-items:center;justify-content:space-between;gap:32px;padding:32px 38px;color:#fff;background:transparent;border-top:1px solid rgba(255,255,255,.16)}
 .visit-label{display:flex;align-items:center;gap:14px}.visit-label p{margin:0;font-family:var(--serif);font-size:19px}
 .live-dot{width:10px;height:10px;flex:0 0 auto;border-radius:50%;background:#e97855;box-shadow:0 0 0 7px rgba(233,120,85,.13);animation:pulse 2.2s ease-in-out infinite}@keyframes pulse{50%{box-shadow:0 0 0 12px rgba(233,120,85,0)}}
 .visit-count{display:flex;align-items:baseline;gap:10px;color:rgba(255,255,255,.62);font-size:12px;white-space:nowrap}.visit-count strong{min-width:7ch;color:var(--white);font-family:var(--serif);font-size:34px;font-weight:500;letter-spacing:.09em;text-align:center;font-variant-numeric:tabular-nums}.visit-count strong.bump{animation:count-in .45s ease-out}@keyframes count-in{from{opacity:.35;transform:translateY(6px)}to{opacity:1;transform:none}}
-.footer-bottom{display:flex;justify-content:flex-end;gap:24px;padding:27px 0 0;color:var(--muted);font-size:12px;text-align:right}
+.footer-bottom{display:flex;justify-content:flex-end;gap:24px;padding:27px 0 0;color:rgba(255,255,255,.55);font-size:12px;text-align:right}
 @media(max-width:620px){.hero-copy{font-size:15px}.hero-actions{align-items:flex-start;flex-direction:column;gap:20px}.visit-card{align-items:flex-start;flex-direction:column;padding:27px 24px}.visit-count{width:100%;justify-content:space-between}.visit-count strong{font-size:30px}.footer-bottom{display:block;line-height:1.8}.footer-bottom>span{display:block}.quote-meta{align-items:flex-start;flex-direction:column;gap:20px}.story-kicker{letter-spacing:.1em}.toast{right:14px;bottom:14px;left:14px;text-align:center}}
 .memory>div:nth-child(2){min-width:0;overflow-wrap:anywhere}.delete-memory{min-height:32px;padding:7px 0}@media(max-width:420px){.dialog-actions{align-items:stretch;flex-direction:column}.dialog-actions .primary{justify-content:center}.save-note{max-width:none}}
 @media(prefers-reduced-motion:reduce){.sun,.live-dot{animation:none}}
@@ -249,7 +248,7 @@ dialog{max-height:calc(100vh - 32px);overflow:auto}
 </section>
 <section class="timeline-section" id="timeline"><div class="shell"><header class="section-head"><div><span class="section-number">01 / CHAPTERS</span><h2>沿着时间，认识我</h2></div><p class="section-note">点击图中的任一节点，查看那段时光里的故事。现在的文字只是一个起点，你可以慢慢把它们换成真正属于你的记忆。</p></header><div class="timeline-layout"><div class="stage-graph" id="stageGraph"><div class="graph-track" id="graphTrack"><svg class="graph-line" id="graphSvg" viewBox="0 0 1200 320" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path class="graph-base" id="graphBase" d="" vector-effect="non-scaling-stroke"/><path class="graph-progress" id="graphProgress" d="" pathLength="1" vector-effect="non-scaling-stroke"/></svg><div class="stage-list" id="stageList" role="tablist" aria-label="人生阶段" aria-orientation="horizontal"></div></div></div><article class="story-panel" id="storyPanel" role="tabpanel" tabindex="0" data-index="01"><div class="story-kicker"><span id="storyYears"></span><span id="storyProgress"></span></div><h3 class="story-title" id="storyTitle"></h3><p class="story-lead" id="storyLead"></p><div class="story-actions"><button class="stage-add-memory js-open-dialog owner-only" id="stageAddMemory" type="button" hidden>＋ 添加本阶段记忆</button></div><div class="memory-list" id="memoryList"></div></article></div></div></section>
 <section class="quote-section shell" id="epilogue"><div class="quote-card"><div class="quote-side" aria-hidden="true"></div><div class="quote-copy"><blockquote>&ldquo;人不是活一辈子，不是活几年、几月、几天，而是活那么几个瞬间。&rdquo;</blockquote><div class="quote-meta"><span><strong>愿每个瞬间，都值得被记住。</strong></span></div></div></div></section>
-<section class="likes-section" id="likes" aria-labelledby="likesTitle"><div class="shell likes-inner"><h2 id="likesTitle">如果你喜欢这里的故事，<br>就送它一颗心吧。</h2><p>点一下，把这份喜欢留在这里。</p><button class="like-button" id="likeButton" type="button" aria-pressed="false" disabled><svg class="like-heart" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 21.35 10.55 20.03C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35Z"/></svg><span id="likeAction">点个喜欢</span><span class="like-count" id="likeCount" aria-live="polite">—</span></button><p class="like-status" id="likeStatus" role="status" hidden></p></div></section>
+<section class="likes-section" id="likes" aria-labelledby="likesTitle"><div class="shell likes-inner"><h2 id="likesTitle">如果你喜欢这里的故事，<br>就送它一颗心吧。</h2><p>喜欢的话，可以多点几次；每次都算数。</p><button class="like-button" id="likeButton" type="button" disabled><svg class="like-heart" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 21.35 10.55 20.03C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35Z"/></svg><span id="likeAction">点个喜欢</span><span class="like-count" id="likeCount" aria-live="polite">—</span></button><p class="like-status" id="likeStatus" role="status" hidden></p></div></section>
 </main>
 <footer class="site-footer"><div class="shell"><div class="visit-card"><div class="visit-label"><span class="live-dot" aria-hidden="true"></span><div><p>谢谢你，再一次来到我的故事里。</p></div></div><div class="visit-count" title="当前浏览器中的累计到访次数" aria-live="polite" aria-atomic="true"><span>此设备第</span><strong id="visitorCount">------</strong><span>次到访</span></div></div><div class="footer-bottom"><span>过去成为故事，未来正在发生。</span></div></div></footer>
 <dialog id="announcementDialog" aria-labelledby="announcementDialogTitle"><form class="dialog-inner" id="announcementForm"><div class="dialog-head"><div><span>RECENT UPDATE</span><h3 id="announcementDialogTitle">发布一条近况</h3><p class="dialog-context" id="announcementDialogContext">这条内容会展示在首页公告栏</p></div><button class="icon-button" type="button" id="closeAnnouncementDialog" aria-label="关闭">&#215;</button></div><label>日期<input type="date" name="publishedOn" required></label><label>标题<input name="title" placeholder="例如：完成了网站的新页面" maxlength="60" required></label><label>近况内容<textarea name="content" placeholder="简单记录最近完成了什么、正在做什么……" maxlength="600" required></textarea></label><div class="stage-dialog-actions"><button class="secondary" id="cancelAnnouncementDialog" type="button">取消</button><button class="primary" id="saveAnnouncement" type="submit">发布近况 <span aria-hidden="true">&rarr;</span></button></div></form></dialog>
@@ -1381,70 +1380,75 @@ function showToast(message){
 function registerVisit(){let count=0;try{count=Number.parseInt(localStorage.getItem(visitStorageKey)||"0",10);if(!Number.isSafeInteger(count)||count<0)count=0;count+=1;localStorage.setItem(visitStorageKey,String(count))}catch(error){count=1}const counter=document.getElementById("visitorCount");counter.textContent=String(count).padStart(6,"0");counter.classList.remove("bump");void counter.offsetWidth;counter.classList.add("bump")}
 
 const likeButton=document.getElementById("likeButton");
-const likeAction=document.getElementById("likeAction");
 const likeCountElement=document.getElementById("likeCount");
 const likeStatus=document.getElementById("likeStatus");
 let likeCount=0;
-let isLiked=false;
+let optimisticLikes=0;
+let queuedLikes=0;
 let likesReady=false;
 let likeSaving=false;
 function renderLikeButton(){
-  likeButton.disabled=!likesReady||likeSaving;
-  likeButton.setAttribute("aria-pressed",String(isLiked));
-  likeAction.textContent=isLiked?"已喜欢":"点个喜欢";
-  likeCountElement.textContent=likesReady?new Intl.NumberFormat("zh-CN").format(likeCount):"—";
-  likeButton.setAttribute("aria-label",likesReady?(isLiked?"取消喜欢，目前共":"喜欢这个网站，目前共")+likeCount+" 人喜欢":"正在加载点赞数");
+  const displayedCount=likeCount+optimisticLikes;
+  likeButton.disabled=!likesReady;
+  likeCountElement.textContent=likesReady?new Intl.NumberFormat("zh-CN").format(displayedCount):"—";
+  likeButton.setAttribute("aria-label",likesReady?"点个喜欢，累计 "+displayedCount+" 次点赞":"正在加载点赞数");
 }
 async function loadSiteLikes(){
   if(!currentUser)return;
   likesReady=false;
   renderLikeButton();
   try{
-    const [ownLike,totalLikes]=await Promise.all([
-      supabase.from("site_likes").select("user_id").eq("user_id",currentUser.id).maybeSingle(),
-      supabase.rpc("get_site_like_count")
-    ]);
-    if(ownLike.error)throw ownLike.error;
+    const totalLikes=await supabase.rpc("get_site_like_click_count");
     if(totalLikes.error)throw totalLikes.error;
     const count=Number(totalLikes.data);
     if(!Number.isSafeInteger(count)||count<0)throw new Error("点赞数格式无效");
-    isLiked=Boolean(ownLike.data);
     likeCount=count;
     likesReady=true;
     likeStatus.hidden=true;
   }catch(error){
-    likeStatus.textContent=isOwner&&/site_likes|get_site_like_count|schema cache|relation|function/i.test(String(error?.message||error))
+    likeStatus.textContent=isOwner&&/get_site_like_click_count|schema cache|relation|function/i.test(String(error?.message||error))
       ?"点赞功能尚未启用，请先运行 supabase-likes.sql"
       :"点赞功能暂不可用，请稍后再试。";
     likeStatus.hidden=false;
   }
   renderLikeButton();
 }
-likeButton.addEventListener("click",async()=>{
-  if(!currentUser||!likesReady||likeSaving)return;
+async function saveQueuedLikes(){
+  if(likeSaving)return;
   likeSaving=true;
-  renderLikeButton();
-  const addLike=!isLiked;
   try{
-    const result=addLike
-      ?await supabase.from("site_likes").insert({user_id:currentUser.id})
-      :await supabase.from("site_likes").delete().eq("user_id",currentUser.id);
-    if(result.error)throw result.error;
-    isLiked=addLike;
-    likeCount=Math.max(0,likeCount+(addLike?1:-1));
-    renderLikeButton();
-    const refreshed=await supabase.rpc("get_site_like_count");
+    while(queuedLikes>0){
+      const batchSize=Math.min(queuedLikes,50);
+      queuedLikes-=batchSize;
+      const events=Array.from({length:batchSize},()=>({user_id:currentUser.id}));
+      const result=await supabase.from("site_like_events").insert(events);
+      if(result.error)throw result.error;
+      likeCount+=batchSize;
+      optimisticLikes-=batchSize;
+      renderLikeButton();
+    }
+    const refreshed=await supabase.rpc("get_site_like_click_count");
     if(!refreshed.error){
       const count=Number(refreshed.data);
-      if(Number.isSafeInteger(count)&&count>=0)likeCount=count;
+      if(Number.isSafeInteger(count)&&count>=0)likeCount=Math.max(likeCount,count);
     }
   }catch(error){
-    if(error?.code!=="23505")showToast("点赞失败："+String(error?.message||error));
+    queuedLikes=0;
+    optimisticLikes=0;
     await loadSiteLikes();
+    showToast("点赞失败："+String(error?.message||error));
   }finally{
     likeSaving=false;
     renderLikeButton();
+    if(queuedLikes>0)void saveQueuedLikes();
   }
+}
+likeButton.addEventListener("click",()=>{
+  if(!currentUser||!likesReady)return;
+  queuedLikes++;
+  optimisticLikes++;
+  renderLikeButton();
+  void saveQueuedLikes();
 });
 
 function loginPageUrl(){return new URL("login/",window.location.href).href}

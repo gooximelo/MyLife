@@ -1705,3 +1705,43 @@ At the bottom add an interactive like button and text styled like the reference 
 
 ### Notes
 - None recorded.
+
+## Checkpoint 2026-09-24T09:14:24+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+Unified footer likes and visit area on one charcoal background. Changed likes from one-per-account toggle to unlimited per-click events tied to auth user ID.
+
+### Latest User Request
+Make footer likes and visits visually integrated; permit unlimited likes per user and record which account clicked if possible.
+
+### Active Requirements
+- Every click increases the visible total; account linkage is private; visitor sees only aggregate count.
+
+### Decisions And Rationale
+- Use new public.site_like_events table instead of altering old site_likes primary key, migrate existing likes idempotently, expose only aggregate count via get_site_like_click_count RPC, and allow authenticated inserts only under RLS.
+
+### Stable Facts
+- None recorded.
+
+### Files And Artifacts
+- index.html: unified footer styles, repeatable like UI, optimistic queued batch insert handler
+- supabase-likes.sql: new per-click table, old-like migration, RLS, count RPC
+
+### Commands
+- None recorded.
+
+### Verification
+- JavaScript syntax and git diff --check passed; mock test saved 3 rapid clicks as 3 account-linked events.
+
+### Open Issues And Risks
+- Run updated supabase-likes.sql in Supabase SQL Editor, then deploy index.html and perform a live account test; no live database change was made in this turn.
+
+### Next Steps
+- Apply SQL migration, deploy page, test repeat clicks and cross-account shared total.
+
+### Notes
+- None recorded.
