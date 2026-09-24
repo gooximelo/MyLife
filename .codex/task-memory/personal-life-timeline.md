@@ -2061,3 +2061,42 @@ Remove green quote frame and put text on the background; make bottom sections sl
 
 ### Notes
 - None recorded.
+
+## Checkpoint 2026-09-24T16:36:08+08:00
+- Status: `active`
+
+### Objective
+将现有网页改造成可点击浏览、可逐步扩充内容的个人生平时间线。
+
+### Current State
+After interrupted turn, verified and retained targeted fixes that reveal timeline picture2 and epilogue picture3 while leaving the first two backgrounds unchanged.
+
+### Latest User Request
+Keep the first two photo sections unchanged and make the later timeline and quote photos visible.
+
+### Active Requirements
+- Do not alter updates picture4 or about picture1; maintain readable timeline labels and white quote text across desktop/mobile.
+
+### Decisions And Rationale
+- Reduce timeline white overlay from roughly 80 percent to 42-65 percent and strengthen graph line; reduce quote dark gradient and shift portrait picture3 focal position downward.
+
+### Stable Facts
+- All four image paths are tracked locally; live picture2 and picture3 URLs returned HTTP 200.
+
+### Files And Artifacts
+- index.html: timeline and quote background CSS only
+
+### Commands
+- None recorded.
+
+### Verification
+- git diff --check passed; local picture2 and picture3 files exist; diff has only targeted CSS changes; front two background rules unchanged.
+
+### Open Issues And Risks
+- No post-deployment visual confirmation yet; quote focal crop should be checked after publishing.
+
+### Next Steps
+- Deploy index.html and inspect timeline/quote at desktop and mobile widths.
+
+### Notes
+- None recorded.
